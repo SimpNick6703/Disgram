@@ -7,37 +7,84 @@ import os
 import io
 import json
 from dateutil import parser
-from config import WEBHOOK_URL, COOLDOWN, EMBED_COLOR, ERROR_PLACEHOLDER
+from config import WEBHOOK_URL as DEFAULT_WEBHOOK_URL, COOLDOWN, EMBED_COLOR as DEFAULT_EMBED_COLOR
 from bs4 import BeautifulSoup
 from discord import SyncWebhook, Embed, File
 from rate_limiter import discord_rate_limiter
 
+# Job-specific configuration (will be set from command-line args)
+WEBHOOK_URL = DEFAULT_WEBHOOK_URL
+EMBED_COLOR = DEFAULT_EMBED_COLOR
+JOB_NAME = None
+
 def log_message(message, log_type="info"):
     timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    log_entry = f"{timestamp} {message}"
+    job_prefix = f"[{JOB_NAME}]" if JOB_NAME else ""
+    log_entry = f"{timestamp} {job_prefix} {message}"
     print(log_entry)
-    if log_type in ["error", "new_message", "status"]:
-        with open("Disgram.log", "a") as log_file:
+    if log_type in ["error", "new_message", "status", "status2"]:
+        with open("Disgram.log", "a", encoding="utf-8") as log_file:
             log_file.write(log_entry + "\n")
 
-def is_message_logged(channel, number):
+def parse_channel_param(channel_param):
+    """
+    Parse channel parameter - can be either:
+    1. Channel name only: 'channel'
+    2. Full message URL: 'https://t.me/channel/123'
+    
+    Returns: (channel_name, start_from_message_number)
+    """
+    if channel_param.startswith('https://t.me/'):
+        # Full URL provided
+        parts = channel_param.split('/')
+        if len(parts) >= 4:
+            channel_name = parts[3]  # Extract channel name
+            if len(parts) >= 5 and parts[4].isdigit():
+                start_message = int(parts[4])
+                return channel_name, start_message
+            else:
+                return channel_name, None
+    
+    # Just channel name provided
+    return channel_param, None
+
+def is_message_logged(channel, number, job_name=None):
+    """
+    Check if a message has been logged by a specific job.
+    If job_name is provided, only return True if this specific job logged the message.
+    If job_name is None, check if any job logged the message (legacy behavior).
+    """
     try:
         with open("Disgram.log", "r") as log_file:
             for line in log_file:
+                # Look for the message URL in the line
                 match = re.search(rf"https://t.me/{channel}/(\d+)", line)
                 if match and int(match.group(1)) >= int(number):
-                    return True
+                    if job_name:
+                        # Check if this specific job logged the message
+                        if f"[{job_name}]" in line:
+                            return True
+                    else:
+                        # Legacy behavior - any job logging counts
+                        return True
     except FileNotFoundError:
         pass
     return False
 
-def scrapeTelegramMessageBox(channel):
+def scrapeTelegramMessageBox(channel, start_from_message=None):
     max_retries = 5
     retry_delay = 2
     for attempt in range(max_retries):
         try:
-            log_message(f"Scraping messages from Telegram channel: {channel} (Attempt {attempt + 1})")
-            tg_html = requests.get(f'https://t.me/s/{channel}', timeout=10)
+            # Build URL with starting point if specified
+            if start_from_message:
+                url = f'https://t.me/s/{channel}?before={start_from_message + 20}'  # Get messages around the target
+                log_message(f"Scraping messages from Telegram channel: {channel} starting near message {start_from_message} (Attempt {attempt + 1})")
+            else:
+                url = f'https://t.me/s/{channel}'
+                log_message(f"Scraping messages from Telegram channel: {channel} (Attempt {attempt + 1})")
+                
+            tg_html = requests.get(url, timeout=10)
             tg_html.raise_for_status()
             tg_soup = BeautifulSoup(tg_html.text, 'html.parser')
             tg_box = tg_soup.find_all('div', {'class': 'tgme_widget_message_wrap js-widget_message_wrap'})
@@ -577,31 +624,25 @@ def sendGroupedMediaMessage(msg_link, msg_text, images, videos, author_name, ico
     except Exception as e:
         log_message(f"Error sending grouped media message: {e}", log_type="error")
 
-def sendMissingMessages(channel, last_number, current_number, author_name, icon_url, timestamp):
-    for missing_number in range(last_number + 1, current_number):
-        missing_link = f"https://t.me/{channel}/{missing_number}"
-        log_message(f"Sending placeholder for missing message: {missing_link}", log_type="error")
-        sendMessage(missing_link, ERROR_PLACEHOLDER, None, None, author_name, icon_url, timestamp=timestamp)
 
-def sendMissingMessagesFiltered(channel, missing_numbers, author_name, icon_url, timestamp):
-    """Send placeholders for specific missing message numbers (filtered to exclude grouped media components)"""
-    for missing_number in missing_numbers:
-        missing_link = f"https://t.me/{channel}/{missing_number}"
-        log_message(f"Sending placeholder for missing message: {missing_link}", log_type="error")
-        sendMessage(missing_link, ERROR_PLACEHOLDER, None, None, author_name, icon_url, timestamp=timestamp)
 
 def main(tg_channel):
     SCRIPT_START_TIME = datetime.datetime.now()
     msg_log = []
-    last_processed_number = 0
+    
+    # Parse channel parameter to handle both channel names and message URLs
+    channel_name, start_from_message = parse_channel_param(tg_channel)
+    last_processed_number = start_from_message if start_from_message else 0
+    
     grouped_media_ranges = set()  # Track message numbers that are part of grouped media
-    log_message(f"Starting bot for channel: {tg_channel}", log_type="status2")
+    log_message(f"Starting bot for channel: {channel_name}" + 
+               (f" from message {start_from_message}" if start_from_message else ""), log_type="status2")
 
     while True:
         try:
             msg_temp = []
             log_message("Checking for new messages...", log_type="status2")
-            message_boxes = scrapeTelegramMessageBox(tg_channel)
+            message_boxes = scrapeTelegramMessageBox(channel_name, start_from_message)
             if not message_boxes:
                 continue
             for tg_box in message_boxes:
@@ -609,7 +650,7 @@ def main(tg_channel):
                 if not msg_link:
                     continue
 
-                match = re.match(rf"https://t.me/{tg_channel}/(\d+)", msg_link)
+                match = re.match(rf"https://t.me/{channel_name}/(\d+)", msg_link)
                 if not match:
                     continue
 
@@ -625,17 +666,9 @@ def main(tg_channel):
                     last_processed_number = current_number
                     continue
 
-                if last_processed_number > 0 and current_number > last_processed_number + 1:
-                    # Filter out grouped media components from missing messages
-                    filtered_missing = []
-                    for missing_num in range(last_processed_number + 1, current_number):
-                        if missing_num not in grouped_media_ranges:
-                            filtered_missing.append(missing_num)
-                    
-                    if filtered_missing:
-                        sendMissingMessagesFiltered(tg_channel, filtered_missing, author_name, icon_url, timestamp)
+                # Skip missing message gap detection - no more placeholder messages
 
-                if is_message_logged(tg_channel, current_number):
+                if is_message_logged(channel_name, current_number, JOB_NAME):
                     log_message(f"Skipping already logged message: {msg_link}", log_type="status2")
                     continue
 
@@ -682,9 +715,22 @@ def main(tg_channel):
         time.sleep(COOLDOWN)
 
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        log_message("Usage: python webhook.py <TG_CHANNEL>", log_type="status2") 
+    if len(sys.argv) < 2:
+        log_message("Usage: python webhook.py <TG_CHANNEL> [WEBHOOK_URL] [EMBED_COLOR] [JOB_NAME]", log_type="status2") 
         sys.exit(1)
+
     TG_CHANNEL = sys.argv[1]
-    log_message(f"Initializing bot with channel: {TG_CHANNEL}", log_type="status2")
+    
+    # Optional job-specific parameters
+    if len(sys.argv) >= 3 and sys.argv[2]:
+        WEBHOOK_URL = sys.argv[2]
+    if len(sys.argv) >= 4 and sys.argv[3]:
+        try:
+            EMBED_COLOR = int(sys.argv[3], 16)
+        except ValueError:
+            log_message(f"Invalid embed color: {sys.argv[3]}, using default", log_type="error")
+    if len(sys.argv) >= 5 and sys.argv[4]:
+        JOB_NAME = sys.argv[4]
+    
+    log_message(f"Initializing bot with channel: {TG_CHANNEL}, job: {JOB_NAME or 'legacy'}", log_type="status2")
     main(TG_CHANNEL)
