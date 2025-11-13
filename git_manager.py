@@ -9,7 +9,6 @@ import logging
 from typing import Optional
 from datetime import datetime
 
-# Get logger (configured in main.py)
 logger = logging.getLogger('GitManager')
 
 def sanitize_url_for_logging(url: str) -> str:
@@ -18,12 +17,8 @@ def sanitize_url_for_logging(url: str) -> str:
         return url
     
     import re
-    # Replace GitHub Personal Access Tokens with [REDACTED]
-    # Pattern matches: github_pat_[alphanumeric] or ghp_[alphanumeric]
     sanitized = re.sub(r'github_pat_[A-Za-z0-9_]+', '[REDACTED]', url)
     sanitized = re.sub(r'ghp_[A-Za-z0-9_]+', '[REDACTED]', sanitized)
-    
-    # Also handle generic token patterns like :token@
     sanitized = re.sub(r'://[^@\s]+@', '://[REDACTED]@', sanitized)
     
     return sanitized
@@ -31,34 +26,28 @@ def sanitize_url_for_logging(url: str) -> str:
 class GitLogManager:
     def __init__(self, github_token: Optional[str] = None, commit_interval: int = 2700):
         self.github_token = github_token
-        self.commit_interval = commit_interval  # For interval mode
+        self.commit_interval = commit_interval
         self.local_log_path = "Disgram.log"
         self.commit_lock = threading.Lock()
         
-        # Commit mode configuration
         self.commit_mode = os.getenv("COMMIT_MODE", "interval").lower()
         self.commit_schedule = os.getenv("COMMIT_SCHEDULE", "hourly").lower()
         self.custom_hours = self._parse_custom_hours(os.getenv("COMMIT_CUSTOM_HOURS", "0,6,12,18"))
         self.startup_grace = int(os.getenv("STARTUP_GRACE_PERIOD", "600"))
         
-        # Initialize last_commit_time by checking recent Git history
         self.last_commit_time = self._get_last_commit_time()
         
-        # Add startup grace period to prevent immediate commits
         current_time = time.time()
         if (current_time - self.last_commit_time) < self.startup_grace:
             logger.info(f"Recent commit detected, extending cooldown by {self.startup_grace//60} minutes")
-            self.last_commit_time = current_time  # Reset to prevent immediate commit
+            self.last_commit_time = current_time
         
-        # Configure git if token is provided
         if self.github_token:
             self._configure_git_auth()
         
-        # Start background commit thread
         self.commit_thread = threading.Thread(target=self._background_commit, daemon=True)
         self.commit_thread.start()
         
-        # Log initialization details
         if self.commit_mode == "scheduled":
             schedule_desc = self._get_schedule_description()
             logger.info(f"GitLogManager initialized - mode: scheduled ({schedule_desc}), last commit: {(current_time - self.last_commit_time)//60:.1f} minutes ago")
@@ -69,7 +58,7 @@ class GitLogManager:
         """Parse custom hours from environment variable"""
         try:
             hours = [int(h.strip()) for h in hours_str.split(',') if h.strip()]
-            return [h for h in hours if 0 <= h <= 23]  # Validate range
+            return [h for h in hours if 0 <= h <= 23]
         except (ValueError, AttributeError):
             logger.warning(f"Invalid COMMIT_CUSTOM_HOURS format: {hours_str}, using default")
             return [0, 6, 12, 18]
@@ -93,30 +82,25 @@ class GitLogManager:
         current_hour = now_utc.hour
         current_minute = now_utc.minute
         
-        # Determine target hours based on schedule
         if self.commit_schedule == "hourly":
-            target_hours = list(range(24))  # Every hour
+            target_hours = list(range(24))
         elif self.commit_schedule == "every_2h":
-            target_hours = list(range(0, 24, 2))  # 0, 2, 4, 6, ..., 22
+            target_hours = list(range(0, 24, 2))
         elif self.commit_schedule == "custom":
             target_hours = sorted(self.custom_hours)
         else:
-            target_hours = list(range(24))  # Fallback to hourly
+            target_hours = list(range(24))
         
-        # Find next scheduled hour
         next_hour = None
         for hour in target_hours:
             if hour > current_hour or (hour == current_hour and current_minute < 5):
-                # Allow 5-minute window at the start of each hour
                 next_hour = hour
                 break
         
         if next_hour is None:
-            # No more hours today, get first hour of tomorrow
             next_hour = target_hours[0]
             now_utc += timedelta(days=1)
         
-        # Create next scheduled time (at the start of the hour)
         next_time = now_utc.replace(hour=next_hour, minute=0, second=0, microsecond=0)
         return next_time.timestamp()
     
@@ -128,54 +112,73 @@ class GitLogManager:
         current_hour = now_utc.hour
         current_minute = now_utc.minute
         
-        # Only commit in the first 5 minutes of the scheduled hour
         if current_minute >= 5:
             return False
         
-        # Determine if current hour is scheduled
         if self.commit_schedule == "hourly":
-            return True  # Every hour
+            return True
         elif self.commit_schedule == "every_2h":
-            return current_hour % 2 == 0  # Even hours only
+            return current_hour % 2 == 0
         elif self.commit_schedule == "custom":
             return current_hour in self.custom_hours
         else:
-            return True  # Fallback to hourly
+            return True
     
     def _configure_git_auth(self):
         """Configure git authentication using GitHub token"""
         try:
-            # Set git config for commits
             subprocess.run(["git", "config", "user.name", "Disgram Bot"], 
                           cwd=".", capture_output=True, text=True, check=True)
             subprocess.run(["git", "config", "user.email", "disgram@bot.local"], 
                           cwd=".", capture_output=True, text=True, check=True)
             
-            # Configure Git to use token-based authentication
-            # Use the token as username with empty password (GitHub's recommended approach)
             subprocess.run([
                 "git", "config", "credential.helper", 
                 f"!f() {{ echo \"username={self.github_token}\"; echo \"password=\"; }}; f"
             ], cwd=".", capture_output=True, text=True, check=True)
             
-            # Ensure remote URL is clean HTTPS without embedded credentials
             result = subprocess.run(["git", "remote", "get-url", "origin"], 
-                                   cwd=".", capture_output=True, text=True, check=True)
-            current_url = result.stdout.strip()
+                                   cwd=".", capture_output=True, text=True)
             
-            # Clean up URL if it has embedded credentials
-            if "@github.com/" in current_url:
-                # Extract just the repo path and reconstruct clean URL
-                repo_part = current_url.split("@github.com/")[1]
-                clean_url = f"https://github.com/{repo_part}"
-                subprocess.run(["git", "remote", "set-url", "origin", clean_url], 
-                              cwd=".", capture_output=True, text=True, check=True)
-                logger.info(f"Git authentication configured for repository: {repo_part}")
-            elif current_url.startswith("https://github.com/"):
-                repo_path = current_url.replace("https://github.com/", "")
-                logger.info(f"Git authentication configured for repository: {repo_path}")
+            if result.returncode != 0:
+                repo_url = os.getenv("GITHUB_REPO_URL")
+                
+                if not repo_url:
+                    config_result = subprocess.run(["git", "config", "--get", "remote.origin.url"], 
+                                                  cwd=".", capture_output=True, text=True)
+                    if config_result.returncode == 0:
+                        repo_url = config_result.stdout.strip()
+                
+                if repo_url:
+                    if "@github.com/" in repo_url:
+                        repo_part = repo_url.split("@github.com/")[1].replace(".git", "")
+                        clean_url = f"https://github.com/{repo_part}"
+                    elif "github.com/" in repo_url:
+                        repo_part = repo_url.split("github.com/")[1].replace(".git", "")
+                        clean_url = f"https://github.com/{repo_part}"
+                    else:
+                        clean_url = repo_url
+                    
+                    subprocess.run(["git", "remote", "add", "origin", clean_url],
+                                  cwd=".", capture_output=True, text=True, check=True)
+                    logger.info(f"Git remote origin initialized: {repo_part if '@github.com/' in repo_url or 'github.com/' in repo_url else sanitize_url_for_logging(clean_url)}")
+                else:
+                    logger.warning("No remote origin exists and REPO_URL not configured - git push will fail")
+                    return
             else:
-                logger.warning(f"Unexpected remote URL format: {sanitize_url_for_logging(current_url)}")
+                current_url = result.stdout.strip()
+                
+                if "@github.com/" in current_url:
+                    repo_part = current_url.split("@github.com/")[1]
+                    clean_url = f"https://github.com/{repo_part}"
+                    subprocess.run(["git", "remote", "set-url", "origin", clean_url], 
+                                  cwd=".", capture_output=True, text=True, check=True)
+                    logger.info(f"Git authentication configured for repository: {repo_part}")
+                elif current_url.startswith("https://github.com/"):
+                    repo_path = current_url.replace("https://github.com/", "")
+                    logger.info(f"Git authentication configured for repository: {repo_path}")
+                else:
+                    logger.warning(f"Unexpected remote URL format: {sanitize_url_for_logging(current_url)}")
                 
         except subprocess.CalledProcessError as e:
             logger.error(f"Error configuring git authentication: {e}")
@@ -185,7 +188,6 @@ class GitLogManager:
     def _get_last_commit_time(self) -> float:
         """Get the timestamp of the last auto-commit to determine cooldown"""
         try:
-            # Get the last commit that was an auto-commit (our commits start with "Auto-commit:")
             result = subprocess.run([
                 "git", "log", "--grep=^Auto-commit:", "--format=%ct", "-1"
             ], cwd=".", capture_output=True, text=True)
@@ -195,7 +197,6 @@ class GitLogManager:
                 logger.debug(f"Found last auto-commit at {datetime.fromtimestamp(last_auto_commit_time)}")
                 return last_auto_commit_time
             else:
-                # No auto-commits found, check for any recent commits in the last 24 hours
                 one_day_ago = int(time.time()) - 86400
                 result = subprocess.run([
                     "git", "log", f"--since={one_day_ago}", "--format=%ct", "-1"
@@ -211,15 +212,14 @@ class GitLogManager:
                     
         except (subprocess.CalledProcessError, ValueError) as e:
             logger.debug(f"Could not determine last commit time: {e}")
-            return time.time() - self.commit_interval  # Safe fallback
+            return time.time() - self.commit_interval
         except Exception as e:
             logger.debug(f"Unexpected error getting last commit time: {e}")
-            return time.time() - self.commit_interval  # Safe fallback
+            return time.time() - self.commit_interval
     
     def _sync_with_remote(self) -> bool:
         """Safely sync with remote repository, handling branch tracking issues"""
         try:
-            # Get current branch name
             branch_result = subprocess.run(["git", "branch", "--show-current"], 
                                          cwd=".", capture_output=True, text=True)
             if branch_result.returncode != 0:
@@ -228,25 +228,21 @@ class GitLogManager:
                 
             current_branch = branch_result.stdout.strip()
             
-            # First try to fetch the remote branch
             fetch_result = subprocess.run(["git", "fetch", "origin", current_branch], 
                                         cwd=".", capture_output=True, text=True)
             if fetch_result.returncode != 0:
                 logger.debug(f"Fetch failed: {sanitize_url_for_logging(fetch_result.stderr)}")
                 return False
             
-            # Check if we have upstream tracking
             upstream_result = subprocess.run(["git", "rev-parse", "--abbrev-ref", f"{current_branch}@{{upstream}}"], 
                                            cwd=".", capture_output=True, text=True)
             
             if upstream_result.returncode != 0:
-                # No upstream set, try to set it
                 logger.debug(f"Setting upstream tracking for branch {current_branch}")
                 subprocess.run(["git", "branch", "--set-upstream-to", f"origin/{current_branch}", current_branch], 
                               cwd=".", capture_output=True, text=True)
             
-            # Now try to pull with explicit branch to avoid ambiguity
-            pull_result = subprocess.run(["git", "pull", "origin", current_branch], 
+            pull_result = subprocess.run(["git", "pull", "origin", current_branch],
                                        cwd=".", capture_output=True, text=True)
             
             if pull_result.returncode == 0:
@@ -266,7 +262,6 @@ class GitLogManager:
     def _push_changes(self) -> bool:
         """Push changes to remote repository with proper error handling"""
         try:
-            # Get current branch name
             branch_result = subprocess.run(["git", "branch", "--show-current"], 
                                          cwd=".", capture_output=True, text=True)
             if branch_result.returncode != 0:
@@ -275,14 +270,12 @@ class GitLogManager:
                 
             current_branch = branch_result.stdout.strip()
             
-            # Try to push with explicit branch first
             result = subprocess.run(["git", "push", "origin", current_branch], 
                                    cwd=".", capture_output=True, text=True)
             
             if result.returncode == 0:
                 return True
             
-            # If push fails, try to handle common issues
             stderr = result.stderr
             
             if "has no upstream branch" in stderr:
@@ -293,13 +286,11 @@ class GitLogManager:
             
             elif "non-fast-forward" in stderr or "rejected" in stderr:
                 logger.warning("Push rejected, trying to sync and retry...")
-                # Try to sync again and retry push
                 if self._sync_with_remote():
                     result = subprocess.run(["git", "push", "origin", current_branch], 
                                           cwd=".", capture_output=True, text=True)
                     return result.returncode == 0
                 else:
-                    # As last resort, force push (only for log files, should be safe)
                     logger.warning("Using force push as last resort for log files...")
                     result = subprocess.run(["git", "push", "--force-with-lease", "origin", current_branch], 
                                           cwd=".", capture_output=True, text=True)
@@ -321,45 +312,37 @@ class GitLogManager:
             logger.debug("No GitHub token configured - skipping commit")
             return False
         
-        # Safety check: respect cooldown period unless this is a force commit
         if not force:
             current_time = time.time()
             time_since_last_commit = current_time - self.last_commit_time
             
-            # Use different cooldown logic based on commit mode  
             if self.commit_mode == "scheduled":
-                # For scheduled mode, ensure at least 45 minutes between commits
-                min_cooldown = 2700  # 45 minutes
+                min_cooldown = 2700
                 if time_since_last_commit < min_cooldown:
                     remaining_cooldown = min_cooldown - time_since_last_commit
                     logger.debug(f"Scheduled commit cooldown active: {remaining_cooldown//60:.1f} minutes remaining")
                     return False
             else:
-                # For interval mode, use the configured interval
                 if time_since_last_commit < self.commit_interval:
                     remaining_cooldown = self.commit_interval - time_since_last_commit
                     logger.debug(f"Interval commit cooldown active: {remaining_cooldown//60:.1f} minutes remaining")
                     return False
             
         try:
-            # Define the specific log files we want to track
             log_files = ["Disgram.log", "app.log"]
             changed_log_files = []
             
-            # Check which log files have actually changed
             for log_file in log_files:
                 if os.path.exists(log_file):
-                    # Check if file has changes using git status
-                    result = subprocess.run(["git", "status", "--porcelain", log_file], 
+                    result = subprocess.run(["git", "status", "--porcelain", log_file],
                                           cwd=".", capture_output=True, text=True)
-                    if result.stdout.strip():  # File has changes
+                    if result.stdout.strip():
                         changed_log_files.append(log_file)
             
             if not changed_log_files:
                 logger.debug("No log file changes to commit")
-                return True  # No changes is still success
+                return True
             
-            # Try to sync with remote before committing
             logger.debug("Syncing with remote repository...")
             sync_success = self._sync_with_remote()
             if not sync_success:
@@ -367,12 +350,10 @@ class GitLogManager:
             
             logger.info(f"Log files to be committed: {', '.join(changed_log_files)}")
             
-            # Add only the specific log files
             for log_file in changed_log_files:
                 subprocess.run(["git", "add", log_file], 
                               cwd=".", capture_output=True, text=True, check=True)
             
-            # Create commit with timestamp and log file list
             timestamp = datetime.now().isoformat()
             if len(changed_log_files) == 1:
                 commit_message = f"Auto-commit: Update {changed_log_files[0]} - {timestamp}"
@@ -382,7 +363,6 @@ class GitLogManager:
             subprocess.run(["git", "commit", "-m", commit_message], 
                           cwd=".", capture_output=True, text=True, check=True)
             
-            # Push to repository if token is configured
             if self.github_token:
                 push_success = self._push_changes()
                 if push_success:
@@ -410,7 +390,6 @@ class GitLogManager:
     def pull_latest_log(self) -> bool:
         """Pull the latest version of the repository to get updated log file"""
         try:
-            # Get current branch name
             branch_result = subprocess.run(["git", "branch", "--show-current"], 
                                          cwd=".", capture_output=True, text=True)
             if branch_result.returncode != 0:
@@ -419,11 +398,9 @@ class GitLogManager:
                 
             current_branch = branch_result.stdout.strip()
             
-            # First, stash any local changes to avoid conflicts
             subprocess.run(["git", "stash", "push", "-m", "Auto-stash before pull"], 
                           cwd=".", capture_output=True, text=True)
             
-            # Try to pull with explicit branch
             result = subprocess.run(["git", "pull", "origin", current_branch], 
                                    cwd=".", capture_output=True, text=True)
             
@@ -447,18 +424,16 @@ class GitLogManager:
         """Background thread to periodically commit log file using interval or scheduled mode"""
         while True:
             try:
-                time.sleep(60)  # Check every minute
+                time.sleep(60)
                 
                 current_time = time.time()
                 should_commit = False
                 commit_reason = ""
                 
                 if self.commit_mode == "scheduled":
-                    # Scheduled mode: commit at specific UTC times
                     if self._is_scheduled_time():
-                        # Check if we haven't committed recently to avoid spam
                         time_since_last_commit = current_time - self.last_commit_time
-                        if time_since_last_commit >= 2700:  # At least 45 minutes since last commit
+                        if time_since_last_commit >= 2700:
                             should_commit = True
                             commit_reason = "scheduled"
                         else:
@@ -466,8 +441,7 @@ class GitLogManager:
                             now_utc = datetime.now(timezone.utc)
                             logger.info(f"Scheduled commit time ({now_utc.hour:02d}:00 UTC) but recent commit detected, skipping")
                     
-                    # Log next scheduled time occasionally
-                    if int(current_time) % 600 == 0:  # Every 10 minutes
+                    if int(current_time) % 600 == 0:
                         next_time = self._get_next_scheduled_time()
                         if next_time:
                             from datetime import datetime, timezone
@@ -475,21 +449,17 @@ class GitLogManager:
                             logger.debug(f"Next scheduled commit: {next_dt.strftime('%H:%M UTC')}")
                 
                 else:
-                    # Interval mode: commit after fixed intervals
                     time_since_last_commit = current_time - self.last_commit_time
                     if time_since_last_commit >= self.commit_interval:
                         should_commit = True
                         commit_reason = f"interval ({time_since_last_commit//60:.1f} minutes)"
                     else:
-                        # Log the countdown occasionally (every 10 minutes)  
                         if int(time_since_last_commit) % 600 == 0:
                             time_until_next = self.commit_interval - time_since_last_commit
                             logger.debug(f"Next interval commit in {time_until_next//60:.1f} minutes")
                 
-                # Execute commit if conditions are met
                 if should_commit:
                     with self.commit_lock:
-                        # Check if there are specific log file changes to commit
                         log_files = ["Disgram.log", "app.log"]
                         has_log_changes = False
                         
@@ -523,14 +493,13 @@ class GitLogManager:
     def get_commit_status(self) -> dict:
         """Get commit status for health monitoring"""
         try:
-            # Get last commit info
             result = subprocess.run([
                 "git", "log", "-1", "--format=%H|%ci|%s", "--", self.local_log_path
             ], cwd=".", capture_output=True, text=True, check=True)
             
             if result.stdout.strip():
                 parts = result.stdout.strip().split("|", 2)
-                last_commit_hash = parts[0][:8]  # Short hash
+                last_commit_hash = parts[0][:8]
                 last_commit_date = parts[1]
                 last_commit_message = parts[2] if len(parts) > 2 else "No message"
             else:
@@ -541,7 +510,6 @@ class GitLogManager:
             current_time = time.time()
             time_since_commit = current_time - self.last_commit_time
             
-            # Calculate next commit timing based on mode
             if self.commit_mode == "scheduled":
                 next_scheduled = self._get_next_scheduled_time()
                 next_commit_info = {
@@ -551,7 +519,6 @@ class GitLogManager:
                     "next_commit_in_seconds": max(0, next_scheduled - current_time) if next_scheduled else None
                 }
                 
-                # Add current UTC time info
                 from datetime import datetime, timezone
                 now_utc = datetime.now(timezone.utc)
                 next_commit_info["current_utc"] = now_utc.strftime("%H:%M UTC")
@@ -587,7 +554,6 @@ class GitLogManager:
                 "github_token_configured": self.github_token is not None
             }
 
-# Global instance
 git_log_manager: Optional[GitLogManager] = None
 
 def initialize_git_manager():
@@ -595,13 +561,12 @@ def initialize_git_manager():
     global git_log_manager
     
     github_token = os.getenv("GITHUB_TOKEN")
-    commit_interval = int(os.getenv("LOG_COMMIT_INTERVAL", "2700"))  # Default 45 minutes
+    commit_interval = int(os.getenv("LOG_COMMIT_INTERVAL", "2700"))
     
     try:
         git_log_manager = GitLogManager(github_token, commit_interval)
         logger.info(f"Git log manager initialized successfully (commit interval: {commit_interval//60} minutes)")
         
-        # Pull latest version on startup
         if git_log_manager.pull_latest_log():
             logger.info("Repository updated with latest changes")
             
