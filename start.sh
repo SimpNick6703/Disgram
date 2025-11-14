@@ -23,10 +23,6 @@ if ! command -v git &> /dev/null; then
     fi
 fi
 
-# Install GitPython if needed
-echo "Installing GitPython..."
-pip install GitPython>=3.1.40
-
 # Verify and configure Git if available
 if command -v git &> /dev/null; then
     echo "Git available: $(git --version)"
@@ -104,6 +100,22 @@ if command -v git &> /dev/null; then
         echo "Git repository initialized successfully"
     else
         echo "Git repository already exists"
+        
+        # Ensure we're on the correct branch (not detached HEAD)
+        DEPLOY_BRANCH=${GITHUB_DEPLOY_BRANCH:-azure-prod}
+        CURRENT_BRANCH=$(git branch --show-current 2>/dev/null || echo "")
+        
+        if [ -z "$CURRENT_BRANCH" ]; then
+            echo "Detached HEAD detected, checking out branch $DEPLOY_BRANCH..."
+            git checkout -B "$DEPLOY_BRANCH" 2>/dev/null || true
+            git branch --set-upstream-to="origin/$DEPLOY_BRANCH" "$DEPLOY_BRANCH" 2>/dev/null || true
+        elif [ "$CURRENT_BRANCH" != "$DEPLOY_BRANCH" ]; then
+            echo "Switching from $CURRENT_BRANCH to $DEPLOY_BRANCH..."
+            git checkout "$DEPLOY_BRANCH" 2>/dev/null || git checkout -B "$DEPLOY_BRANCH" 2>/dev/null || true
+            git branch --set-upstream-to="origin/$DEPLOY_BRANCH" "$DEPLOY_BRANCH" 2>/dev/null || true
+        else
+            echo "Already on branch $DEPLOY_BRANCH"
+        fi
     fi
 else
     echo "Warning: Git not available - Git commit functionality will be disabled"
