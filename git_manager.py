@@ -127,9 +127,9 @@ class GitLogManager:
     def _configure_git_auth(self):
         """Configure git authentication using GitHub token"""
         try:
-            subprocess.run(["git", "config", "user.name", "Disgram Bot"], 
+            subprocess.run(["git", "config", "user.name", "Disgram-Bot"], 
                           cwd=".", capture_output=True, text=True, check=True)
-            subprocess.run(["git", "config", "user.email", "disgram@bot.local"], 
+            subprocess.run(["git", "config", "user.email", "2304680+Disgram-Bot[bot]@users.noreply.github.com"], 
                           cwd=".", capture_output=True, text=True, check=True)
             
             subprocess.run([
