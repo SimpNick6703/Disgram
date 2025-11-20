@@ -29,8 +29,8 @@ if command -v git &> /dev/null; then
     
     # Configure Git globally first
     DEFAULT_BRANCH=${GITHUB_DEPLOY_BRANCH:-azure-prod}
-    git config --global user.name "Disgram Bot" 2>/dev/null || true
-    git config --global user.email "disgram@bot.local" 2>/dev/null || true
+    git config --global user.name "Disgram-Bot" 2>/dev/null || true
+    git config --global user.email "2304680+Disgram-Bot[bot]@users.noreply.github.com" 2>/dev/null || true
     git config --global init.defaultBranch "$DEFAULT_BRANCH" 2>/dev/null || true
     git config --global pull.rebase false 2>/dev/null || true    # Configure token-based authentication if token is available
     if [ ! -z "$GITHUB_TOKEN" ]; then
