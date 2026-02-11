@@ -39,15 +39,15 @@ def sanitize_log_content(content: str) -> str:
     """Remove sensitive tokens from log content for safe display"""
     if not content:
         return content
-    
+
     import re
     # Replace GitHub Personal Access Tokens with [REDACTED]
     sanitized = re.sub(r'github_pat_[A-Za-z0-9_]+', '[REDACTED]', content)
     sanitized = re.sub(r'ghp_[A-Za-z0-9_]+', '[REDACTED]', sanitized)
-    
+
     # Also handle generic token patterns in URLs
     sanitized = re.sub(r'://[^@\s]+@', '://[REDACTED]@', sanitized)
-    
+
     return sanitized
 
 processes = []
@@ -65,12 +65,12 @@ def initialize_disgram_log():
                 line = line.strip()
                 if line.startswith("https://t.me/"):
                     existing_links.add(line)
-                    
+
     new_links = []
     for channel_url in Channels:
         if channel_url not in existing_links:
             new_links.append(channel_url)
-    
+
     if new_links:
         with open("Disgram.log", "a", encoding="utf-8") as log_file:
             for channel_url in new_links:
@@ -87,13 +87,13 @@ def extract_channel_name(channel_url):
 def check_process_health():
     alive_processes = 0
     dead_processes = []
-    
+
     for i, process in enumerate(processes):
         if process and process.poll() is None:
             alive_processes += 1
         else:
             dead_processes.append(i)
-    
+
     return alive_processes, dead_processes
 
 def check_telegram_connectivity():
@@ -106,7 +106,7 @@ def check_telegram_connectivity():
 def check_discord_webhook():
     if not WEBHOOK_URL or "{webhookID}" in WEBHOOK_URL:
         return False, "Webhook URL not configured"
-    
+
     try:
         response = requests.get(WEBHOOK_URL, timeout=10)
         if response.status_code == 200:
@@ -118,25 +118,25 @@ def check_discord_webhook():
 
 def check_log_freshness():
     log_file_path = "Disgram.log"
-    max_age_minutes = 6  # Consider unhealthy if log is older than 6 minutes
-    
+    max_age_minutes = 20  # Consider unhealthy if log is older than 6 minutes
+
     try:
         if not os.path.exists(log_file_path):
             return False, "Log file does not exist", None
-        
+
         last_modified = os.path.getmtime(log_file_path)
         last_modified_dt = datetime.datetime.fromtimestamp(last_modified)
-        
+
         current_time = datetime.datetime.now()
         age_minutes = (current_time - last_modified_dt).total_seconds() / 60
-        
+
         is_fresh = age_minutes <= max_age_minutes
-        
+
         if is_fresh:
             return True, f"Log is fresh (last updated {age_minutes:.1f} minutes ago)", last_modified_dt
         else:
             return False, f"Log is stale (last updated {age_minutes:.1f} minutes ago, max allowed: {max_age_minutes})", last_modified_dt
-            
+
     except Exception as e:
         return False, f"Error checking log freshness: {str(e)}", None
 
@@ -145,7 +145,7 @@ def get_system_stats():
         cpu_percent = psutil.cpu_percent(interval=1)
         memory = psutil.virtual_memory()
         disk = psutil.disk_usage('/')
-        
+
         return {
             "cpu_percent": cpu_percent,
             "memory_percent": memory.percent,
@@ -159,9 +159,9 @@ def get_system_stats():
 def restart_all_processes():
     """Restart all bot processes when they appear to be zombified"""
     global processes, bot_start_time
-    
+
     print("⚠️  Log freshness check failed - restarting all bot processes...")
-    
+
     # Terminate existing processes
     for process in processes:
         if process and process.poll() is None:
@@ -172,47 +172,47 @@ def restart_all_processes():
                 process.kill()
             except Exception as e:
                 print(f"Error terminating process: {e}")
-    
+
     # Clear the processes list
     processes.clear()
-    
+
     # Restart all processes
     start_bot_processes()
-    
+
     print(f"✅ Restarted {len(processes)} bot processes due to stale logs")
 
 @app.route('/health')
 def health_check():
     global last_health_check
     last_health_check = datetime.datetime.now()
-    
+
     # Define wrapper functions for async execution
     def get_process_health():
         return check_process_health()
-    
+
     def get_telegram_status():
         return check_telegram_connectivity()
-    
+
     def get_discord_status():
         return check_discord_webhook()
-    
+
     def get_log_status():
         return check_log_freshness()
-    
+
     def get_sys_stats():
         return get_system_stats()
-    
+
     def get_rate_limit():
         try:
             from rate_limiter import discord_rate_limiter
             return discord_rate_limiter.get_rate_limit_status()
         except Exception as e:
             return {"error": f"Failed to get rate limit status: {str(e)}"}
-    
+
     def get_git_status():
         git_manager = get_git_manager()
         return git_manager.get_commit_status() if git_manager else {"git_available": False}
-    
+
     # Execute all checks in parallel using ThreadPoolExecutor
     with ThreadPoolExecutor(max_workers=7) as executor:
         # Submit all tasks
@@ -223,7 +223,7 @@ def health_check():
         future_system = executor.submit(get_sys_stats)
         future_rate_limit = executor.submit(get_rate_limit)
         future_git = executor.submit(get_git_status)
-        
+
         # Collect results
         alive_count, dead_processes = future_process_health.result()
         telegram_ok = future_telegram.result()
@@ -232,11 +232,11 @@ def health_check():
         system_stats = future_system.result()
         rate_limit_status = future_rate_limit.result()
         git_commit_status = future_git.result()
-    
+
     total_processes = len(processes)
     uptime_seconds = (datetime.datetime.now() - bot_start_time).total_seconds() if bot_start_time else 0
     uptime_minutes = round(uptime_seconds / 60, 2)
-    
+
     is_healthy = (
         alive_count == total_processes and
         alive_count > 0 and
@@ -244,9 +244,15 @@ def health_check():
         discord_ok and
         log_fresh
     )
-    
+
+    if not is_healthy:
+        logger.warning(f"Health Check Failed: Alive={alive_count}/{total_processes}, TG={telegram_ok}, Discord={discord_ok}, LogFresh={log_fresh}")
+        if not telegram_ok: logger.warning("Telegram unreachable")
+        if not discord_ok: logger.warning(f"Discord Webhook issue: {discord_msg}")
+        if not log_fresh: logger.warning(f"Log stale: {log_msg}")
+
     status_code = 200 if is_healthy else 503
-    
+
     health_data = {
         "status": "healthy" if is_healthy else "unhealthy",
         "timestamp": last_health_check.isoformat(),
@@ -280,31 +286,31 @@ def health_check():
             "git_commits_configured": get_git_manager() is not None
         }
     }
-    
+
     global health_status
     health_status = health_data
-    
+
     return jsonify(health_data), status_code
 
 @app.route('/logs')
 def view_logs():
     try:
         log_file_path = "Disgram.log"
-        
+
         if not os.path.exists(log_file_path):
             return Response(
                 "Disgram.log file not found",
                 status=404,
                 mimetype='text/plain'
             )
-        
+
         with open(log_file_path, 'r', encoding='utf-8') as file:
             lines = file.readlines()
-            
+
         last_lines = lines[-1000:] if len(lines) > 1000 else lines
-        
+
         log_content = ''.join(last_lines)
-        
+
         total_lines = len(lines)
         showing_lines = len(last_lines)
         header = f"Disgram Log Viewer\n"
@@ -313,9 +319,9 @@ def view_logs():
         header += f"Log file: {os.path.abspath(log_file_path)}\n"
         header += f"Last modified: {datetime.datetime.fromtimestamp(os.path.getmtime(log_file_path)).isoformat()}\n"
         header += "=" * 80 + "\n\n"
-        
+
         response_content = header + log_content
-        
+
         return Response(
             response_content,
             mimetype='text/plain',
@@ -324,7 +330,7 @@ def view_logs():
                 'Cache-Control': 'no-cache'
             }
         )
-        
+
     except Exception as e:
         return Response(
             f"Error reading log file: {str(e)}",
@@ -337,24 +343,24 @@ def clear_disgram_log():
     """Clear the contents of Disgram.log while preserving latest message links for each channel"""
     try:
         log_file_path = "Disgram.log"
-        
+
         if not os.path.exists(log_file_path):
             return jsonify({
                 "status": "error",
                 "message": "Disgram.log file not found"
             }), 404
-        
+
         # Read the file and extract the latest message link for each channel
         header_line = None
         latest_messages = {}  # Dictionary to store latest message per channel
-        
+
         with open(log_file_path, 'r', encoding='utf-8') as log_file:
             for line in log_file:
                 line_stripped = line.strip()
                 # Preserve the header line
                 if "Add your message links" in line_stripped:
                     header_line = line_stripped
-                
+
                 # Extract all message links from the line (from log entries)
                 matches = re.findall(r'https://t\.me/([^/\s]+)/(\d+)', line)
                 for channel, msg_num in matches:
@@ -362,27 +368,27 @@ def clear_disgram_log():
                     # Keep only the latest message number for each channel
                     if channel not in latest_messages or msg_num > latest_messages[channel]:
                         latest_messages[channel] = msg_num
-        
+
         # Convert to sorted list of full URLs
-        channel_links = [f"https://t.me/{channel}/{msg_num}" 
+        channel_links = [f"https://t.me/{channel}/{msg_num}"
                         for channel, msg_num in sorted(latest_messages.items())]
-        
+
         # Write back only the header and latest channel links
         with open(log_file_path, 'w', encoding='utf-8') as log_file:
             if header_line:
                 log_file.write(f"{header_line}\n")
             for link in channel_links:
                 log_file.write(f"{link}\n")
-        
+
         logger.info(f"Disgram.log cleared successfully, preserving {len(channel_links)} latest channel links")
-        
+
         return jsonify({
             "status": "success",
             "message": "Disgram.log cleared successfully",
             "preserved_links": len(channel_links),
             "latest_messages": channel_links
         })
-        
+
     except Exception as e:
         logger.error(f"Error clearing Disgram.log: {str(e)}")
         return jsonify({
@@ -395,23 +401,23 @@ def view_app_logs():
     """View application logs (app.log)"""
     try:
         log_file_path = "app.log"
-        
+
         if not os.path.exists(log_file_path):
             return Response(
                 "app.log file not found",
                 status=404,
                 mimetype='text/plain'
             )
-        
+
         with open(log_file_path, 'r', encoding='utf-8') as file:
             lines = file.readlines()
-            
+
         # Show last 500 lines for application logs
         last_lines = lines[-500:] if len(lines) > 500 else lines
-        
+
         # Sanitize log content to remove sensitive information
         log_content = sanitize_log_content(''.join(last_lines))
-        
+
         total_lines = len(lines)
         showing_lines = len(last_lines)
         header = f"Disgram Application Log Viewer\n"
@@ -420,9 +426,9 @@ def view_app_logs():
         header += f"Log file: {os.path.abspath(log_file_path)}\n"
         header += f"Last modified: {datetime.datetime.fromtimestamp(os.path.getmtime(log_file_path)).isoformat()}\n"
         header += "=" * 80 + "\n\n"
-        
+
         response_content = header + log_content
-        
+
         return Response(
             response_content,
             mimetype='text/plain',
@@ -431,7 +437,7 @@ def view_app_logs():
                 'Cache-Control': 'no-cache'
             }
         )
-        
+
     except Exception as e:
         return Response(
             f"Error reading application log file: {str(e)}",
@@ -443,10 +449,10 @@ def view_app_logs():
 def force_commit():
     """Endpoint to force immediate commit of all changes to repository"""
     git_manager = get_git_manager()
-    
+
     if not git_manager:
         return jsonify({"error": "Git manager not configured"}), 400
-    
+
     success = git_manager.force_commit()
     if success:
         return jsonify({"message": "All changes committed to repository successfully"})
@@ -457,7 +463,7 @@ def force_commit():
 def git_status():
     """Debug endpoint to check git manager status"""
     git_manager = get_git_manager()
-    
+
     if not git_manager:
         return jsonify({
             "configured": False,
@@ -465,7 +471,7 @@ def git_status():
             "github_token_available": bool(os.getenv("GITHUB_TOKEN")),
             "commit_interval": os.getenv("LOG_COMMIT_INTERVAL", "2700")
         })
-    
+
     status = git_manager.get_commit_status()
     status["configured"] = True
     return jsonify(status)
@@ -486,21 +492,19 @@ def root():
 def start_bot_processes():
     global bot_start_time, processes
     bot_start_time = datetime.datetime.now()
-    
+
     # Initialize Disgram.log with channel/message links from environment
     initialize_disgram_log()
-    
+
     print(f"Starting Disgram bot with {len(Channels)} channels...")
-    
+
     try:
         if THREAD_ID is not None:
             for channel in Channels:
                 print(f"Starting threaded bot for {channel}...")
                 channel_name = extract_channel_name(channel)
                 process = subprocess.Popen(
-                    ["python", "threadhook.py", channel_name, f"{WEBHOOK_URL}?thread_id={THREAD_ID}"],
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE
+                    ["python", "threadhook.py", channel_name, f"{WEBHOOK_URL}?thread_id={THREAD_ID}"]
                 )
                 processes.append(process)
         else:
@@ -508,14 +512,12 @@ def start_bot_processes():
                 print(f"Starting webhook bot for {channel}...")
                 channel_name = extract_channel_name(channel)
                 process = subprocess.Popen(
-                    ["python", "webhook.py", channel_name],
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE
+                    ["python", "webhook.py", channel_name]
                 )
                 processes.append(process)
-        
+
         print(f"Started {len(processes)} bot processes successfully.")
-        
+
     except Exception as e:
         print(f"Error starting bot processes: {e}")
 
@@ -526,25 +528,25 @@ def run_flask_server():
 
 if __name__ == "__main__":
     import os
-    
+
     # Initialize Git manager first
     initialize_git_manager()
-    
+
     start_bot_processes()
-    
+
     flask_thread = threading.Thread(target=run_flask_server, daemon=True)
     flask_thread.start()
-    
+
     logger.info("Disgram bot is running with health check endpoint.")
     logger.info("Health check available at: /health")
     logger.info("Message log viewer available at: /logs")
-    logger.info("Application log viewer available at: /app-logs") 
+    logger.info("Application log viewer available at: /app-logs")
     logger.info("Force commit (all changes) available at: /force-commit")
-    
+
     try:
         while True:
             time.sleep(30)
-            
+
             alive_count, dead_processes = check_process_health()
             if dead_processes:
                 print(f"Detected {len(dead_processes)} dead processes, restarting...")
@@ -553,47 +555,43 @@ if __name__ == "__main__":
                         channel = Channels[dead_idx]
                         channel_name = extract_channel_name(channel)
                         print(f"Restarting process for {channel}...")
-                        
+
                         if THREAD_ID is not None:
                             new_process = subprocess.Popen(
-                                ["python", "threadhook.py", channel_name, f"{WEBHOOK_URL}?thread_id={THREAD_ID}"],
-                                stdout=subprocess.PIPE,
-                                stderr=subprocess.PIPE
+                                ["python", "threadhook.py", channel_name, f"{WEBHOOK_URL}?thread_id={THREAD_ID}"]
                             )
                         else:
                             new_process = subprocess.Popen(
-                                ["python", "webhook.py", channel_name],
-                                stdout=subprocess.PIPE,
-                                stderr=subprocess.PIPE
+                                ["python", "webhook.py", channel_name]
                             )
                         processes[dead_idx] = new_process
-            
+
             # Check if logs are stale (indicates zombie processes)
             log_fresh, log_msg, log_last_modified = check_log_freshness()
             if not log_fresh and alive_count > 0:  # Only restart if we have processes that should be working
                 print(f"🚨 ZOMBIE PROCESSES DETECTED: {log_msg}")
                 print("All processes appear alive but logs are stale - restarting all processes...")
                 restart_all_processes()
-            
+
     except KeyboardInterrupt:
         print("\nShutting down all bots...")
-        
+
         # Force final commit before shutdown
         git_manager = get_git_manager()
         if git_manager:
             logger.info("Performing final commit of all changes to repository...")
             git_manager.force_commit()
-        
+
         for process in processes:
             if process and process.poll() is None:
                 process.terminate()
-        
+
         for process in processes:
             if process:
                 try:
                     process.wait(timeout=5)
                 except subprocess.TimeoutExpired:
                     process.kill()
-        
+
 
         print("All bots have been stopped.")
