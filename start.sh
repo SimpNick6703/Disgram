@@ -28,7 +28,7 @@ if command -v git &> /dev/null; then
     echo "Git available: $(git --version)"
     
     # Configure Git globally first
-    DEFAULT_BRANCH=${GITHUB_DEPLOY_BRANCH:-azure-prod}
+    DEFAULT_BRANCH=${GITHUB_DEPLOY_BRANCH:-debug/health-check}
     git config --global user.name "Disgram-Bot" 2>/dev/null || true
     git config --global user.email "2304680+Disgram-Bot[bot]@users.noreply.github.com" 2>/dev/null || true
     git config --global init.defaultBranch "$DEFAULT_BRANCH" 2>/dev/null || true
@@ -54,7 +54,7 @@ if command -v git &> /dev/null; then
             git remote add origin "$GITHUB_REPO_URL"
             
             # Try to fetch and sync with remote repository
-            DEPLOY_BRANCH=${GITHUB_DEPLOY_BRANCH:-azure-prod}
+            DEPLOY_BRANCH=${GITHUB_DEPLOY_BRANCH:-debug/health-check}
             echo "Attempting to sync with remote ${DEPLOY_BRANCH} branch..."
             
             # Try to fetch the remote branch
@@ -98,7 +98,7 @@ if command -v git &> /dev/null; then
         echo "Git repository already exists"
         
         # Ensure we're on the correct branch (not detached HEAD)
-        DEPLOY_BRANCH=${GITHUB_DEPLOY_BRANCH:-azure-prod}
+        DEPLOY_BRANCH=${GITHUB_DEPLOY_BRANCH:-debug/health-check}
         CURRENT_BRANCH=$(git branch --show-current 2>/dev/null || echo "")
         
         if [ -z "$CURRENT_BRANCH" ]; then

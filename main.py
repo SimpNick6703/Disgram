@@ -282,6 +282,8 @@ def health_check():
     }
     
     global health_status
+    if not is_healthy:
+        logger.error(f"Health check failed: {health_data}")
     health_status = health_data
     
     return jsonify(health_data), status_code
