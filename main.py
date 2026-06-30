@@ -9,7 +9,7 @@ import re
 import logging
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from flask import Flask, jsonify, Response
-from config import Channels, WEBHOOK_URL, THREAD_ID
+from config import Channels, WEBHOOK_URL, THREAD_ID, COOLDOWN
 from git_manager import initialize_git_manager
 
 def get_git_manager():
@@ -117,7 +117,7 @@ def check_discord_webhook():
     except Exception as e:
         return False, f"Webhook error: {str(e)}"
 
-# Cache external check results for 15 minutes to avoid Cloudflare/Discord rate-limiting issues
+# Cache external check results to avoid Cloudflare/Discord rate-limiting issues
 _ext_check_cache = {
     "last_check_time": 0.0,
     "telegram_ok": False,
@@ -127,12 +127,12 @@ _ext_check_cache = {
 _ext_check_lock = threading.Lock()
 
 def get_cached_external_checks():
-    """Get cached connectivity status for Telegram and Discord, updating at most every 15 minutes."""
+    """Get cached connectivity status for Telegram and Discord, updating based on config.COOLDOWN."""
     global _ext_check_cache
     current_time = time.time()
     
     with _ext_check_lock:
-        if current_time - _ext_check_cache["last_check_time"] > 900:
+        if current_time - _ext_check_cache["last_check_time"] > COOLDOWN:
             telegram_ok = check_telegram_connectivity()
             discord_ok, discord_msg = check_discord_webhook()
             
