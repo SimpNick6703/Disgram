@@ -1,242 +1,282 @@
 # Disgram
 
-A Python-based tool to forward messages from public Telegram channels to Discord using webhooks embeds. Disgram scrapes Telegram's public preview pages and forwards messages, including text, images, and formatted content, to Discord channels through webhooks.
+A Python-based application that scrapes public Telegram channel preview pages (`https://t.me/s/{channel}`) and forwards messages—including text, images, and videos—to Discord channels using Discord's modern **Components V2 (Layouts)** system.
 
-## Workflow
+It features native process management for scraping multiple channels concurrently, a Flask health/status server, and built-in automatic Git log persistence using either Personal Access Tokens (PATs) or GitHub Apps.
+
+---
+
+## Core Architecture
+
+Disgram uses a master-worker process structure. The master process runs a status watchdog and a Flask API server, while spawning isolated worker subprocesses for each scraped Telegram channel.
+
+### 1.1 Process Management & API Server
+
+The master process manages lifecycle supervision for all channel subprocesses and exposes administrative API routes.
+
 ```mermaid
-flowchart TD
-    A[Start: python main.py] --> B[Load config.py]
-    B --> C[Initialize Logging]
-    C --> D{Thread ID Exists?}
-    D --> |Yes| E[Launch threadhook.py]
-    D --> |No| F[Launch webhook.py]
+graph TD
+    Start[Start: main.py] --> InitGit[Initialize GitLogManager]
+    InitGit --> SpawnBots[Spawn Subprocesses: webhook.py per channel]
+    InitGit --> SpawnFlask[Spawn Flask Server Thread]
     
-    %% threadhook.py workflow
-    E --> G1[URL: webhook?thread_ID]
-    G1 --> H1[Read Log for Last Message]
-    H1 --> I1[Start Main Loop]
+    SpawnBots --> WatchdogLoop[Watchdog Loop: Every 30s]
+    WatchdogLoop --> CheckHealth{Subprocesses Alive?}
+    CheckHealth -- No --> RestartDead[Restart Dead Subprocess]
+    RestartDead --> WatchdogLoop
+    CheckHealth -- Yes --> CheckZombies{Logs Fresh?}
+    CheckZombies -- No (Zombie detected) --> RestartAll[Restart All Subprocesses]
+    RestartAll --> WatchdogLoop
+    CheckZombies -- Yes --> WatchdogLoop
 
-    %% webhook.py workflow
-    F --> G2[URL: webhook]
-    G2 --> H2[Read Log for Last Message]
-    H2 --> I2[Start Main Loop]
-    
-    %% Common workflow for both scripts
-    I1 --> J[Scrape Telegram Prev Page]
-    I2 --> J
-    J --> K{New Message Found?}
-    K --> |No| L[Wait and Retry]
-    L --> J
-    K --> |Yes| M[Parse and Extract Content]
-    M --> N[Text Content]
-    M --> O[Media Content] 
-    M --> P[Grouped Media]
-    N --> Q[Format Text for Discord]
-    O --> Q
-    P --> Q
-    Q --> R[Create Discord Embed]
-    R --> S[Add Source Credits]
-    S --> T[Send Message]
-    T --> |threadhook.py| U[Send to Thread]
-    T --> |webhook.py| V[Send to Channel]
-    U --> W{Send Successful?}
-    V --> W
-    W --> |No| X[Error & Retry Logic]
-    X --> Y[Log Error to Disgram.log]
-    Y --> Z{Retry Available?}
-    Z --> |Yes| AA[Wait and Retry]
-    AA --> T
-    Z --> |No| AB[Skip Message]
-    W --> |Yes| AC[Update Disgram.log]
-    AC --> AD[Continue to Next Message]
-    AB --> AD
-    AD --> AE[Wait for Cooldown]
-    AE --> J
+    SpawnFlask --> FlaskThread[Flask Thread: Listen on PORT]
+    FlaskThread --> ServeAPI[Serve Endpoints]
+    ServeAPI --> E1["GET / (Root Info Page)"]
+    ServeAPI --> E2["GET /health"]
+    ServeAPI --> E3["GET /logs"]
+    ServeAPI --> E4["GET /app-logs"]
+    ServeAPI --> E5["GET /git-status"]
+    ServeAPI --> E6["POST /force-commit"]
+    ServeAPI --> E7["POST /logs/clear"]
 
-    %% Error Logging
-    AF[Error Logging] -.-> Y
-    AF -.-> AC
-    AF -.-> AD
-
-    %% Rate Limit Handling
-    AG[Rate Limit Handling] -.-> U
-    AG -.-> J
-    AG -.-> V
-
-    %% Shutdown
-    AH[Shutdown: Ctrl + C] --> AI[Terminate All Processes]
-    AI --> AJ[Wait for Termination]
-    AJ --> AK[Exit Program]
-
-    classDef startEnd fill:#2E8B57,stroke:#000,stroke-width:3px,color:#fff
-    classDef process fill:#4169E1,stroke:#000,stroke-width:2px,color:#fff
-    classDef decision fill:#FF6B35,stroke:#000,stroke-width:3px,color:#fff
-    classDef error fill:#DC143C,stroke:#000,stroke-width:3px,color:#fff
-    classDef support fill:#FFD700,stroke:#000,stroke-width:2px,color:#000
-    classDef thread fill:#9370DB,stroke:#000,stroke-width:2px,color:#fff
-    classDef channel fill:#20B2AA,stroke:#000,stroke-width:2px,color:#fff
-    
-    class A,AK startEnd
-    class B,C,G1,G2,H1,H2,I1,I2,J,L,M,N,O,P,Q,R,S,T,AC,AD,AE process
-    class D,K,W,Z decision
-    class X,Y,AA,AB,AI,AJ error
-    class AF,AG,AH support
-    class E,U thread
-    class F,V channel
+    classDef proc fill:#3b82f6,stroke:#1d4ed8,color:#fff
+    classDef decis fill:#f59e0b,stroke:#b45309,color:#fff
+    classDef api fill:#8b5cf6,stroke:#6d28d9,color:#fff
+    class Start,InitGit,SpawnBots,SpawnFlask,WatchdogLoop,RestartDead,RestartAll,FlaskThread proc
+    class CheckHealth,CheckZombies decis
+    class ServeAPI,E1,E2,E3,E4,E5,E6,E7 api
 ```
+
+### 1.2 Scraper & Message Forwarding Pipeline
+
+Each channel worker scrapes content from Telegram and forwards it via Discord Layouts (with built-in failover capabilities).
+
+```mermaid
+graph TD
+    Startbot[Start Subprocess] --> ScraperLoop[Scraper Loop]
+    ScraperLoop --> FetchTG[Fetch Public Telegram Preview via HTTP]
+    FetchTG --> ParseTG{New Message Found?}
+    ParseTG -- No --> Cooldown[Wait Cooldown]
+    Cooldown --> FetchTG
+    
+    ParseTG -- Yes --> GetMedia[Download Media Concurrently <max 8 workers>]
+    GetMedia --> BuildLayout[Build Discord Component V2 Layout]
+    BuildLayout --> SendWebhook[Send Webhook Message]
+    
+    SendWebhook --> Success{Send Successful?}
+    Success -- Yes --> UpdateLog[Update Disgram.log with Marker]
+    UpdateLog --> Cooldown
+    
+    Success -- No (Payload Too Large 413) --> ApplyFallback[Targeted Video Fallback]
+    ApplyFallback --> LoopMedia[Iterate Downloaded Media]
+    LoopMedia --> ExcludeVideos{Is Video & Size > 10MB?}
+    ExcludeVideos -- Yes --> ReplaceWithCDN[Replace with Telegram CDN URL]
+    ExcludeVideos -- No --> KeepAttachment[Keep as File Attachment]
+    ReplaceWithCDN --> BuildFallbackLayout[Build Fallback Layout]
+    KeepAttachment --> BuildFallbackLayout
+    BuildFallbackLayout --> RetryWebhook[Retry Send Webhook]
+    
+    RetryWebhook --> SuccessFallback{Retry Successful?}
+    SuccessFallback -- Yes --> UpdateLog
+    SuccessFallback -- No --> PlainTextFallback[Final Plain Text Fallback]
+    PlainTextFallback --> SuccessFinal{Final Send Successful?}
+    SuccessFinal -- Yes --> UpdateLog
+    SuccessFinal -- No --> LogError[Log Error]
+    LogError --> Cooldown
+
+    classDef loop fill:#10b981,stroke:#047857,color:#fff
+    classDef decis fill:#f59e0b,stroke:#b45309,color:#fff
+    classDef fallback fill:#ef4444,stroke:#b91c1c,color:#fff
+    class Startbot,ScraperLoop,FetchTG,Cooldown,GetMedia,BuildLayout,SendWebhook,UpdateLog,BuildFallbackLayout,RetryWebhook,PlainTextFallback,LogError loop
+    class ParseTG,Success,ExcludeVideos,SuccessFallback,SuccessFinal decis
+    class ApplyFallback,LoopMedia,ReplaceWithCDN,KeepAttachment fallback
+```
+
+---
 
 ## Features
 
-- No Telegram or Discord Bots required
-- Forward messages from multiple Telegram channels to Discord
-- Automated message source crediting in embeds
-- Preserve message formatting (bold, italic, links, code blocks, etc.)
-- Support for text and media content
-- Automatic handling of missing messages
-- Robust error handling and retry mechanisms
-- Send messages to Discord threads using `DISCORD_THREAD_ID`
-- **Advanced Rate Limiting**: Full Discord API compliance with bucket-based rate limiting
-- **Comprehensive Media Handling**: Support for images, videos, and grouped media collections
-- **Smart Grouped Media Processing**: Automatically detects and handles grouped media messages
-- **Embed Formatting**: Rich Discord embeds with author avatars, names, and proper formatting
-- **Health Monitoring**: Real-time health status at `/health` endpoint with rate limit tracking
-- **Log Viewing**: View application logs via `/logs` endpoint for debugging
-- **Process Management**: Automatic process spawning for multiple channels
+- **No Bot Accounts Required**: Operates using public Telegram preview pages.
+- **Discord Components V2**: Utilizes the layout model (`Container`, `TextDisplay`, and `MediaGallery`) rather than legacy embeds for cleaner rendering.
+- **Grouped Media Processing**: Support for up to 10 images and videos inside a single gallery component.
+- **Parallel Downloading**: Uses a thread pool capped at 8 workers to fetch media assets from the Telegram CDN quickly.
+- **Targeted Video Fallback**: If an upload fails with `413 Payload Too Large`, the bot filters out video files larger than 10MB, replacing them with their Telegram CDN links, while still uploading smaller videos and images as attachments.
+- **Process Isolation**: Each channel scrapes in its own subprocess. If a subprocess crashes or hangs (zombie detection), the main watchdog restarts it.
+- **Git Log Persistence**: Automatically commits and pushes log files back to GitHub periodically using **PAT** or **GitHub App** authorization.
+- **Monitoring endpoints**: Health checks, real-time log viewers, git status debug tools, and log clearing via HTTP.
+
+---
 
 ## Prerequisites
 
-- Python 3.6 or higher
-- Discord Webhook URL
-- Public Telegram Channel links
+- Python 3.8 or higher
+- Git (configured on host system or running environment)
+- A Discord Webhook URL
+
+---
 
 ## Installation
 
 1. Clone the repository:
-    ```
-    git clone https://github.com/SimpNick6703/Disgram.git
-    cd Disgram
-    ```
+   ```bash
+   git clone https://github.com/SimpNick6703/Disgram.git
+   cd Disgram
+   ```
 
-2. Install the required dependencies:
-    ```
-    pip install -r requirements.txt
-    ```
+2. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+---
 
 ## Configuration
 
-- Copy `.env.example` to `.env` and fill in the required environment variables:
-    ```
-    cp .env.example .env
-    ```
-  - `DISCORD_WEBHOOK_URL`: Your Discord webhook URL.
-  - `DISCORD_THREAD_ID` (Optional): The ID of the Discord thread to send messages to.
-  - `TELEGRAM_CHANNELS`: Comma-separated list of public Telegram channel URLs.
-  - `EMBED_COLOR`: Hex color code for embeds (e.g., 89a7d9 or 0x89a7d9).
+Duplicate `.env.example` to `.env` and fill out your variables:
+```bash
+cp .env.example .env
+```
 
-- (Optional) Modify `config.py` for advanced settings:
-  - `COOLDOWN`: Interval between checks (Suggested 300s or more to avoid IP bans).
-  - `ERROR_PLACEHOLDER`: Message shown for unparseable content.
+### 1. General & Scraper Settings
+* `DISCORD_WEBHOOK_URL`: Your Discord webhook.
+* `DISCORD_THREAD_ID` (Optional): ID of a specific Discord thread to forward messages into.
+* `TELEGRAM_CHANNELS`: Comma-separated list of Telegram channel links.
+* `EMBED_COLOR`: Color hex (e.g., `89a7d9`) for Discord layout container borders.
 
 > [!TIP]
-> **Starting from specific messages**: Instead of simply providing channel links in `TELEGRAM_CHANNELS`, you can provide specific message links in it to start forwarding from particular points.
+> **Starting from specific messages**: To begin scraping from a specific message number, append the message ID to the channel URL: `https://t.me/channel_name/1234`.
+
+---
+
+### 2. Git Persistence Settings
+Disgram automatically commits and pushes its state and application logs back to GitHub. You can authenticate using one of two options:
+
+#### Option A: Personal Access Token (PAT)
+* `GITHUB_TOKEN`: Your personal access token with repository write scope.
+
+#### Option B: GitHub App (Preferred)
+* `GITHUB_APP_ID` or `GITHUB_APP_CLIENT_ID`: Identifies the registered GitHub App.
+* `GITHUB_APP_INSTALLATION_ID`: The installation ID of the App on the target repository.
+* `GITHUB_APP_PRIVATE_KEY_PATH`: Local path to the private key (`.pem` file), or...
+* `GITHUB_APP_PRIVATE_KEY`: Raw multiline PEM string (e.g., `"-----BEGIN RSA PRIVATE KEY-----\nMIIE...\n-----END RSA PRIVATE KEY-----"`). Ideal for cloud deployments like Azure.
+
+* `GITHUB_REPO_URL`: The repository Git clone URL (`https://github.com/username/repo.git`).
+* `GITHUB_DEPLOY_BRANCH`: The branch to push logs to (e.g., `azure-prod`).
+
+---
+
+### 3. Log Commits & Scheduling
+
+You can customize how log pushes to GitHub are scheduled using two mutually exclusive modes:
+
+#### 3.1 Scheduled Commits Flow (`COMMIT_MODE=scheduled`)
+
+```mermaid
+graph TD
+    Start[Daemon Thread Check] --> CheckMode{Is COMMIT_MODE == scheduled?}
+    CheckMode -- No --> Skip[Skip Scheduled Logic]
+    CheckMode -- Yes --> CheckTime{Is Scheduled UTC Hour?}
+    
+    CheckTime -- No --> WaitNext[Wait 60s]
+    WaitNext --> Start
+    
+    CheckTime -- Yes --> CheckGrace{Time since last commit >= 45m?}
+    CheckGrace -- No --> LogCooldown[Log Cooldown Active & Skip]
+    LogCooldown --> WaitNext
+    
+    CheckGrace -- Yes --> CheckChanges{Has Log Changes?}
+    CheckChanges -- No --> LogNoChanges[Log 'No Changes' & Skip]
+    LogNoChanges --> WaitNext
+    
+    CheckChanges -- Yes --> AuthApp[Get/Refresh GitHub Token]
+    AuthApp --> GitCommit[Git Commit & Push logs to deployment branch]
+    GitCommit --> UpdateTime[Update last_commit_time]
+    UpdateTime --> WaitNext
+
+    classDef proc fill:#3b82f6,stroke:#1d4ed8,color:#fff
+    classDef decis fill:#f59e0b,stroke:#b45309,color:#fff
+    classDef git fill:#10b981,stroke:#047857,color:#fff
+    class Start,Skip,WaitNext,LogCooldown,LogNoChanges,UpdateTime proc
+    class CheckMode,CheckTime,CheckGrace,CheckChanges decis
+    class AuthApp,GitCommit git
+```
+
+#### 3.2 Interval Commits Flow (`COMMIT_MODE=interval`)
+
+```mermaid
+graph TD
+    Start[Daemon Thread Check] --> CheckMode{Is COMMIT_MODE == interval?}
+    CheckMode -- No --> Skip[Skip Interval Logic]
+    CheckMode -- Yes --> CheckInterval{Time since last commit >= LOG_COMMIT_INTERVAL?}
+    
+    CheckInterval -- No --> WaitNext[Wait 60s]
+    WaitNext --> Start
+    
+    CheckInterval -- Yes --> CheckChanges{Has Log Changes?}
+    CheckChanges -- No --> LogNoChanges[Log 'No Changes' & Reset timer]
+    LogNoChanges --> WaitNext
+    
+    CheckChanges -- Yes --> AuthApp[Get/Refresh GitHub Token]
+    AuthApp --> GitCommit[Git Commit & Push logs to deployment branch]
+    GitCommit --> UpdateTime[Update last_commit_time]
+    UpdateTime --> WaitNext
+
+    classDef proc fill:#3b82f6,stroke:#1d4ed8,color:#fff
+    classDef decis fill:#f59e0b,stroke:#b45309,color:#fff
+    classDef git fill:#10b981,stroke:#047857,color:#fff
+    class Start,Skip,WaitNext,LogNoChanges,UpdateTime proc
+    class CheckMode,CheckInterval,CheckChanges decis
+    class AuthApp,GitCommit git
+```
+
+* `COMMIT_MODE`: The scheduling strategy. Options: `"interval"` (default) or `"scheduled"`.
+* **Interval Settings** (if `COMMIT_MODE=interval`):
+  * `LOG_COMMIT_INTERVAL`: Time in seconds between pushes (e.g. `3600` for 1 hour).
+* **Scheduled Settings** (if `COMMIT_MODE=scheduled`):
+  * `COMMIT_SCHEDULE`: Preset execution time (`"hourly"`, `"every_2h"`, `"custom"`).
+  * `COMMIT_CUSTOM_HOURS`: Comma-separated list of UTC hours (e.g., `"0,6,12,18"` for midnight, 6 AM, noon, and 6 PM UTC).
+* `STARTUP_GRACE_PERIOD`: Period in seconds (default `600` = 10 minutes) during which background commits are blocked on startup. This acts as a cooldown buffer to avoid rapid redeployment loops when deploying via a CI/CD pipeline triggered by code pushes to the same branch.
+
+---
 
 ## Usage
 
-1. Start the bot:
-    ```
-    python main.py
-    ```
-2. The bot will create separate processes for each channel and begin forwarding messages.
-3. To stop the bot, press `Ctrl + C`.
+1. Start the bot manually:
+   ```bash
+   python main.py
+   ```
+2. Start the bot via Azure startup script:
+   ```bash
+   bash start.sh
+   ```
+   *The startup script verifies and configures git credentials globally, sets the default branch, configures credential helpers, and launches the application.*
 
-## Logging
+3. Stop the bot: Press `Ctrl + C` (which triggers a final log push to git and terminates all worker processes).
 
-The bot maintains logs at `/logs` endpoint that lets you view `Disgram.log` with the following information:
-- Error messages
-- New message notifications
-- Operational status updates
+---
 
-## Rate Limiting
+## Flask Server API Endpoints
 
-Disgram uses comprehensive Discord API rate limiting logic:
+The Flask server listens on `PORT` (default: `5000`):
 
-- **Per-Route Rate Limiting**: Tracks individual webhook endpoint limits
-- **Global Rate Limiting**: Respects Discord's global rate limits (50 requests/second)
-- **Bucket-Based Tracking**: Uses Discord's rate limit bucket system
-- **429 Response Handling**: Automatic retry with proper wait times
-- **Exponential Backoff**: Smart retry logic for network errors
-- **Rate Limit Headers**: Parses and respects Discord's rate limit headers
+* `GET /`: Displays repository description, status, and list of endpoints.
+* `GET /health`: Health diagnostic response indicating if processes are alive and returns Discord webhook rate limit statuses.
+* `GET /logs`: Displays contents of `Disgram.log` (scraped messages history).
+* `GET /app-logs`: Displays `app.log` (internal system, Flask, and process manager activity).
+* `GET /git-status`: Status diagnostics for git persistence (commit mode, last/next scheduled commits, elapsed time, hash, and status).
+* `POST /force-commit`: Bypasses schedule cooldowns to immediately commit and push logs to the remote repository.
+* `POST /logs/clear`: Wipes historical entries from `Disgram.log` but automatically extracts and preserves the latest processed message URLs for each channel as the new markers to prevent forwarding duplicate messages.
 
-## Health Monitoring
+---
 
-The bot includes a health check endpoint at `/health` for monitoring:
-- **URL**: `http://localhost:5000/health` (or your server's address)
-- **Method**: GET
-- **Returns**: JSON with health status including rate limit information
-- **Status Codes**: 
-  - `200` - All systems healthy
-  - `500` - Issues detected (check logs for details)
+## Known Constraints & Issues
 
-## Log Viewing
+- **Scraping Limits**: Since logs are fetched from public preview pages (`/s/{channel}`), only public Telegram channels are supported.
+- **Compressed Media Quality**: Telegram scales down image quality on its preview web server; higher-resolution assets must be extracted natively.
+- **Media Exclusions**: The scraper does not support uncompressed file attachments, documents, or message replies.
 
-Access application logs via the `/logs` endpoint:
-- **URL**: `http://localhost:5000/logs` (or your server's address)
-- **Method**: GET
-- **Returns**: Recent log entries from `Disgram.log`
-- **Features**: Real-time log viewing for debugging and monitoring
-
-## Log Management
-
-Clear the contents of `Disgram.log` while preserving the latest message links via the `/logs/clear` endpoint:
-- **URL**: `http://localhost:5000/logs/clear` (or your server's address)
-- **Method**: POST
-- **Returns**: JSON response with status, number of preserved channel links, and the latest message URLs
-- **Features**: 
-  - Removes all timestamped log entries
-  - Preserves the header line
-  - Extracts and preserves the **latest** message link for each channel (not the initial starting points)
-  - Useful for managing log file size while maintaining progress
-
-**Example:**
-```bash
-curl -X POST http://localhost:5000/logs/clear
-```
-
-**Response:**
-```json
-{
-  "status": "success",
-  "message": "Disgram.log cleared successfully",
-  "preserved_links": 9,
-  "latest_messages": [
-    "https://t.me/Galaxy_leak/3649",
-    "https://t.me/Seele_WW_Leak/3728",
-    "..."
-  ]
-}
-```
-
-## Notes
-
-- **Rate Limiting**: Discord rate limits are handled automatically with intelligent retry logic but be mindful of Telegram Preview Page's rates as well, in order to avoid IP bans.
-- **Message Source**: Messages are fetched from Telegram's public preview page (https://t.me/s/{channel})
-- **Channel Requirements**: Only works with public Telegram channels with accessible preview pages
-- **Media Processing**: Supports single images, videos, and grouped media collections automatically
-- **Thread vs Channel**: The bot automatically chooses between `webhook.py` (channel) and `threadhook.py` (thread) based on `DISCORD_THREAD_ID` configuration
-- **Process Management**: Each Telegram channel runs in a separate process for better performance and isolation
-
-## Known Issues
-- Image quality of compressed images is too low to scrap from preview page. Use Telegram app for higher quality.
-- Video URL extraction depends on video size, which determines if the Telegram public preview page will preview the video or not. If the video is too large, it won't be previewed and thus can't be scraped.
-- The bot can not fully parse messages reliably with following content for now:
-  - Uncompressed Media
-  - Documents
-  - Messages with replies
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
+---
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License - see the [LICENSE](Disgram/LICENSE) file for details.

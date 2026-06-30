@@ -44,6 +44,7 @@ def sanitize_log_content(content: str) -> str:
     # Replace GitHub Personal Access Tokens with [REDACTED]
     sanitized = re.sub(r'github_pat_[A-Za-z0-9_]+', '[REDACTED]', content)
     sanitized = re.sub(r'ghp_[A-Za-z0-9_]+', '[REDACTED]', sanitized)
+    sanitized = re.sub(r'ghs_[A-Za-z0-9_]+', '[REDACTED]', sanitized)
     
     # Also handle generic token patterns in URLs
     sanitized = re.sub(r'://[^@\s]+@', '://[REDACTED]@', sanitized)
@@ -115,6 +116,34 @@ def check_discord_webhook():
             return False, f"Webhook returned status {response.status_code}"
     except Exception as e:
         return False, f"Webhook error: {str(e)}"
+
+# Cache external check results for 15 minutes to avoid Cloudflare/Discord rate-limiting issues
+_ext_check_cache = {
+    "last_check_time": 0.0,
+    "telegram_ok": False,
+    "discord_ok": False,
+    "discord_msg": "Not checked yet"
+}
+_ext_check_lock = threading.Lock()
+
+def get_cached_external_checks():
+    """Get cached connectivity status for Telegram and Discord, updating at most every 15 minutes."""
+    global _ext_check_cache
+    current_time = time.time()
+    
+    with _ext_check_lock:
+        if current_time - _ext_check_cache["last_check_time"] > 900:
+            telegram_ok = check_telegram_connectivity()
+            discord_ok, discord_msg = check_discord_webhook()
+            
+            _ext_check_cache.update({
+                "last_check_time": current_time,
+                "telegram_ok": telegram_ok,
+                "discord_ok": discord_ok,
+                "discord_msg": discord_msg
+            })
+        
+        return _ext_check_cache["telegram_ok"], _ext_check_cache["discord_ok"], _ext_check_cache["discord_msg"]
 
 def check_log_freshness():
     log_file_path = "Disgram.log"
@@ -190,11 +219,8 @@ def health_check():
     def get_process_health():
         return check_process_health()
     
-    def get_telegram_status():
-        return check_telegram_connectivity()
-    
-    def get_discord_status():
-        return check_discord_webhook()
+    def get_external_status():
+        return get_cached_external_checks()
     
     def get_log_status():
         return check_log_freshness()
@@ -202,35 +228,24 @@ def health_check():
     def get_sys_stats():
         return get_system_stats()
     
-    def get_rate_limit():
-        try:
-            from rate_limiter import discord_rate_limiter
-            return discord_rate_limiter.get_rate_limit_status()
-        except Exception as e:
-            return {"error": f"Failed to get rate limit status: {str(e)}"}
-    
     def get_git_status():
         git_manager = get_git_manager()
         return git_manager.get_commit_status() if git_manager else {"git_available": False}
     
-    # Execute all checks in parallel using ThreadPoolExecutor
-    with ThreadPoolExecutor(max_workers=7) as executor:
+    # Execute all checks in parallel using ThreadPoolExecutor (max_workers=5)
+    with ThreadPoolExecutor(max_workers=5) as executor:
         # Submit all tasks
         future_process_health = executor.submit(get_process_health)
-        future_telegram = executor.submit(get_telegram_status)
-        future_discord = executor.submit(get_discord_status)
+        future_external = executor.submit(get_external_status)
         future_log = executor.submit(get_log_status)
         future_system = executor.submit(get_sys_stats)
-        future_rate_limit = executor.submit(get_rate_limit)
         future_git = executor.submit(get_git_status)
         
         # Collect results
         alive_count, dead_processes = future_process_health.result()
-        telegram_ok = future_telegram.result()
-        discord_ok, discord_msg = future_discord.result()
+        telegram_ok, discord_ok, discord_msg = future_external.result()
         log_fresh, log_msg, log_last_modified = future_log.result()
         system_stats = future_system.result()
-        rate_limit_status = future_rate_limit.result()
         git_commit_status = future_git.result()
     
     total_processes = len(processes)
@@ -271,7 +286,6 @@ def health_check():
             "age_minutes": round((datetime.datetime.now() - log_last_modified).total_seconds() / 60, 1) if log_last_modified else None
         },
         "system": system_stats,
-        "rate_limiting": rate_limit_status,
         "git_commits": git_commit_status,
         "configuration": {
             "thread_id_configured": THREAD_ID is not None,
@@ -493,26 +507,15 @@ def start_bot_processes():
     print(f"Starting Disgram bot with {len(Channels)} channels...")
     
     try:
-        if THREAD_ID is not None:
-            for channel in Channels:
-                print(f"Starting threaded bot for {channel}...")
-                channel_name = extract_channel_name(channel)
-                process = subprocess.Popen(
-                    ["python", "threadhook.py", channel_name, f"{WEBHOOK_URL}?thread_id={THREAD_ID}"],
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE
-                )
-                processes.append(process)
-        else:
-            for channel in Channels:
-                print(f"Starting webhook bot for {channel}...")
-                channel_name = extract_channel_name(channel)
-                process = subprocess.Popen(
-                    ["python", "webhook.py", channel_name],
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE
-                )
-                processes.append(process)
+        for channel in Channels:
+            print(f"Starting bot for {channel}...")
+            channel_name = extract_channel_name(channel)
+            process = subprocess.Popen(
+                ["python", "webhook.py", channel_name],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE
+            )
+            processes.append(process)
         
         print(f"Started {len(processes)} bot processes successfully.")
         
@@ -554,18 +557,11 @@ if __name__ == "__main__":
                         channel_name = extract_channel_name(channel)
                         print(f"Restarting process for {channel}...")
                         
-                        if THREAD_ID is not None:
-                            new_process = subprocess.Popen(
-                                ["python", "threadhook.py", channel_name, f"{WEBHOOK_URL}?thread_id={THREAD_ID}"],
-                                stdout=subprocess.PIPE,
-                                stderr=subprocess.PIPE
-                            )
-                        else:
-                            new_process = subprocess.Popen(
-                                ["python", "webhook.py", channel_name],
-                                stdout=subprocess.PIPE,
-                                stderr=subprocess.PIPE
-                            )
+                        new_process = subprocess.Popen(
+                            ["python", "webhook.py", channel_name],
+                            stdout=subprocess.PIPE,
+                            stderr=subprocess.PIPE
+                        )
                         processes[dead_idx] = new_process
             
             # Check if logs are stale (indicates zombie processes)

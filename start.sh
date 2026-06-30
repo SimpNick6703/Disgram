@@ -32,10 +32,14 @@ if command -v git &> /dev/null; then
     git config --global user.name "Disgram-Bot" 2>/dev/null || true
     git config --global user.email "2304680+Disgram-Bot[bot]@users.noreply.github.com" 2>/dev/null || true
     git config --global init.defaultBranch "$DEFAULT_BRANCH" 2>/dev/null || true
-    git config --global pull.rebase false 2>/dev/null || true    # Configure token-based authentication if token is available
+    git config --global pull.rebase false 2>/dev/null || true
+    
+    # Configure token-based authentication if token or App credentials are available
     if [ ! -z "$GITHUB_TOKEN" ]; then
         echo "Configuring Git authentication with GitHub token..."
         git config --global credential.helper "!f() { echo \"username=\$GITHUB_TOKEN\"; echo \"password=\"; }; f" 2>/dev/null || true
+    elif [ ! -z "$GITHUB_APP_ID" ] || [ ! -z "$GITHUB_APP_CLIENT_ID" ]; then
+        echo "GitHub App credentials detected. Git authentication will be configured dynamically by the Python application."
     fi
     
     # Check if we're in a Git repository

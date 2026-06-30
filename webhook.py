@@ -5,43 +5,49 @@ import sys
 import re
 import os
 import io
-import json
 from dateutil import parser
-from config import WEBHOOK_URL, COOLDOWN, EMBED_COLOR, ERROR_PLACEHOLDER
 from bs4 import BeautifulSoup
+import discord
 from discord import SyncWebhook, Embed, File
-from rate_limiter import discord_rate_limiter
+from discord.ui import LayoutView, Container, TextDisplay, MediaGallery
+import concurrent.futures
+from config import WEBHOOK_URL, THREAD_ID, COOLDOWN, EMBED_COLOR, ERROR_PLACEHOLDER
 
-def log_message(message, log_type="info"):
+TELEGRAM_HEADERS = {"User-Agent": "Mozilla/5.0 (compatible; Disgram/2.0)"}
+MAX_MEDIA_WORKERS = 8
+
+def log_message(message: str, log_type: str = "info") -> None:
+    """Log messages to console and to Disgram.log for specific message types."""
     timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     log_entry = f"{timestamp} {message}"
     print(log_entry)
     if log_type in ["error", "new_message", "status"]:
-        with open("Disgram.log", "a") as log_file:
+        with open("Disgram.log", "a", encoding="utf-8") as log_file:
             log_file.write(log_entry + "\n")
 
-def is_message_logged(channel, number):
+def is_message_logged(channel: str, number: int) -> bool:
+    """Check if the given message number has already been logged for the channel."""
     try:
-        with open("Disgram.log", "r") as log_file:
+        with open("Disgram.log", "r", encoding="utf-8") as log_file:
             for line in log_file:
                 match = re.search(rf"https://t.me/{channel}/(\d+)", line)
-                if match and int(match.group(1)) >= int(number):
+                if match and int(match.group(1)) >= number:
                     return True
     except FileNotFoundError:
         pass
     return False
 
-def scrapeTelegramMessageBox(channel):
+def scrapeTelegramMessageBox(channel: str) -> list:
+    """Scrape the latest messages from the Telegram channel preview page."""
     max_retries = 5
     retry_delay = 2
     for attempt in range(max_retries):
         try:
             log_message(f"Scraping messages from Telegram channel: {channel} (Attempt {attempt + 1})")
-            tg_html = requests.get(f'https://t.me/s/{channel}', timeout=10)
+            tg_html = requests.get(f'https://t.me/s/{channel}', headers=TELEGRAM_HEADERS, timeout=10)
             tg_html.raise_for_status()
             tg_soup = BeautifulSoup(tg_html.text, 'html.parser')
-            tg_box = tg_soup.find_all('div', {'class': 'tgme_widget_message_wrap js-widget_message_wrap'})
-            return tg_box
+            return tg_soup.find_all('div', {'class': 'tgme_widget_message_wrap js-widget_message_wrap'})
         except requests.exceptions.RequestException as e:
             log_message(f"Error scraping Telegram: {e}", log_type="error")
             if attempt < max_retries - 1:
@@ -50,8 +56,10 @@ def scrapeTelegramMessageBox(channel):
             else:
                 log_message("Max retries reached. Skipping this iteration.", log_type="error")
                 return []
+    return []
 
-def getAuthorIcon(tg_box):
+def getAuthorIcon(tg_box) -> str | None:
+    """Extract the author's profile icon URL."""
     icon_element = tg_box.find('i', {'class': 'tgme_widget_message_user_photo'})
     if icon_element:
         img_tag = icon_element.find('img')
@@ -59,25 +67,25 @@ def getAuthorIcon(tg_box):
             return img_tag['src']
     return None
 
-def getAuthorName(tg_box):
+def getAuthorName(tg_box) -> str | None:
+    """Extract the author's name."""
     author_name = tg_box.find('a', {'class': 'tgme_widget_message_owner_name'})
     return author_name.text.strip() if author_name else None
 
-def getLink(tg_box):
-    msg_link = tg_box.find_all('a', {'class':'tgme_widget_message_date'}, href=True)
-    if msg_link:
-        return msg_link[0]['href']
-    return None
+def getLink(tg_box) -> str | None:
+    """Extract the Telegram message link."""
+    msg_link = tg_box.find_all('a', {'class': 'tgme_widget_message_date'}, href=True)
+    return msg_link[0]['href'] if msg_link else None
 
-def _render_children(element, in_quote=False):
+def _render_children(element, in_quote=False) -> str:
+    """Helper to render elements inside blockquotes and other tags recursively."""
     parts = []
     for child in element.children:
         parts.append(_render_node(child, in_quote))
     return ''.join(parts)
 
-
-def _render_node(node, in_quote=False):
-    # Text node
+def _render_node(node, in_quote=False) -> str:
+    """Helper to format individual HTML elements into Markdown."""
     if getattr(node, 'name', None) is None:
         return str(node)
 
@@ -104,7 +112,6 @@ def _render_node(node, in_quote=False):
     if name == 'br':
         return '\n'
     if name == 'blockquote':
-        # Allow formatting inside, but disallow nested quotes
         if in_quote:
             return _render_children(node, in_quote=True)
         inner = _render_children(node, in_quote=True)
@@ -113,20 +120,17 @@ def _render_node(node, in_quote=False):
         quoted = "\n".join(["> " + l if l != "" else "> " for l in lines]) + "\n"
         return quoted
 
-    # Fallback to rendering children of unknown tags
     return _render_children(node, in_quote)
 
-
-def getText(tg_box):
+def getText(tg_box) -> str | None:
+    """Extract and format the message text."""
     msg_text = tg_box.find_all('div', {'class': 'tgme_widget_message_text js-message_text'})
     if not msg_text:
         return None
+    return _render_children(msg_text[0])
 
-    root = msg_text[0]
-    return _render_children(root)
-
-def getTextFromIndividualMessage(msg_link):
-    """Extract text from an individual message URL, useful for grouped media messages"""
+def getTextFromIndividualMessage(msg_link: str) -> str | None:
+    """Extract text from an individual message page (fallback for media groups)."""
     if not msg_link:
         return None
         
@@ -135,65 +139,58 @@ def getTextFromIndividualMessage(msg_link):
     
     for attempt in range(max_retries):
         try:
-            response = requests.get(msg_link, timeout=10)
+            response = requests.get(msg_link, headers=TELEGRAM_HEADERS, timeout=10)
             response.raise_for_status()
             soup = BeautifulSoup(response.content, 'html.parser')
             
-            # First try to find text in standard location
             text_div = soup.find('div', class_='tgme_widget_message_text')
             if text_div:
                 text_content = text_div.get_text(strip=True)
                 if text_content:
                     return text_content
             
-            # For grouped media messages, check meta tags
             og_desc = soup.find('meta', property='og:description')
             if og_desc:
                 content_attr = og_desc.get('content')
                 if content_attr:
-                    # Handle both string and list types
-                    content = str(content_attr).strip() if hasattr(content_attr, 'strip') else str(content_attr)
+                    content = str(content_attr).strip()
                     if content and _is_likely_message_content(content):
                         return content
-                    
             return None
-            
         except Exception as e:
             log_message(f"Error fetching text from individual message {msg_link}: {e}", log_type="error")
             if attempt < max_retries - 1:
                 time.sleep(retry_delay)
             else:
                 return None
+    return None
 
-def _is_likely_message_content(content):
-    """Simple check to filter out obvious channel descriptions"""
+def _is_likely_message_content(content: str) -> bool:
+    """Check to filter out obvious channel descriptions."""
     if not content:
         return False
     
     content_lower = content.lower().strip()
-    
-    # Filter out common channel description patterns
     channel_desc_patterns = [
         r'^the official .+ on telegram',
         r'official .+ channel',
         r'.+ official channel', 
         r'welcome to .+',
-        r'much recursion\. very telegram\. wow\.',  # Telegram's description
-        r'^.+\s+–\s+.+$',  # Channel title format
+        r'much recursion\. very telegram\. wow\.',
+        r'^.+\s+–\s+.+$',
     ]
     
     for pattern in channel_desc_patterns:
         if re.match(pattern, content_lower):
             return False
     
-    # If content is very generic/short, be cautious
     if len(content.split()) <= 1:
         return False
     
-    # Otherwise, likely message content
     return True
 
-def getImage(tg_box):
+def getImage(tg_box) -> str | None:
+    """Get single message image URL."""
     msg_image = tg_box.find('a', {'class': 'tgme_widget_message_photo_wrap'}, href=True)
     if msg_image:
         startIndex = msg_image['style'].find("background-image:url('") + 22
@@ -202,15 +199,13 @@ def getImage(tg_box):
             return msg_image['style'][startIndex:endIndex]
     return None
 
-def getAllImages(tg_box):
-    """Extract all images from a message (for grouped media)"""
+def getAllImages(tg_box) -> list[str]:
+    """Get all image URLs for media groups."""
     images = []
     msg_images = tg_box.find_all('a', {'class': 'tgme_widget_message_photo_wrap'})
-    
     for msg_image in msg_images:
         if msg_image.get('style'):
             style = msg_image['style']
-            # Handle different image formats (.jpg, .png, .webp, etc.)
             for ext in ['.jpg', '.jpeg', '.png', '.webp']:
                 start_pos = style.find("background-image:url('")
                 end_pos = style.find(f"{ext}')")
@@ -218,406 +213,272 @@ def getAllImages(tg_box):
                     start_index = start_pos + 22
                     end_index = end_pos + len(ext)
                     if start_index > 21 and end_index > start_index:
-                        image_url = style[start_index:end_index]
-                        images.append(image_url)
+                        images.append(style[start_index:end_index])
                     break
-    
     return images
 
-def getAllVideos(tg_box):
-    """Extract all videos from a message (for grouped media)"""
-    videos = []
-    video_elements = tg_box.find_all('video', {'class': 'tgme_widget_message_video'})
-    
-    for video_element in video_elements:
-        if video_element.get('src'):
-            videos.append(video_element['src'])
-    
-    return videos
-
-def getTimestamp(tg_box):
-    time_element = tg_box.find('time', {'datetime': True})
-    if time_element and 'datetime' in time_element.attrs:
-        return parser.isoparse(time_element['datetime'])
-    return None
-
-def download_image(image_url: str | None) -> tuple[io.BytesIO | None, str | None]:
-    if not image_url:
-        return (None, None)
-    
-    max_retries = 3
-    retry_delay = 2
-    
-    for attempt in range(max_retries):
-        try:
-            response = requests.get(image_url, timeout=10)
-            response.raise_for_status()
-            
-            file_ext = os.path.splitext(image_url)[1]
-            if not file_ext:
-                file_ext = '.jpg'
-                
-            filename = f"img_{int(time.time())}_{attempt}{file_ext}"
-            return io.BytesIO(response.content), filename
-        except Exception as e:
-            log_message(f"Error downloading image: {e}", log_type="error")
-            if attempt < max_retries - 1:
-                time.sleep(retry_delay)
-                retry_delay *= 2
-            else:
-                log_message("Max retries reached. Unable to download image.", log_type="error")
-                return (None, None)
-    
-    # This should never be reached, but added for type checker completeness
-    return (None, None)
-
-def download_video(video_url: str | None) -> tuple[io.BytesIO | None, str | None]:
-    if not video_url:
-        return (None, None)
-    
-    max_retries = 3
-    retry_delay = 2
-    
-    for attempt in range(max_retries):
-        try:
-            response = requests.get(video_url, timeout=30)
-            response.raise_for_status()
-            
-            # Get file extension from URL or default to mp4
-            file_ext = video_url.split('.')[-1].split('?')[0] if '.' in video_url else 'mp4'
-            if file_ext not in ['mp4', 'mov', 'avi', 'webm', 'mkv']:
-                file_ext = 'mp4'
-            
-            filename = f"video_{int(time.time())}_{attempt}.{file_ext}"
-            return io.BytesIO(response.content), filename
-        except Exception as e:
-            log_message(f"Error downloading video: {e}", log_type="error")
-            if attempt < max_retries - 1:
-                time.sleep(retry_delay)
-                retry_delay *= 2
-            else:
-                log_message("Max retries reached. Unable to download video.", log_type="error")
-                return (None, None)
-    
-    # This should never be reached, but added for type checker completeness
-    return (None, None)
-
-def getVideo(tg_box):
+def getVideo(tg_box) -> str | None:
+    """Get single video URL."""
     video_element = tg_box.find('video', {'class': 'tgme_widget_message_video'})
     if video_element and 'src' in video_element.attrs:
         return video_element['src']
     return None
 
-class RateLimitedWebhook:
-    """
-    A wrapper around SyncWebhook that integrates with our rate limiter
-    """
-    def __init__(self, webhook_url):
-        self.webhook_url = webhook_url
-        self.webhook = SyncWebhook.from_url(webhook_url)
-    
-    def send_with_rate_limiting(self, max_retries=5, **kwargs):
-        """
-        Send webhook message with rate limiting using SyncWebhook
-        """
-        for attempt in range(max_retries + 1):
-            # Wait for rate limits before making request
-            if not discord_rate_limiter.wait_for_rate_limit(self.webhook_url, "POST"):
-                return False
-            
-            try:
-                # Use SyncWebhook's send method which handles all Discord formatting
-                self.webhook.send(**kwargs)
-                
-                # Manually track successful request for rate limiter
-                discord_rate_limiter._increment_global_counter()
-                bucket_key = discord_rate_limiter._get_bucket_key(self.webhook_url, "POST")
-                discord_rate_limiter._decrement_bucket_remaining(bucket_key)
-                
-                return True
-                
-            except requests.exceptions.HTTPError as e:
-                if e.response is not None:
-                    # Handle the response with our rate limiter
-                    should_retry, wait_time = discord_rate_limiter.handle_response(
-                        e.response, self.webhook_url, "POST"
-                    )
-                    
-                    if not should_retry:
-                        log_message(f"Webhook request failed permanently: {e}", log_type="error")
-                        return False
-                    
-                    if attempt < max_retries and wait_time:
-                        log_message(f"Rate limited, retrying in {wait_time:.2f} seconds (attempt {attempt + 1}/{max_retries})", log_type="error")
-                        time.sleep(wait_time)
-                        continue
-                
-                # Max retries reached or no response
-                if attempt >= max_retries:
-                    log_message(f"Max retries ({max_retries}) exceeded for webhook", log_type="error")
-                    return False
-                    
-            except Exception as e:
-                log_message(f"Webhook request exception on attempt {attempt + 1}: {e}", log_type="error")
-                if attempt < max_retries:
-                    # Exponential backoff for network errors
-                    wait_time = min(2.0 ** attempt, 60.0)
-                    time.sleep(wait_time)
-                    continue
-                else:
-                    return False
-        
-        return False
+def getAllVideos(tg_box) -> list[str]:
+    """Get all video URLs for media groups."""
+    videos = []
+    video_elements = tg_box.find_all('video', {'class': 'tgme_widget_message_video'})
+    for video_element in video_elements:
+        if video_element.get('src'):
+            videos.append(video_element['src'])
+    return videos
 
-def sendMessage(msg_link, msg_text, msg_image, msg_video, author_name, icon_url, timestamp=None, all_images=None, all_videos=None):
-    """Send a Discord message using SyncWebhook with proper rate limiting"""
-    # Use all_images if provided (for grouped media), otherwise fall back to single image
+def getTimestamp(tg_box) -> datetime.datetime | None:
+    """Extract message timestamp."""
+    time_element = tg_box.find('time', {'datetime': True})
+    if time_element and 'datetime' in time_element.attrs:
+        return parser.isoparse(time_element['datetime'])
+    return None
+
+def download_file(url: str | None, prefix: str, ext_fallback: str, timeout: int = 10) -> tuple[io.BytesIO | None, str | None]:
+    """Download a file from url and return a BytesIO object and filename."""
+    if not url:
+        return None, None
+    max_retries = 3
+    retry_delay = 2
+    for attempt in range(max_retries):
+        try:
+            response = requests.get(url, headers=TELEGRAM_HEADERS, timeout=timeout)
+            response.raise_for_status()
+            
+            content_bytes = response.content
+            if not content_bytes:
+                raise ValueError("Downloaded file content is empty (0 bytes)")
+            
+            ext = os.path.splitext(url)[1]
+            if not ext or '?' in ext:
+                ext = url.split('.')[-1].split('?')[0] if '.' in url else ext_fallback
+            if not ext.startswith('.'):
+                ext = f".{ext}"
+            if len(ext) > 5:
+                ext = f".{ext_fallback}"
+                
+            filename = f"{prefix}_{int(time.time())}_{attempt}{ext}"
+            return io.BytesIO(content_bytes), filename
+        except Exception as e:
+            log_message(f"Error downloading {prefix}: {e}", log_type="error")
+            if attempt < max_retries - 1:
+                time.sleep(retry_delay)
+                retry_delay *= 2
+    return None, None
+
+def download_image(url: str | None) -> tuple[io.BytesIO | None, str | None]:
+    """Download an image file."""
+    return download_file(url, "img", "jpg", timeout=10)
+
+def download_video(url: str | None) -> tuple[io.BytesIO | None, str | None]:
+    """Download a video file."""
+    return download_file(url, "video", "mp4", timeout=30)
+
+def send_webhook_message(webhook_url: str, thread_id: str | None = None, **kwargs) -> tuple[bool, bool]:
+    """Send webhook message via discord.py SyncWebhook with native error handling.
+    Returns (success, is_payload_too_large)"""
+    try:
+        webhook = SyncWebhook.from_url(webhook_url)
+        if thread_id:
+            kwargs['thread'] = discord.Object(id=int(thread_id))
+        webhook.send(**kwargs)
+        return True, False
+    except discord.HTTPException as e:
+        log_message(f"Discord HTTP Exception: {e}", log_type="error")
+        is_payload_too_large = (e.status == 413)
+        return False, is_payload_too_large
+    except Exception as e:
+        log_message(f"Error sending message to Discord: {e}", log_type="error")
+        return False, False
+def download_media_concurrently(media_list: list[tuple[str, str]]) -> list[tuple[str, io.BytesIO | None, str | None]]:
+    """Download multiple media files concurrently while preserving their original order.
+    media_list is a list of (media_type, url) tuples.
+    Returns a list of (url, bytes_io, filename) tuples."""
+    def download_one(item: tuple[str, str]) -> tuple[str, io.BytesIO | None, str | None]:
+        media_type, url = item
+        try:
+            if media_type == 'image':
+                data, filename = download_image(url)
+            else:
+                data, filename = download_video(url)
+            return url, data, filename
+        except Exception as e:
+            log_message(f"Concurrent download error for {url}: {e}", log_type="error")
+            return url, None, None
+            
+    with concurrent.futures.ThreadPoolExecutor(max_workers=min(len(media_list), MAX_MEDIA_WORKERS) or 1) as executor:
+        results = list(executor.map(download_one, media_list))
+    return results
+
+def sendMessage(msg_link: str, msg_text: str | None, msg_image: str | None, msg_video: str | None, 
+                author_name: str, icon_url: str | None, timestamp: datetime.datetime | None = None, 
+                all_images: list[str] | None = None, all_videos: list[str] | None = None) -> None:
+    """Send a Telegram message to Discord webhook using Components V2 (with thread support)."""
+    # 1. Collect all media in their correct sequence
+    media_list = []
     images_to_send = all_images if all_images else ([msg_image] if msg_image else [])
     videos_to_send = all_videos if all_videos else ([msg_video] if msg_video else [])
     
-    # If this is a grouped media message, send all media items
-    if len(images_to_send) > 1 or len(videos_to_send) > 1:
-        log_message(f"Sending grouped media message with {len(images_to_send)} images and {len(videos_to_send)} videos: {msg_link}", log_type="new_message")
-        sendGroupedMediaMessage(msg_link, msg_text, images_to_send, videos_to_send, author_name, icon_url, timestamp)
-        return
+    for img in images_to_send:
+        if img:
+            media_list.append(('image', img))
+    for vid in videos_to_send:
+        if vid:
+            media_list.append(('video', vid))
+            
+    # Slicing to first 10 items since Discord CV2 gallery limit is 10
+    media_list = media_list[:10]
     
-    # Handle media files (image and video)
-    image_data = None
-    image_filename = None
-    video_data = None
-    video_filename = None
-    video_sent_as_attachment = False
+    # 2. Download concurrently
+    downloaded_results = []
+    if media_list:
+        log_message(f"Downloading {len(media_list)} media files concurrently...", log_type="status2")
+        downloaded_results = download_media_concurrently(media_list)
+        
+    # 3. Build files list and gallery items
+    files = []
+    gallery_items = []
+    media_status = []
     
-    # Try to get image file
-    if images_to_send:
-        result = download_image(images_to_send[0])
-        if result and result[0] is not None and result[1] is not None:
-            image_data, image_filename = result
+    for url, data, filename in downloaded_results:
+        is_video = any(item[0] == 'video' and item[1] == url for item in media_list)
+        if data and filename:
+            files.append(File(data, filename=filename))
+            gallery_items.append(discord.MediaGalleryItem(f"attachment://{filename}"))
+            media_status.append({
+                'url': url,
+                'data': data,
+                'filename': filename,
+                'is_video': is_video,
+                'attached': True
+            })
         else:
-            image_data, image_filename = None, None
-    
-    # Try to get video file if video exists
-    if videos_to_send:
-        video_url = videos_to_send[0]
-        try:
-            result = download_video(video_url)
-            if result and result[0] is not None and result[1] is not None:
-                video_data, video_filename = result
-                video_sent_as_attachment = True
-                log_message(f"Video will be sent as attachment: {video_url}", log_type="new_message")
-        except Exception as e:
-            log_message(f"Failed to download video, will fallback to link: {e}", log_type="error")
-    
+            gallery_items.append(discord.MediaGalleryItem(url))
+            media_status.append({
+                'url': url,
+                'data': None,
+                'filename': None,
+                'is_video': is_video,
+                'attached': False
+            })
+            
     try:
-        webhook = RateLimitedWebhook(WEBHOOK_URL)
+        # Format timestamp
+        unix_time = int(timestamp.timestamp()) if timestamp else int(time.time())
+        time_str = f" at <t:{unix_time}:f>"
         
-        embed = Embed(title='Message Link', url=msg_link, color=EMBED_COLOR, timestamp=timestamp)
+        text_content = f"{msg_text}\n\n-# [Message Link](<{msg_link}>){time_str}" if msg_text else f"-# [Message Link](<{msg_link}>){time_str}"
+        text_disp = TextDisplay(text_content)
         
-        if msg_text:
-            embed.description = msg_text
-        
-        embed.set_author(name=author_name, icon_url=icon_url, url=msg_link)
-        
-        files = []
-        if image_data and image_filename:
-            file = File(image_data, filename=image_filename)
-            files.append(file)
-            embed.set_image(url=f"attachment://{image_filename}")
-        
-        if video_data and video_filename:
-            video_file = File(video_data, filename=video_filename)
-            files.append(video_file)
+        # Construct layout container
+        container = Container(text_disp, accent_color=EMBED_COLOR)
+        if gallery_items:
+            gallery = MediaGallery(*gallery_items)
+            container.add_item(gallery)
+            
+        view = LayoutView()
+        view.add_item(container)
         
         log_message(f"Sending message to Discord: {msg_link}", log_type="new_message")
         
         kwargs = {
             'username': author_name,
             'avatar_url': icon_url,
-            'embed': embed
+            'view': view
         }
         if files:
             kwargs['files'] = files
             
-        success = webhook.send_with_rate_limiting(**kwargs)
+        success, too_large = send_webhook_message(WEBHOOK_URL, THREAD_ID, **kwargs)
         
+        # Targeted video fallback on HTTP 413 (Payload Too Large)
+        if not success and too_large:
+            log_message("Payload too large, applying targeted video fallback (replacing videos with CDN URLs)...", log_type="new_message")
+            
+            # Reset BytesIO streams before retry to prevent empty bytes read
+            for item in media_status:
+                if item['data']:
+                    item['data'].seek(0)
+                    
+            fallback_files = []
+            fallback_gallery_items = []
+            
+            for item in media_status:
+                if item['attached']:
+                    if item['is_video']:
+                        video_size = len(item['data'].getvalue())
+                        if video_size > 10 * 1024 * 1024:
+                            log_message(f"Video {item['filename']} is too large ({video_size / (1024*1024):.2f} MB), replacing with CDN URL.", log_type="new_message")
+                            fallback_gallery_items.append(discord.MediaGalleryItem(item['url']))
+                            continue
+                    fallback_files.append(File(item['data'], filename=item['filename']))
+                    fallback_gallery_items.append(discord.MediaGalleryItem(f"attachment://{item['filename']}"))
+                else:
+                    fallback_gallery_items.append(discord.MediaGalleryItem(item['url']))
+                    
+            fallback_container = Container(text_disp, accent_color=EMBED_COLOR)
+            if fallback_gallery_items:
+                fallback_gallery = MediaGallery(*fallback_gallery_items)
+                fallback_container.add_item(fallback_gallery)
+                
+            fallback_view = LayoutView()
+            fallback_view.add_item(fallback_container)
+            
+            fallback_kwargs = {
+                'username': author_name,
+                'avatar_url': icon_url,
+                'view': fallback_view
+            }
+            if fallback_files:
+                fallback_kwargs['files'] = fallback_files
+                
+            success, too_large = send_webhook_message(WEBHOOK_URL, THREAD_ID, **fallback_kwargs)
+            
+        # Final fallback to plain text content if layout still fails
         if not success:
-            log_message("Failed to send main message", log_type="error")
-            return
-        
-        if videos_to_send and not video_sent_as_attachment:
-            video_url = videos_to_send[0]
-            video_content = f"[Attached video]({video_url})\n[Message Link](<{msg_link}>)"
+            log_message("Failed to send with layout, falling back to plain text content only...", log_type="new_message")
+            content_parts = []
+            if msg_text:
+                content_parts.append(msg_text)
+            for url in [item['url'] for item in media_status]:
+                content_parts.append(url)
+            content_parts.append(f"[Message Link](<{msg_link}>) at <t:{unix_time}:f>")
             
-            log_message(f"Sending video link as separate message: {video_url}", log_type="new_message")
+            fallback_content = "\n\n".join(content_parts)
             
-            video_success = webhook.send_with_rate_limiting(
+            success, _ = send_webhook_message(
+                WEBHOOK_URL,
+                THREAD_ID,
                 username=author_name,
                 avatar_url=icon_url,
-                content=video_content
+                content=fallback_content
             )
-            
-            if not video_success:
-                log_message("Failed to send video link message", log_type="error")
-        
+            if not success:
+                log_message("Failed to send plain text fallback", log_type="error")
+                return
+                
         log_message("Message sent successfully.", log_type="new_message")
-        
     except Exception as e:
         log_message(f"Error preparing or sending message to Discord: {e}", log_type="error")
 
-def sendGroupedMediaMessage(msg_link, msg_text, images, videos, author_name, icon_url, timestamp=None):
-    try:
-        webhook = RateLimitedWebhook(WEBHOOK_URL)
-        
-        main_embed = Embed(title='Grouped Media Message Link', url=msg_link, color=EMBED_COLOR, timestamp=timestamp)
-        
-        description_parts = []
-        if msg_text:
-            description_parts.append(msg_text)
-        
-        description_parts.append(f"-# **Grouped Media:** {len(images)} images, {len(videos)} videos")
-        main_embed.description = '\n\n'.join(description_parts)
-        main_embed.set_author(name=author_name, icon_url=icon_url, url=msg_link)
-        
-        main_files = []
-        if images:
-            result = download_image(images[0])
-            if result and result[0] is not None and result[1] is not None:
-                image_data, image_filename = result
-                if image_data and image_filename:
-                    file = File(image_data, filename=image_filename)
-                    main_files.append(file)
-                    main_embed.set_image(url=f"attachment://{image_filename}")
-        
-        log_message(f"Sending grouped media main message: {msg_link}", log_type="new_message")
-        kwargs = {
-            'username': author_name,
-            'avatar_url': icon_url,
-            'embed': main_embed
-        }
-        if main_files:
-            kwargs['files'] = main_files
-            
-        success = webhook.send_with_rate_limiting(**kwargs)
-        
-        if not success:
-            log_message("Failed to send grouped media main message", log_type="error")
-            return
-        
-        for i, image_url in enumerate(images[1:], 2):
-            try:
-                result = download_image(image_url)
-                if result and result[0] is not None and result[1] is not None:
-                    image_data, image_filename = result
-                    if image_data and image_filename:
-                        image_embed = Embed(
-                            title='Message Link',
-                            url=msg_link,
-                            color=EMBED_COLOR,
-                            timestamp=timestamp
-                        )
-                        
-                        if msg_text:
-                            image_embed.description = msg_text[:4096]
-                            
-                        image_embed.set_author(name=author_name, icon_url=icon_url, url=msg_link)
-                        image_embed.set_footer(text=f'Image {i} of {len(images)}')
-                        image_embed.set_image(url=f"attachment://{image_filename}")
-                        
-                        image_file = File(image_data, filename=image_filename)
-                        
-                        success = webhook.send_with_rate_limiting(
-                            username=author_name,
-                            avatar_url=icon_url,
-                            embed=image_embed,
-                            files=[image_file]
-                        )
-                        
-                        if not success:
-                            log_message(f"Failed to send image {i}", log_type="error")
-                            
-            except Exception as e:
-                log_message(f"Error sending image {i}: {e}", log_type="error")
-        
-        for i, video_url in enumerate(videos, 1):
-            try:
-                video_sent_as_attachment = False
-                
-                try:
-                    result = download_video(video_url)
-                    if result and result[0] is not None and result[1] is not None:
-                        video_data, video_filename = result
-                        log_message(f"Attempting to send video {i} as attachment: {video_url}", log_type="new_message")
-                        
-                        video_embed = Embed(
-                            title='Message Link',
-                            url=msg_link,
-                            color=EMBED_COLOR,
-                            timestamp=timestamp
-                        )
-                        
-                        if msg_text:
-                            video_embed.description = msg_text[:4096]
-                            
-                        video_embed.set_author(name=author_name, icon_url=icon_url, url=msg_link)
-                        video_embed.set_footer(text=f'Video {i} of {len(videos)}')
-                        
-                        assert video_data is not None and video_filename is not None
-                        video_file = File(video_data, filename=video_filename)
-                        
-                        success = webhook.send_with_rate_limiting(
-                            username=author_name,
-                            avatar_url=icon_url,
-                            embed=video_embed,
-                            files=[video_file]
-                        )
-                        
-                        if success:
-                            video_sent_as_attachment = True
-                            log_message(f"Video {i} sent successfully as attachment", log_type="new_message")
-                        else:
-                            log_message(f"Failed to send video {i} as attachment, will try link", log_type="error")
-                            
-                except Exception as e:
-                    log_message(f"Failed to send video {i} as attachment, falling back to link: {e}", log_type="error")
-                
-                if not video_sent_as_attachment:
-                    video_content = f"**Video** [**{i}**]({video_url}) of {len(videos)}\n[Message Link](<{msg_link}>)"
-                    
-                    success = webhook.send_with_rate_limiting(
-                        username=author_name,
-                        avatar_url=icon_url,
-                        content=video_content
-                    )
-                    
-                    if not success:
-                        log_message(f"Failed to send video {i} link", log_type="error")
-                        
-            except Exception as e:
-                log_message(f"Error sending video {i}: {e}", log_type="error")
-        
-        log_message(f"Grouped media message sent successfully: {len(images)} images, {len(videos)} videos", log_type="new_message")
-        
-    except Exception as e:
-        log_message(f"Error sending grouped media message: {e}", log_type="error")
-
-def sendMissingMessages(channel, last_number, current_number, author_name, icon_url, timestamp):
-    for missing_number in range(last_number + 1, current_number):
-        missing_link = f"https://t.me/{channel}/{missing_number}"
-        log_message(f"Sending placeholder for missing message: {missing_link}", log_type="error")
-        sendMessage(missing_link, ERROR_PLACEHOLDER, None, None, author_name, icon_url, timestamp=timestamp)
-
-def sendMissingMessagesFiltered(channel, missing_numbers, author_name, icon_url, timestamp):
-    """Send placeholders for specific missing message numbers (filtered to exclude grouped media components)"""
+def sendMissingMessages(channel: str, missing_numbers: list[int], author_name: str, icon_url: str | None, timestamp: datetime.datetime | None) -> None:
+    """Send placeholders for specific missing message numbers."""
     for missing_number in missing_numbers:
         missing_link = f"https://t.me/{channel}/{missing_number}"
         log_message(f"Sending placeholder for missing message: {missing_link}", log_type="error")
         sendMessage(missing_link, ERROR_PLACEHOLDER, None, None, author_name, icon_url, timestamp=timestamp)
 
-def main(tg_channel):
+def main(tg_channel: str) -> None:
     SCRIPT_START_TIME = datetime.datetime.now()
     msg_log = []
     last_processed_number = 0
-    grouped_media_ranges = set()  # Track message numbers that are part of grouped media
+    grouped_media_ranges = set()
     log_message(f"Starting bot for channel: {tg_channel}", log_type="status2")
 
     while True:
@@ -641,7 +502,6 @@ def main(tg_channel):
                 icon_url = getAuthorIcon(tg_box)
                 timestamp = getTimestamp(tg_box)
 
-                # Check if this message is part of a grouped media we already processed
                 if current_number in grouped_media_ranges:
                     log_message(f"Skipping grouped media component: {msg_link}", log_type="status2")
                     msg_temp.append(msg_link)
@@ -649,14 +509,9 @@ def main(tg_channel):
                     continue
 
                 if last_processed_number > 0 and current_number > last_processed_number + 1:
-                    # Filter out grouped media components from missing messages
-                    filtered_missing = []
-                    for missing_num in range(last_processed_number + 1, current_number):
-                        if missing_num not in grouped_media_ranges:
-                            filtered_missing.append(missing_num)
-                    
+                    filtered_missing = [num for num in range(last_processed_number + 1, current_number) if num not in grouped_media_ranges]
                     if filtered_missing:
-                        sendMissingMessagesFiltered(tg_channel, filtered_missing, author_name, icon_url, timestamp)
+                        sendMissingMessages(tg_channel, filtered_missing, author_name, icon_url, timestamp)
 
                 if is_message_logged(tg_channel, current_number):
                     log_message(f"Skipping already logged message: {msg_link}", log_type="status2")
@@ -666,14 +521,10 @@ def main(tg_channel):
                 msg_image = getImage(tg_box)
                 msg_video = getVideo(tg_box)
                 
-                # Check for grouped media
                 all_images = getAllImages(tg_box)
                 all_videos = getAllVideos(tg_box)
-                
-                # Calculate total media count
                 total_media = len(all_images) + len(all_videos)
                 
-                # For grouped media messages, if no text found in the box, try individual message URL
                 if total_media > 1 and not msg_text:
                     log_message(f"Grouped media detected with no text, trying individual message URL: {msg_link}", log_type="status2")
                     msg_text = getTextFromIndividualMessage(msg_link)
@@ -684,10 +535,9 @@ def main(tg_channel):
                     log_message(f"New message found: {msg_link}", log_type="new_message")
                     msg_temp.append(msg_link)
                     
-                    # If this is grouped media, mark the component message numbers
                     if total_media > 1:
                         log_message(f"Marking grouped media range: {current_number} + {total_media-1} components", log_type="status2")
-                        for i in range(1, total_media):  # Skip first message (already processed), mark next N-1
+                        for i in range(1, total_media):
                             grouped_media_ranges.add(current_number + i)
                     
                     sendMessage(msg_link, msg_text, msg_image, msg_video, author_name, icon_url, timestamp=timestamp, all_images=all_images, all_videos=all_videos)
@@ -696,7 +546,6 @@ def main(tg_channel):
                 last_processed_number = current_number
 
             msg_log = msg_temp
-
             current_time = datetime.datetime.now()
             time_passed = current_time - SCRIPT_START_TIME
             log_message(f"Bot working for {tg_channel}. Time passed: {time_passed}", log_type="status")

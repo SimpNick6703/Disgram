@@ -6,6 +6,8 @@ import time
 import threading
 import subprocess
 import logging
+import jwt
+import requests
 from typing import Optional
 from datetime import datetime
 
@@ -19,6 +21,7 @@ def sanitize_url_for_logging(url: str) -> str:
     import re
     sanitized = re.sub(r'github_pat_[A-Za-z0-9_]+', '[REDACTED]', url)
     sanitized = re.sub(r'ghp_[A-Za-z0-9_]+', '[REDACTED]', sanitized)
+    sanitized = re.sub(r'ghs_[A-Za-z0-9_]+', '[REDACTED]', sanitized)
     sanitized = re.sub(r'://[^@\s]+@', '://[REDACTED]@', sanitized)
     
     return sanitized
@@ -26,6 +29,10 @@ def sanitize_url_for_logging(url: str) -> str:
 class GitLogManager:
     def __init__(self, github_token: Optional[str] = None, commit_interval: int = 2700):
         self.github_token = github_token
+        self.github_app_token = None
+        self.github_app_token_expires_at = 0.0
+        self.github_app_commit_name = None
+        self.github_app_commit_email = None
         self.commit_interval = commit_interval
         self.local_log_path = "Disgram.log"
         self.commit_lock = threading.Lock()
@@ -42,7 +49,7 @@ class GitLogManager:
             logger.info(f"Recent commit detected, extending cooldown by {self.startup_grace//60} minutes")
             self.last_commit_time = current_time
         
-        if self.github_token:
+        if self.github_token or os.getenv("GITHUB_APP_ID") or os.getenv("GITHUB_APP_CLIENT_ID"):
             self._configure_git_auth()
         
         self.commit_thread = threading.Thread(target=self._background_commit, daemon=True)
@@ -123,18 +130,152 @@ class GitLogManager:
             return current_hour in self.custom_hours
         else:
             return True
-    
+    def _get_github_app_token(self) -> Optional[str]:
+        """Generate/fetch a GitHub App installation token, refreshing if necessary"""
+        current_time = time.time()
+        # If we have a cached token that is still valid for at least 5 minutes, use it
+        if self.github_app_token and self.github_app_token_expires_at > (current_time + 300):
+            return self.github_app_token
+            
+        github_app_id = os.getenv("GITHUB_APP_ID") or os.getenv("GITHUB_APP_CLIENT_ID")
+        installation_id = os.getenv("GITHUB_APP_INSTALLATION_ID")
+        private_key_path = os.getenv("GITHUB_APP_PRIVATE_KEY_PATH")
+        private_key_content = os.getenv("GITHUB_APP_PRIVATE_KEY")
+        
+        if not github_app_id or not installation_id:
+            return None
+            
+        private_key = None
+        if private_key_path and os.path.exists(private_key_path):
+            try:
+                with open(private_key_path, "r", encoding="utf-8") as f:
+                    private_key = f.read()
+            except Exception as e:
+                logger.error(f"Error reading private key file from {private_key_path}: {e}")
+        elif private_key_content:
+            # Strip quotes if present
+            private_key_content = private_key_content.strip('"\'')
+            private_key = private_key_content.replace("\\n", "\n")
+            
+        if not private_key:
+            logger.error("GitHub App config found but no private key loaded (check GITHUB_APP_PRIVATE_KEY_PATH or GITHUB_APP_PRIVATE_KEY)")
+            return None
+            
+        try:
+            from datetime import datetime, timezone
+            
+            payload = {
+                'iat': int(current_time) - 60,
+                'exp': int(current_time) + 540,  # 9 minutes
+                'iss': int(github_app_id) if github_app_id.isdigit() else github_app_id
+            }
+            
+            # Sign JWT
+            jwt_token = jwt.encode(payload, private_key, algorithm='RS256')
+            
+            # Get installation access token
+            url = f"https://api.github.com/app/installations/{installation_id}/access_tokens"
+            headers = {
+                "Authorization": f"Bearer {jwt_token}",
+                "Accept": "application/vnd.github+json",
+                "User-Agent": "Disgram-Bot"
+            }
+            
+            response = requests.post(url, headers=headers, timeout=10)
+            if response.status_code == 201:
+                data = response.json()
+                token = data.get("token")
+                expires_at = data.get("expires_at")  # e.g., '2026-06-26T19:00:00Z'
+                
+                if token and expires_at:
+                    self.github_app_token = token
+                    try:
+                        expires_at = expires_at.replace("Z", "+00:00")
+                        expires_dt = datetime.fromisoformat(expires_at)
+                        self.github_app_token_expires_at = expires_dt.timestamp()
+                    except Exception as e:
+                        logger.warning(f"Error parsing token expiration {expires_at}: {e}. Fallback to 1 hour.")
+                        self.github_app_token_expires_at = current_time + 3600
+                        
+                    logger.info("Successfully generated new GitHub App installation token")
+                    self._fetch_app_bot_identity(jwt_token)
+                    return self.github_app_token
+                else:
+                    logger.error("Token or expiration missing in GitHub API response")
+            else:
+                logger.error(f"Failed to get GitHub App access token: {response.status_code} - {response.text}")
+                
+        except Exception as e:
+            logger.error(f"Unexpected error generating GitHub App token: {e}")
+            
+        return None
+
+    def _fetch_app_bot_identity(self, jwt_token: str):
+        """Fetch GitHub App metadata to construct proper bot commit identity"""
+        if self.github_app_commit_name:
+            return
+        try:
+            headers = {
+                "Authorization": f"Bearer {jwt_token}",
+                "Accept": "application/vnd.github+json",
+                "User-Agent": "Disgram-Bot"
+            }
+            app_resp = requests.get("https://api.github.com/app", headers=headers, timeout=10)
+            if app_resp.status_code != 200:
+                logger.warning(f"Could not fetch GitHub App info: {app_resp.status_code}")
+                return
+            app_data = app_resp.json()
+            app_slug = app_data.get("slug", "")
+            if not app_slug:
+                logger.warning("GitHub App slug not found in API response")
+                return
+
+            bot_username = f"{app_slug}[bot]"
+            user_resp = requests.get(
+                f"https://api.github.com/users/{bot_username}",
+                headers={"Accept": "application/vnd.github+json", "User-Agent": "Disgram-Bot"},
+                timeout=10
+            )
+            if user_resp.status_code == 200:
+                bot_user_id = user_resp.json().get("id")
+                self.github_app_commit_name = bot_username
+                self.github_app_commit_email = f"{bot_user_id}+{bot_username}@users.noreply.github.com"
+                logger.info(f"GitHub App bot identity resolved: {self.github_app_commit_name} <{self.github_app_commit_email}>")
+            else:
+                logger.warning(f"Could not resolve bot user '{bot_username}': {user_resp.status_code}")
+        except Exception as e:
+            logger.warning(f"Error fetching GitHub App bot identity: {e}")
+
+    def _get_git_token(self) -> Optional[str]:
+        """Get git token, dynamically generating GitHub App token if configured"""
+        github_app_id = os.getenv("GITHUB_APP_ID") or os.getenv("GITHUB_APP_CLIENT_ID")
+        installation_id = os.getenv("GITHUB_APP_INSTALLATION_ID")
+        
+        if github_app_id and installation_id:
+            app_token = self._get_github_app_token()
+            if app_token:
+                return app_token
+        return self.github_token
+
     def _configure_git_auth(self):
         """Configure git authentication using GitHub token"""
         try:
-            subprocess.run(["git", "config", "user.name", "Disgram-Bot"], 
-                          cwd=".", capture_output=True, text=True, check=True)
-            subprocess.run(["git", "config", "user.email", "2304680+Disgram-Bot[bot]@users.noreply.github.com"], 
-                          cwd=".", capture_output=True, text=True, check=True)
-            
+            token = self._get_git_token()
+            if not token:
+                logger.warning("No token available for git configuration")
+                return
+                
+            is_app_token = token.startswith("ghs_")
+            if is_app_token:
+                username = "x-access-token"
+                password = token
+            else:
+                username = token
+                password = ""
+                
             subprocess.run([
                 "git", "config", "credential.helper", 
-                f"!f() {{ echo \"username={self.github_token}\"; echo \"password=\"; }}; f"
+                f"!f() {{ echo \"username={username}\"; echo \"password={password}\"; }}; f"
             ], cwd=".", capture_output=True, text=True, check=True)
             
             result = subprocess.run(["git", "remote", "get-url", "origin"], 
@@ -219,6 +360,7 @@ class GitLogManager:
     
     def _sync_with_remote(self) -> bool:
         """Safely sync with remote repository, handling branch tracking issues"""
+        self._configure_git_auth()
         try:
             branch_result = subprocess.run(["git", "branch", "--show-current"], 
                                          cwd=".", capture_output=True, text=True)
@@ -266,6 +408,7 @@ class GitLogManager:
     
     def _push_changes(self) -> bool:
         """Push changes to remote repository with proper error handling"""
+        self._configure_git_auth()
         try:
             branch_result = subprocess.run(["git", "branch", "--show-current"], 
                                          cwd=".", capture_output=True, text=True)
@@ -318,8 +461,8 @@ class GitLogManager:
     
     def commit_changes(self, force: bool = False) -> bool:
         """Commit and push log file changes to repository"""
-        if not self.github_token:
-            logger.debug("No GitHub token configured - skipping commit")
+        if not self.github_token and not os.getenv("GITHUB_APP_ID") and not os.getenv("GITHUB_APP_CLIENT_ID"):
+            logger.debug("No GitHub token or App ID configured - skipping commit")
             return False
         
         if not force:
@@ -370,10 +513,17 @@ class GitLogManager:
             else:
                 commit_message = f"Auto-commit: Update log files ({', '.join(changed_log_files)}) - {timestamp}"
             
+            env = os.environ.copy()
+            commit_name = self.github_app_commit_name or 'Disgram Bot'
+            commit_email = self.github_app_commit_email or 'disgram@bot.local'
+            env['GIT_AUTHOR_NAME'] = commit_name
+            env['GIT_AUTHOR_EMAIL'] = commit_email
+            env['GIT_COMMITTER_NAME'] = commit_name
+            env['GIT_COMMITTER_EMAIL'] = commit_email
             subprocess.run(["git", "commit", "-m", commit_message], 
-                          cwd=".", capture_output=True, text=True, check=True)
+                          cwd=".", env=env, capture_output=True, text=True, check=True)
             
-            if self.github_token:
+            if self.github_token or os.getenv("GITHUB_APP_ID") or os.getenv("GITHUB_APP_CLIENT_ID"):
                 push_success = self._push_changes()
                 if push_success:
                     total_size = sum(os.path.getsize(f) for f in log_files if os.path.exists(f))
@@ -384,7 +534,7 @@ class GitLogManager:
                     logger.error("Commit successful but push failed")
                     return False
             else:
-                logger.info(f"Files committed locally (no GitHub token configured for push)")
+                logger.info(f"Files committed locally (no GitHub token or App ID configured for push)")
                 self.last_commit_time = time.time()
                 return True
                 
@@ -399,6 +549,7 @@ class GitLogManager:
     
     def pull_latest_log(self) -> bool:
         """Pull the latest version of the repository to get updated log file"""
+        self._configure_git_auth()
         try:
             branch_result = subprocess.run(["git", "branch", "--show-current"], 
                                          cwd=".", capture_output=True, text=True)
@@ -542,6 +693,7 @@ class GitLogManager:
                     "next_commit_in_seconds": max(0, self.commit_interval - time_since_commit)
                 }
             
+            has_token = self.github_token is not None or os.getenv("GITHUB_APP_ID") is not None or os.getenv("GITHUB_APP_CLIENT_ID") is not None
             return {
                 "git_available": True,
                 "commit_mode": self.commit_mode,
@@ -551,28 +703,34 @@ class GitLogManager:
                 "last_commit_hash": last_commit_hash,
                 "last_commit_date": last_commit_date,
                 "last_commit_message": last_commit_message,
-                "github_token_configured": self.github_token is not None,
+                "github_token_configured": has_token,
                 **next_commit_info
             }
             
         except Exception as e:
+            has_token = self.github_token is not None or os.getenv("GITHUB_APP_ID") is not None or os.getenv("GITHUB_APP_CLIENT_ID") is not None
             return {
                 "git_available": False,
                 "error": str(e),
                 "commit_mode": self.commit_mode,
                 "last_commit_time": self.last_commit_time,
-                "github_token_configured": self.github_token is not None
+                "github_token_configured": has_token
             }
 
 git_log_manager: Optional[GitLogManager] = None
 
 def initialize_git_manager():
-    """Initialize Git manager if GitHub token is available"""
+    """Initialize Git manager if GitHub token or App config is available"""
     global git_log_manager
     
     github_token = os.getenv("GITHUB_TOKEN")
+    github_app_id = os.getenv("GITHUB_APP_ID") or os.getenv("GITHUB_APP_CLIENT_ID")
     commit_interval = int(os.getenv("LOG_COMMIT_INTERVAL", "2700"))
     
+    if not github_token and not github_app_id:
+        logger.info("Neither GITHUB_TOKEN nor GITHUB_APP_ID/GITHUB_APP_CLIENT_ID configured - git manager will not be initialized")
+        return
+        
     try:
         git_log_manager = GitLogManager(github_token, commit_interval)
         logger.info(f"Git log manager initialized successfully (commit interval: {commit_interval//60} minutes)")
