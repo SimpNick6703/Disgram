@@ -101,6 +101,17 @@ if command -v git &> /dev/null; then
     else
         echo "Git repository already exists"
         
+        # Configure/verify origin URL if GITHUB_REPO_URL is provided
+        if [ ! -z "$GITHUB_REPO_URL" ]; then
+            if git remote | grep -q "^origin$"; then
+                echo "Updating Git remote origin URL to $GITHUB_REPO_URL..."
+                git remote set-url origin "$GITHUB_REPO_URL"
+            else
+                echo "Adding Git remote origin URL $GITHUB_REPO_URL..."
+                git remote add origin "$GITHUB_REPO_URL"
+            fi
+        fi
+        
         # Ensure we're on the correct branch (not detached HEAD)
         DEPLOY_BRANCH=${GITHUB_DEPLOY_BRANCH:-azure-prod}
         CURRENT_BRANCH=$(git branch --show-current 2>/dev/null || echo "")

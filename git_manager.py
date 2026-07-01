@@ -167,7 +167,7 @@ class GitLogManager:
             payload = {
                 'iat': int(current_time) - 60,
                 'exp': int(current_time) + 540,  # 9 minutes
-                'iss': int(github_app_id) if github_app_id.isdigit() else github_app_id
+                'iss': str(github_app_id)
             }
             
             # Sign JWT
