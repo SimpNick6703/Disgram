@@ -229,11 +229,10 @@ class GitLogManager:
             if not app_slug:
                 logger.warning("GitHub App slug not found in API response")
                 return
-
             bot_username = f"{app_slug}[bot]"
             user_resp = requests.get(
                 f"https://api.github.com/users/{bot_username}",
-                headers={"Accept": "application/vnd.github+json", "User-Agent": "Disgram-Bot"},
+                headers=headers,
                 timeout=10
             )
             if user_resp.status_code == 200:
@@ -723,10 +722,15 @@ def initialize_git_manager():
     """Initialize Git manager if GitHub token or App config is available"""
     global git_log_manager
     
+    use_git = os.getenv("USE_GIT", "true").lower() == "true"
     github_token = os.getenv("GITHUB_TOKEN")
     github_app_id = os.getenv("GITHUB_APP_ID") or os.getenv("GITHUB_APP_CLIENT_ID")
     commit_interval = int(os.getenv("LOG_COMMIT_INTERVAL", "2700"))
     
+    if not use_git:
+        logger.info("Git persistence explicitly disabled via USE_GIT - skipping initialization")
+        return
+        
     if not github_token and not github_app_id:
         logger.info("Neither GITHUB_TOKEN nor GITHUB_APP_ID/GITHUB_APP_CLIENT_ID configured - git manager will not be initialized")
         return

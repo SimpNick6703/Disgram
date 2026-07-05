@@ -11,7 +11,7 @@ import discord
 from discord import SyncWebhook, Embed, File
 from discord.ui import LayoutView, Container, TextDisplay, MediaGallery
 import concurrent.futures
-from config import WEBHOOK_URL, THREAD_ID, COOLDOWN, EMBED_COLOR, ERROR_PLACEHOLDER
+from config import WEBHOOK_URL, THREAD_ID, COOLDOWN, EMBED_COLOR
 
 TELEGRAM_HEADERS = {"User-Agent": "Mozilla/5.0 (compatible; Disgram/2.0)"}
 MAX_MEDIA_WORKERS = 8
@@ -357,6 +357,8 @@ def sendMessage(msg_link: str, msg_text: str | None, media_items: list[dict],
     for item in media_items:
         if item['type'] in ('image', 'video'):
             download_list.append((item['type'], item['url']))
+        elif item['type'] == 'video_too_large':
+            download_list.append(('image', item['url']))
             
     # Capped at first 10 items since Discord CV2 gallery limit is 10
     media_items = media_items[:10]
@@ -380,15 +382,28 @@ def sendMessage(msg_link: str, msg_text: str | None, media_items: list[dict],
         
         if itype == 'video_too_large':
             duration = item.get('duration', '0:00')
-            gallery_items.append(discord.MediaGalleryItem(url, description=f"Media is too big ({duration})"))
-            media_status.append({
-                'type': itype,
-                'url': url,
-                'duration': duration,
-                'data': None,
-                'filename': None,
-                'attached': False
-            })
+            data, filename = downloaded_map.get(url, (None, None))
+            if data and filename:
+                files.append(File(data, filename=filename))
+                gallery_items.append(discord.MediaGalleryItem(f"attachment://{filename}", description=f"Media is too big ({duration})"))
+                media_status.append({
+                    'type': itype,
+                    'url': url,
+                    'duration': duration,
+                    'data': data,
+                    'filename': filename,
+                    'attached': True
+                })
+            else:
+                gallery_items.append(discord.MediaGalleryItem(url, description=f"Media is too big ({duration})"))
+                media_status.append({
+                    'type': itype,
+                    'url': url,
+                    'duration': duration,
+                    'data': None,
+                    'filename': None,
+                    'attached': False
+                })
         else:
             data, filename = downloaded_map.get(url, (None, None))
             if data and filename:
@@ -476,7 +491,10 @@ def sendMessage(msg_link: str, msg_text: str | None, media_items: list[dict],
                             fallback_gallery_items.append(discord.MediaGalleryItem(item['url']))
                             continue
                     fallback_files.append(File(item['data'], filename=item['filename']))
-                    fallback_gallery_items.append(discord.MediaGalleryItem(f"attachment://{item['filename']}"))
+                    if itype == 'video_too_large':
+                        fallback_gallery_items.append(discord.MediaGalleryItem(f"attachment://{item['filename']}", description=f"Media is too big ({item['duration']})"))
+                    else:
+                        fallback_gallery_items.append(discord.MediaGalleryItem(f"attachment://{item['filename']}"))
                 elif itype == 'video_too_large':
                     fallback_gallery_items.append(discord.MediaGalleryItem(item['url'], description=f"Media is too big ({item['duration']})"))
                 else:
