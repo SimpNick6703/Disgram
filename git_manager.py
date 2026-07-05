@@ -230,9 +230,15 @@ class GitLogManager:
                 logger.warning("GitHub App slug not found in API response")
                 return
             bot_username = f"{app_slug}[bot]"
+            bot_headers = {
+                "Accept": "application/vnd.github+json",
+                "User-Agent": "Disgram-Bot"
+            }
+            if self.github_app_token:
+                bot_headers["Authorization"] = f"token {self.github_app_token}"
             user_resp = requests.get(
                 f"https://api.github.com/users/{bot_username}",
-                headers=headers,
+                headers=bot_headers,
                 timeout=10
             )
             if user_resp.status_code == 200:
