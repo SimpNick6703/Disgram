@@ -267,8 +267,8 @@ def getTimestamp(tg_box) -> datetime.datetime | None:
         return parser.isoparse(time_element['datetime'])
     return None
 
-def download_file(url: str | None, prefix: str, ext_fallback: str, index: int = 0, timeout: int = 10) -> tuple[io.BytesIO | None, str | None]:
-    """Download a file from url and return a BytesIO object and filename."""
+def download_file(url: str | None, prefix: str, ext_fallback: str, index: int = 0, timeout: int = 10) -> tuple[bytes | None, str | None]:
+    """Download a file from url and return raw bytes and filename."""
     if not url:
         return None, None
     max_retries = 3
@@ -293,7 +293,7 @@ def download_file(url: str | None, prefix: str, ext_fallback: str, index: int = 
             import uuid
             unique_id = uuid.uuid4().hex[:8]
             filename = f"{prefix}_{int(time.time())}_{unique_id}_{index}_{attempt}{ext}"
-            return io.BytesIO(content_bytes), filename
+            return content_bytes, filename
         except Exception as e:
             log_message(f"Error downloading {prefix}: {e}", log_type="error")
             if attempt < max_retries - 1:
@@ -301,11 +301,11 @@ def download_file(url: str | None, prefix: str, ext_fallback: str, index: int = 
                 retry_delay *= 2
     return None, None
 
-def download_image(url: str | None, index: int = 0) -> tuple[io.BytesIO | None, str | None]:
+def download_image(url: str | None, index: int = 0) -> tuple[bytes | None, str | None]:
     """Download an image file."""
     return download_file(url, "img", "jpg", index=index, timeout=10)
 
-def download_video(url: str | None, index: int = 0) -> tuple[io.BytesIO | None, str | None]:
+def download_video(url: str | None, index: int = 0) -> tuple[bytes | None, str | None]:
     """Download a video file."""
     return download_file(url, "video", "mp4", index=index, timeout=30)
 
@@ -326,11 +326,11 @@ def send_webhook_message(webhook_url: str, thread_id: str | None = None, **kwarg
         log_message(f"Error sending message to Discord: {e}", log_type="error")
         return False, False
 
-def download_media_concurrently(media_list: list[tuple[str, str]]) -> list[tuple[str, io.BytesIO | None, str | None]]:
+def download_media_concurrently(media_list: list[tuple[str, str]]) -> list[tuple[str, bytes | None, str | None]]:
     """Download multiple media files concurrently while preserving their original order.
     media_list is a list of (media_type, url) tuples.
-    Returns a list of (url, bytes_io, filename) tuples."""
-    def download_one(args: tuple[int, str, str]) -> tuple[str, io.BytesIO | None, str | None]:
+    Returns a list of (url, bytes, filename) tuples."""
+    def download_one(args: tuple[int, str, str]) -> tuple[str, bytes | None, str | None]:
         index, media_type, url = args
         try:
             if media_type == 'image':
@@ -384,7 +384,7 @@ def sendMessage(msg_link: str, msg_text: str | None, media_items: list[dict],
             duration = item.get('duration', '0:00')
             data, filename = downloaded_map.get(url, (None, None))
             if data and filename:
-                files.append(File(data, filename=filename))
+                files.append(File(io.BytesIO(data), filename=filename))
                 gallery_items.append(discord.MediaGalleryItem(f"attachment://{filename}", description=f"Media is too big ({duration})"))
                 media_status.append({
                     'type': itype,
@@ -407,7 +407,7 @@ def sendMessage(msg_link: str, msg_text: str | None, media_items: list[dict],
         else:
             data, filename = downloaded_map.get(url, (None, None))
             if data and filename:
-                files.append(File(data, filename=filename))
+                files.append(File(io.BytesIO(data), filename=filename))
                 gallery_items.append(discord.MediaGalleryItem(f"attachment://{filename}"))
                 media_status.append({
                     'type': itype,
@@ -473,10 +473,7 @@ def sendMessage(msg_link: str, msg_text: str | None, media_items: list[dict],
         if not success and too_large:
             log_message("Payload too large, applying targeted video fallback (replacing videos with CDN URLs)...", log_type="new_message")
             
-            # Reset BytesIO streams before retry to prevent empty bytes read
-            for item in media_status:
-                if item['data']:
-                    item['data'].seek(0)
+            # Streams are dynamically generated from raw bytes, no need to reset seek(0)
                     
             fallback_files = []
             fallback_gallery_items = []
@@ -485,12 +482,12 @@ def sendMessage(msg_link: str, msg_text: str | None, media_items: list[dict],
                 itype = item['type']
                 if item['attached']:
                     if itype == 'video':
-                        video_size = len(item['data'].getvalue())
+                        video_size = len(item['data'])
                         if video_size > 10 * 1024 * 1024:
                             log_message(f"Video {item['filename']} is too large ({video_size / (1024*1024):.2f} MB), replacing with CDN URL.", log_type="new_message")
                             fallback_gallery_items.append(discord.MediaGalleryItem(item['url']))
                             continue
-                    fallback_files.append(File(item['data'], filename=item['filename']))
+                    fallback_files.append(File(io.BytesIO(item['data']), filename=item['filename']))
                     if itype == 'video_too_large':
                         fallback_gallery_items.append(discord.MediaGalleryItem(f"attachment://{item['filename']}", description=f"Media is too big ({item['duration']})"))
                     else:
@@ -527,9 +524,12 @@ def sendMessage(msg_link: str, msg_text: str | None, media_items: list[dict],
             for item in media_status:
                 content_parts.append(item['url'])
             content_parts.append(f"[Message Link](<{msg_link}>) at <t:{unix_time}:f>")
-            
             fallback_content = "\n\n".join(content_parts)
-            
+            if len(fallback_content) > 4000:
+                link_part = f"[Message Link](<{msg_link}>) at <t:{unix_time}:f>"
+                allowed_len = 4000 - len(link_part) - 10
+                rest = "\n\n".join(content_parts[:-1])
+                fallback_content = rest[:allowed_len] + "...\n\n" + link_part
             success, _ = send_webhook_message(
                 WEBHOOK_URL,
                 THREAD_ID,
