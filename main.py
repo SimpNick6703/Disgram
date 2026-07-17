@@ -9,8 +9,8 @@ import requests
 import re
 import logging
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from flask import Flask, jsonify, Response
-from config import Channels, WEBHOOK_URL, THREAD_ID, COOLDOWN
+from flask import Flask, jsonify, Response, request
+from config import Channels, WEBHOOK_URL, THREAD_ID, COOLDOWN, API_BEARER_TOKEN
 from git_manager import initialize_git_manager
 
 def get_git_manager():
@@ -58,6 +58,21 @@ last_health_check = None
 health_status = {"status": "starting", "details": {}}
 
 app = Flask(__name__)
+
+def verify_bearer_token():
+    """Verify Bearer token for administrative POST endpoints."""
+    if not API_BEARER_TOKEN:
+        return False, (jsonify({"error": "Unauthorized: API Bearer Token is not configured on server"}), 401)
+        
+    auth_header = request.headers.get("Authorization")
+    if not auth_header or not auth_header.startswith("Bearer "):
+        return False, (jsonify({"error": "Unauthorized: Missing Authorization header"}), 401)
+        
+    provided_token = auth_header.split("Bearer ", 1)[1].strip()
+    if provided_token != API_BEARER_TOKEN:
+        return False, (jsonify({"error": "Forbidden: Invalid Bearer Token"}), 403)
+        
+    return True, None
 
 def initialize_disgram_log():
     existing_links = set()
@@ -123,7 +138,8 @@ _ext_check_cache = {
     "last_check_time": 0.0,
     "telegram_ok": False,
     "discord_ok": False,
-    "discord_msg": "Not checked yet"
+    "discord_msg": "Not checked yet",
+    "telethon_ok": False
 }
 _ext_check_lock = threading.Lock()
 
@@ -137,14 +153,18 @@ def get_cached_external_checks():
             telegram_ok = check_telegram_connectivity()
             discord_ok, discord_msg = check_discord_webhook()
             
+            from telethon_client import check_telethon_health
+            telethon_ok = check_telethon_health()
+            
             _ext_check_cache.update({
                 "last_check_time": current_time,
                 "telegram_ok": telegram_ok,
                 "discord_ok": discord_ok,
-                "discord_msg": discord_msg
+                "discord_msg": discord_msg,
+                "telethon_ok": telethon_ok
             })
         
-        return _ext_check_cache["telegram_ok"], _ext_check_cache["discord_ok"], _ext_check_cache["discord_msg"]
+        return _ext_check_cache["telegram_ok"], _ext_check_cache["discord_ok"], _ext_check_cache["discord_msg"], _ext_check_cache["telethon_ok"]
 
 def check_log_freshness():
     log_file_path = "Disgram.log"
@@ -190,7 +210,7 @@ def restart_all_processes():
     """Restart all bot processes when they appear to be zombified"""
     global processes, bot_start_time
     
-    print("⚠️  Log freshness check failed - restarting all bot processes...")
+    logger.warning("Log freshness check failed - restarting all bot processes...")
     
     # Terminate existing processes
     for process in processes:
@@ -201,7 +221,7 @@ def restart_all_processes():
             except subprocess.TimeoutExpired:
                 process.kill()
             except Exception as e:
-                print(f"Error terminating process: {e}")
+                logger.error(f"Error terminating process: {e}")
     
     # Clear the processes list
     processes.clear()
@@ -209,7 +229,7 @@ def restart_all_processes():
     # Restart all processes
     start_bot_processes()
     
-    print(f"✅ Restarted {len(processes)} bot processes due to stale logs")
+    logger.info(f"Restarted {len(processes)} bot processes due to stale logs")
 
 @app.route('/health')
 def health_check():
@@ -244,7 +264,7 @@ def health_check():
         
         # Collect results
         alive_count, dead_processes = future_process_health.result()
-        telegram_ok, discord_ok, discord_msg = future_external.result()
+        telegram_ok, discord_ok, discord_msg, telethon_ok = future_external.result()
         log_fresh, log_msg, log_last_modified = future_log.result()
         system_stats = future_system.result()
         git_commit_status = future_git.result()
@@ -275,6 +295,7 @@ def health_check():
         },
         "external_services": {
             "telegram_reachable": telegram_ok,
+            "telethon_authorized": telethon_ok,
             "discord_webhook": {
                 "accessible": discord_ok,
                 "message": discord_msg
@@ -350,6 +371,10 @@ def view_logs():
 @app.route('/logs/clear', methods=['POST'])
 def clear_disgram_log():
     """Clear the contents of Disgram.log while preserving latest message links for each channel"""
+    is_valid, error_response = verify_bearer_token()
+    if not is_valid:
+        return error_response
+        
     try:
         log_file_path = "Disgram.log"
         
@@ -457,6 +482,10 @@ def view_app_logs():
 @app.route('/force-commit', methods=['POST'])
 def force_commit():
     """Endpoint to force immediate commit of all changes to repository"""
+    is_valid, error_response = verify_bearer_token()
+    if not is_valid:
+        return error_response
+
     git_manager = get_git_manager()
     
     if not git_manager:
@@ -505,25 +534,25 @@ def start_bot_processes():
     # Initialize Disgram.log with channel/message links from environment
     initialize_disgram_log()
     
-    print(f"Starting Disgram bot with {len(Channels)} channels...")
+    logger.info(f"Starting Disgram bot with {len(Channels)} channels...")
     
     try:
         for channel in Channels:
-            print(f"Starting bot for {channel}...")
+            logger.info(f"Starting bot for {channel}...")
             channel_name = extract_channel_name(channel)
             process = subprocess.Popen(
                 [sys.executable, "webhook.py", channel_name]
             )
             processes.append(process)
         
-        print(f"Started {len(processes)} bot processes successfully.")
+        logger.info(f"Started {len(processes)} bot processes successfully.")
         
     except Exception as e:
-        print(f"Error starting bot processes: {e}")
+        logger.error(f"Error starting bot processes: {e}")
 
 def run_flask_server():
     port = int(os.environ.get('PORT', 5000))
-    print(f"Starting health check server on port {port}...")
+    logger.info(f"Starting health check server on port {port}...")
     app.run(host='0.0.0.0', port=port, debug=False, use_reloader=False)
 
 if __name__ == "__main__":
@@ -549,12 +578,12 @@ if __name__ == "__main__":
             
             alive_count, dead_processes = check_process_health()
             if dead_processes:
-                print(f"Detected {len(dead_processes)} dead processes, restarting...")
+                logger.warning(f"Detected {len(dead_processes)} dead processes, restarting...")
                 for dead_idx in dead_processes:
                     if dead_idx < len(processes) and dead_idx < len(Channels):
                         channel = Channels[dead_idx]
                         channel_name = extract_channel_name(channel)
-                        print(f"Restarting process for {channel}...")
+                        logger.info(f"Restarting process for {channel}...")
                         
                         new_process = subprocess.Popen(
                             [sys.executable, "webhook.py", channel_name]
@@ -564,12 +593,12 @@ if __name__ == "__main__":
             # Check if logs are stale (indicates zombie processes)
             log_fresh, log_msg, log_last_modified = check_log_freshness()
             if not log_fresh and alive_count > 0:  # Only restart if we have processes that should be working
-                print(f"🚨 ZOMBIE PROCESSES DETECTED: {log_msg}")
-                print("All processes appear alive but logs are stale - restarting all processes...")
+                logger.warning(f"ZOMBIE PROCESSES DETECTED: {log_msg}")
+                logger.warning("All processes appear alive but logs are stale - restarting all processes...")
                 restart_all_processes()
             
     except KeyboardInterrupt:
-        print("\nShutting down all bots...")
+        logger.info("Shutting down all bots...")
         
         # Force final commit before shutdown
         git_manager = get_git_manager()
@@ -589,4 +618,4 @@ if __name__ == "__main__":
                     process.kill()
         
 
-        print("All bots have been stopped.")
+        logger.info("All bots have been stopped.")

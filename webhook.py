@@ -9,7 +9,7 @@ from dateutil import parser
 from bs4 import BeautifulSoup
 import discord
 from discord import SyncWebhook, Embed, File
-from discord.ui import LayoutView, Container, TextDisplay, MediaGallery
+from discord.ui import LayoutView, Container, TextDisplay, MediaGallery, File as UIFile
 import concurrent.futures
 from config import WEBHOOK_URL, THREAD_ID, COOLDOWN, EMBED_COLOR
 
@@ -348,88 +348,128 @@ def download_media_concurrently(media_list: list[tuple[str, str]]) -> list[tuple
         results = list(executor.map(download_one, indexed_media_list))
     return results
 
-def sendMessage(msg_link: str, msg_text: str | None, media_items: list[dict], 
+def sendMessage(channel: str, message_ids: list[int], msg_link: str, msg_text: str | None, media_items: list[dict], 
                 author_name: str, icon_url: str | None, timestamp: datetime.datetime | None = None,
                 documents: list[str] | None = None) -> None:
     """Send a Telegram message to Discord webhook using Components V2 (with thread support)."""
-    # 1. Build the list of media to download
-    download_list = []
-    for item in media_items:
-        if item['type'] in ('image', 'video'):
-            download_list.append((item['type'], item['url']))
-        elif item['type'] == 'video_too_large':
-            download_list.append(('image', item['url']))
-            
     # Capped at first 10 items since Discord CV2 gallery limit is 10
     media_items = media_items[:10]
+    message_ids = message_ids[:10]
     
-    # 2. Download concurrently
-    downloaded_map = {}
-    if download_list:
-        log_message(f"Downloading {len(download_list)} media files concurrently...", log_type="status2")
-        downloaded_results = download_media_concurrently(download_list)
-        for url, data, filename in downloaded_results:
-            downloaded_map[url] = (data, filename)
+    # 2. Download concurrently via Telethon
+    from telethon_client import get_telethon_media, TELETHON_CONFIGURED
+    
+    telethon_results = []
+    if TELETHON_CONFIGURED and (media_items or documents):
+        try:
+            log_message(f"Fetching original high-quality media via Telethon for message {message_ids}...", log_type="status2")
+            telethon_results = get_telethon_media(channel, message_ids)
+        except Exception as e:
+            log_message(f"Telethon fetch failed: {e}", log_type="status2")
+            telethon_results = []
+            
+    if not telethon_results and media_items:
+        log_message("Telethon media fetch skipped or failed. Falling back to HTML scraping...", log_type="status2")
+        download_list = []
+        for item in media_items:
+            if item['type'] in ('image', 'video'):
+                download_list.append((item['type'], item['url']))
+            elif item['type'] == 'video_too_large':
+                download_list.append(('image', item['url']))
+                
+        downloaded_map = {}
+        if download_list:
+            log_message(f"Downloading {len(download_list)} media files concurrently via HTML...", log_type="status2")
+            downloaded_results = download_media_concurrently(download_list)
+            for url, data, filename in downloaded_results:
+                downloaded_map[url] = (data, filename)
+                
+        for item in media_items:
+            itype = item['type']
+            url = item['url']
+            data, filename = downloaded_map.get(url, (None, None))
+            telethon_results.append({
+                'type': itype,
+                'data': data,
+                'filename': filename,
+                'is_spoiler': False,
+                'is_too_large': (itype == 'video_too_large')
+            })
             
     # 3. Build files list and gallery items
     files = []
     gallery_items = []
+    ui_files = []
     media_status = []
     
-    for item in media_items:
+    # If telethon couldn't fetch anything, fallback to HTML scraping is practically non-existent for high quality,
+    # but we'll try to map the results we got.
+    
+    for idx, item in enumerate(telethon_results):
         itype = item['type']
-        url = item['url']
+        is_too_large = item['is_too_large']
+        file_bytes = item['data']
+        filename = item['filename']
+        is_spoiler = item.get('is_spoiler', False)
         
-        if itype == 'video_too_large':
-            duration = item.get('duration', '0:00')
-            data, filename = downloaded_map.get(url, (None, None))
-            if data and filename:
-                files.append(File(io.BytesIO(data), filename=filename))
-                gallery_items.append(discord.MediaGalleryItem(f"attachment://{filename}", description=f"Media is too big ({duration})"))
-                media_status.append({
-                    'type': itype,
-                    'url': url,
-                    'duration': duration,
-                    'data': data,
-                    'filename': filename,
-                    'attached': True
-                })
-            else:
-                gallery_items.append(discord.MediaGalleryItem(url, description=f"Media is too big ({duration})"))
-                media_status.append({
-                    'type': itype,
-                    'url': url,
-                    'duration': duration,
-                    'data': None,
-                    'filename': None,
-                    'attached': False
-                })
+        if is_spoiler and filename and not filename.startswith('SPOILER_'):
+            filename = 'SPOILER_' + filename
+        
+        duration = None
+        fallback_url = None
+        if idx < len(media_items):
+            fallback_url = media_items[idx]['url']
+            duration = media_items[idx].get('duration', None)
+            
+        dur_str = f" ({duration})" if duration and duration != 'Too large' else ""
+            
+        if is_too_large:
+            if fallback_url:
+                thumb_bytes, thumb_filename = download_image(fallback_url)
+                desc_label = f"Media is too big{dur_str}"
+                
+                if thumb_bytes and thumb_filename:
+                    files.append(File(io.BytesIO(thumb_bytes), filename=thumb_filename))
+                    gallery_items.append(discord.MediaGalleryItem(f"attachment://{thumb_filename}", description=desc_label, spoiler=is_spoiler))
+                    media_status.append({
+                        'type': 'video_too_large',
+                        'url': fallback_url,
+                        'duration': duration,
+                        'data': thumb_bytes,
+                        'filename': thumb_filename,
+                        'attached': True
+                    })
+                else:
+                    gallery_items.append(discord.MediaGalleryItem(fallback_url, description=desc_label, spoiler=is_spoiler))
+                    media_status.append({
+                        'type': 'video_too_large',
+                        'url': fallback_url,
+                        'duration': duration,
+                        'data': None,
+                        'filename': None,
+                        'attached': False
+                    })
         else:
-            data, filename = downloaded_map.get(url, (None, None))
-            if data and filename:
-                files.append(File(io.BytesIO(data), filename=filename))
-                gallery_items.append(discord.MediaGalleryItem(f"attachment://{filename}"))
+            if file_bytes and filename:
+                files.append(File(io.BytesIO(file_bytes), filename=filename))
+                if itype in ['image', 'video']:
+                    gallery_items.append(discord.MediaGalleryItem(f"attachment://{filename}", spoiler=is_spoiler))
+                else:
+                    ui_files.append(UIFile(f"attachment://{filename}"))
                 media_status.append({
                     'type': itype,
-                    'url': url,
-                    'data': data,
+                    'url': fallback_url or '',
+                    'duration': duration,
+                    'data': file_bytes,
                     'filename': filename,
                     'attached': True
-                })
-            else:
-                gallery_items.append(discord.MediaGalleryItem(url))
-                media_status.append({
-                    'type': itype,
-                    'url': url,
-                    'data': None,
-                    'filename': None,
-                    'attached': False
                 })
             
     try:
         # Format timestamp
         unix_time = int(timestamp.timestamp()) if timestamp else int(time.time())
         time_str = f" at <t:{unix_time}:f>"
+        link_label = author_name if author_name else channel
         
         doc_str = ""
         if documents:
@@ -437,14 +477,14 @@ def sendMessage(msg_link: str, msg_text: str | None, media_items: list[dict],
             
         if msg_text:
             if doc_str:
-                text_content = f"{msg_text}\n\n{doc_str}\n-# [Message Link](<{msg_link}>){time_str}"
+                text_content = f"{msg_text}\n\n{doc_str}\n-# [{link_label}](<{msg_link}>){time_str}"
             else:
-                text_content = f"{msg_text}\n\n-# [Message Link](<{msg_link}>){time_str}"
+                text_content = f"{msg_text}\n\n-# [{link_label}](<{msg_link}>){time_str}"
         else:
             if doc_str:
-                text_content = f"{doc_str}\n-# [Message Link](<{msg_link}>){time_str}"
+                text_content = f"{doc_str}\n-# [{link_label}](<{msg_link}>){time_str}"
             else:
-                text_content = f"-# [Message Link](<{msg_link}>){time_str}"
+                text_content = f"-# [{link_label}](<{msg_link}>){time_str}"
                 
         text_disp = TextDisplay(text_content)
         
@@ -453,6 +493,9 @@ def sendMessage(msg_link: str, msg_text: str | None, media_items: list[dict],
         if gallery_items:
             gallery = MediaGallery(*gallery_items)
             container.add_item(gallery)
+            
+        for uf in ui_files:
+            container.add_item(uf)
             
         view = LayoutView()
         view.add_item(container)
@@ -471,36 +514,58 @@ def sendMessage(msg_link: str, msg_text: str | None, media_items: list[dict],
         
         # Targeted video fallback on HTTP 413 (Payload Too Large)
         if not success and too_large:
-            log_message("Payload too large, applying targeted video fallback (replacing videos with CDN URLs)...", log_type="new_message")
+            log_message("Payload too large, applying targeted video fallback (downloading video thumbnails and re-uploading to Discord)...", log_type="new_message")
             
-            # Streams are dynamically generated from raw bytes, no need to reset seek(0)
-                    
             fallback_files = []
             fallback_gallery_items = []
             
             for item in media_status:
                 itype = item['type']
+                url = item.get('url', '')
+                dur = item.get('duration')
+                dur_str = f" ({dur})" if dur and dur != 'Too large' else ""
+                
                 if item['attached']:
                     if itype == 'video':
-                        video_size = len(item['data'])
+                        video_size = len(item['data']) if item['data'] else 0
                         if video_size > 10 * 1024 * 1024:
-                            log_message(f"Video {item['filename']} is too large ({video_size / (1024*1024):.2f} MB), replacing with CDN URL.", log_type="new_message")
-                            fallback_gallery_items.append(discord.MediaGalleryItem(item['url']))
+                            log_message(f"Video {item['filename']} is too large ({video_size / (1024*1024):.2f} MB), downloading thumbnail for re-upload...", log_type="new_message")
+                            thumb_bytes, thumb_filename = download_image(url)
+                            desc_label = f"Media is too big{dur_str}"
+                            if thumb_bytes and thumb_filename:
+                                fallback_files.append(File(io.BytesIO(thumb_bytes), filename=thumb_filename))
+                                fallback_gallery_items.append(discord.MediaGalleryItem(f"attachment://{thumb_filename}", description=desc_label))
+                            else:
+                                fallback_gallery_items.append(discord.MediaGalleryItem(url, description=desc_label))
                             continue
                     fallback_files.append(File(io.BytesIO(item['data']), filename=item['filename']))
                     if itype == 'video_too_large':
-                        fallback_gallery_items.append(discord.MediaGalleryItem(f"attachment://{item['filename']}", description=f"Media is too big ({item['duration']})"))
+                        fallback_gallery_items.append(discord.MediaGalleryItem(f"attachment://{item['filename']}", description=f"Media is too big{dur_str}"))
                     else:
                         fallback_gallery_items.append(discord.MediaGalleryItem(f"attachment://{item['filename']}"))
                 elif itype == 'video_too_large':
-                    fallback_gallery_items.append(discord.MediaGalleryItem(item['url'], description=f"Media is too big ({item['duration']})"))
+                    thumb_bytes, thumb_filename = download_image(url)
+                    desc_label = f"Media is too big{dur_str}"
+                    if thumb_bytes and thumb_filename:
+                        fallback_files.append(File(io.BytesIO(thumb_bytes), filename=thumb_filename))
+                        fallback_gallery_items.append(discord.MediaGalleryItem(f"attachment://{thumb_filename}", description=desc_label))
+                    else:
+                        fallback_gallery_items.append(discord.MediaGalleryItem(url, description=desc_label))
                 else:
-                    fallback_gallery_items.append(discord.MediaGalleryItem(item['url']))
+                    thumb_bytes, thumb_filename = download_image(url)
+                    if thumb_bytes and thumb_filename:
+                        fallback_files.append(File(io.BytesIO(thumb_bytes), filename=thumb_filename))
+                        fallback_gallery_items.append(discord.MediaGalleryItem(f"attachment://{thumb_filename}"))
+                    else:
+                        fallback_gallery_items.append(discord.MediaGalleryItem(url))
                     
             fallback_container = Container(text_disp, accent_color=EMBED_COLOR)
             if fallback_gallery_items:
                 fallback_gallery = MediaGallery(*fallback_gallery_items)
                 fallback_container.add_item(fallback_gallery)
+                
+            for uf in ui_files:
+                fallback_container.add_item(uf)
                 
             fallback_view = LayoutView()
             fallback_view.add_item(fallback_container)
@@ -523,10 +588,10 @@ def sendMessage(msg_link: str, msg_text: str | None, media_items: list[dict],
                 content_parts.append(msg_text)
             for item in media_status:
                 content_parts.append(item['url'])
-            content_parts.append(f"[Message Link](<{msg_link}>) at <t:{unix_time}:f>")
+            content_parts.append(f"[{link_label}](<{msg_link}>) at <t:{unix_time}:f>")
             fallback_content = "\n\n".join(content_parts)
             if len(fallback_content) > 4000:
-                link_part = f"[Message Link](<{msg_link}>) at <t:{unix_time}:f>"
+                link_part = f"[{link_label}](<{msg_link}>) at <t:{unix_time}:f>"
                 allowed_len = 4000 - len(link_part) - 10
                 rest = "\n\n".join(content_parts[:-1])
                 fallback_content = rest[:allowed_len] + "...\n\n" + link_part
@@ -598,12 +663,14 @@ def main(tg_channel: str) -> None:
                     log_message(f"New message found: {msg_link}", log_type="new_message")
                     msg_temp.append(msg_link)
                     
+                    message_ids = [current_number + i for i in range(total_media)] if total_media > 1 else [current_number]
+                    
                     if total_media > 1:
                         log_message(f"Marking grouped media range: {current_number} + {total_media-1} components", log_type="status2")
                         for i in range(1, total_media):
                             grouped_media_ranges.add(current_number + i)
                     
-                    sendMessage(msg_link, msg_text, media_items, author_name, icon_url, timestamp=timestamp, documents=documents)
+                    sendMessage(tg_channel, message_ids, msg_link, msg_text, media_items, author_name, icon_url, timestamp=timestamp, documents=documents)
 
                 msg_temp.append(msg_link)
                 last_processed_number = current_number
