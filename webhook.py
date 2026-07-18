@@ -724,6 +724,19 @@ def main(tg_channel: str) -> None:
                     if msg_text:
                         log_message(f"Successfully extracted text from meta tags: '{msg_text[:50]}...'", log_type="status2")
 
+                if not msg_text and tg_box.find(class_='message_media_not_supported'):
+                    import os
+                    if os.getenv("TG_SESSION_STRING"):
+                        log_message(f"Text hidden (View in Telegram), fetching via Telethon for {msg_link}", log_type="status2")
+                        try:
+                            from telethon_client import get_telethon_text
+                            fetched_text = get_telethon_text(tg_channel, current_number)
+                            if fetched_text:
+                                msg_text = fetched_text
+                                log_message(f"Successfully extracted text via Telethon: '{msg_text[:50]}...'", log_type="status2")
+                        except Exception as e:
+                            log_message(f"Failed to fetch text via Telethon: {e}", log_type="error")
+
                 if msg_link not in msg_log:
                     log_message(f"New message found: {msg_link}", log_type="new_message")
                     msg_temp.append(msg_link)

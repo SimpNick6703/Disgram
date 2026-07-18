@@ -170,6 +170,7 @@ graph TD
 Adding your Telegram API credentials unlocks the full potential of Disgram:
 - **Best-Available Quality Media**: Extracts original, uncompressed images, full-length HD videos, and native audio tracks instead of downscaled web preview thumbnails.
 - **Native File Attachments (Requires Telethon)**: Non-media files (documents, code files, archives, and uncompressed attachments) are fetched directly via Telethon and attached using Discord `ui.File` components.
+- **Long Articles & Hidden Text (Requires Telethon)**: Detects posts that are truncated on the web preview (e.g., "View in Telegram" or long Telegraph-style articles) and automatically extracts the complete text along with its formatting using Telegram's native `RichMessage` parser.
 - **Spoiler Protection (Requires Telethon)**: Detects Telegram spoiler flags on photos and media, automatically masking them in Discord with `SPOILER_` tags.
 - **Grouped Media Processing (Telethon Recommended)**: Preserves original visual order and full resolution for up to 10 images/videos in a single `MediaGallery`.
 - **Targeted Video Upload Fallback**: Telethon fetches original video files to upload directly. If Discord rejects the payload with HTTP 413 (Payload Too Large), Disgram automatically applies targeted fallback—downloading the preview thumbnail image of oversized videos and re-uploading it as a permanent file attachment (`attachment://thumb_xxx.jpg`) to Discord in the `MediaGallery` with its duration label (e.g., `Media is too big (0:17)`) while keeping all other media attachments intact.

@@ -181,3 +181,68 @@ def check_telethon_health() -> bool:
     _ensure_loop_running()
     future = asyncio.run_coroutine_threadsafe(_async_check_health(), _telethon_loop)
     return future.result()
+
+def _parse_text_node(text_obj):
+    if not text_obj:
+        return ""
+    if hasattr(text_obj, 'text'):
+        text_str = text_obj.text
+        t_type = type(text_obj).__name__
+        if t_type == 'TextBold':
+            return f"**{text_str}**"
+        elif t_type == 'TextItalic':
+            return f"*{text_str}*"
+        elif t_type == 'TextStrike':
+            return f"~~{text_str}~~"
+        elif t_type == 'TextFixed':
+            return f"`{text_str}`"
+        return text_str
+    elif type(text_obj).__name__ == 'TextConcat':
+        return "".join([_parse_text_node(t) for t in getattr(text_obj, 'texts', [])])
+    return ""
+
+def _parse_rich_message(rich_message):
+    if not rich_message or not hasattr(rich_message, 'blocks'):
+        return ""
+    parts = []
+    for block in rich_message.blocks:
+        b_type = type(block).__name__
+        if b_type in ('PageBlockParagraph', 'PageBlockHeader', 'PageBlockSubheader'):
+            parts.append(_parse_text_node(getattr(block, 'text', None)))
+        elif b_type == 'PageBlockBlockquote':
+            text = _parse_text_node(getattr(block, 'text', None))
+            parts.append("\n".join(["> " + line for line in text.split('\n')]))
+        elif b_type == 'PageBlockPreformatted':
+            text = _parse_text_node(getattr(block, 'text', None))
+            parts.append(f"```\n{text}\n```")
+        elif hasattr(block, 'text'):
+            parts.append(_parse_text_node(getattr(block, 'text', None)))
+    return "\n\n".join(parts)
+
+async def _async_get_telethon_text(channel: str, message_id: int) -> str | None:
+    try:
+        client = await _get_client()
+        message = await client.get_messages(channel, ids=message_id)
+        if not message:
+            return None
+            
+        if getattr(message, 'rich_message', None):
+            return _parse_rich_message(message.rich_message)
+            
+        return message.text
+    except Exception as e:
+        msg = f"Error fetching text via Telethon for {channel}/{message_id}: {e}"
+        try:
+            from webhook import log_message
+            log_message(msg, log_type="error")
+        except Exception:
+            print(msg)
+        return None
+
+def get_telethon_text(channel: str, message_id: int) -> str | None:
+    """
+    Synchronous wrapper to fetch text via Telethon.
+    """
+    _ensure_loop_running()
+    future = asyncio.run_coroutine_threadsafe(_async_get_telethon_text(channel, message_id), _telethon_loop)
+    return future.result()
