@@ -84,27 +84,39 @@ graph TD
     ParseTG -- No --> Cooldown[Wait Cooldown]
     Cooldown --> FetchTG
     
-    ParseTG -- Yes --> CheckTelethon{"Telethon Configured on Boot?"}
+    ParseTG -- Yes --> ExtractMetadata["Extract Text, Forwards & Replies"]
+    ExtractMetadata --> CheckTelethon{"Telethon Configured on Boot?"}
     
-    CheckTelethon -- Yes --> FetchTelethon["Fetch Best-Available Media & Documents via Telethon"]
+    CheckTelethon -- Yes --> CheckTelethonSize{"File Size <= Boost Level Max?"}
+    CheckTelethonSize -- Yes --> FetchTelethon["Fetch Media via Telethon"]
+    CheckTelethonSize -- No --> MarkTooLarge["Skip DL: Mark as video_too_large"]
+    
     FetchTelethon --> MediaSuccess{"Telethon Download Succeeded?"}
+    MarkTooLarge --> ProcessMedia["Process Media Items"]
+    MediaSuccess -- Yes --> ProcessMedia
     
-    MediaSuccess -- Yes --> ProcessTelethonMedia["Process Telethon Items (Spoilers, MIME Types)"]
+    CheckTelethon -- No --> CheckHTMLSize{"HTTP Content-Length <= Boost Level Max?"}
+    MediaSuccess -- No --> CheckHTMLSize
     
-    CheckTelethon -- No --> HTMLFallback["Fallback: Download Web Preview Media Concurrently"]
-    MediaSuccess -- No --> HTMLFallback
+    CheckHTMLSize -- Yes --> HTMLFallback["Download Web Preview Media Concurrently"]
+    CheckHTMLSize -- No --> MarkTooLargeHTML["Skip DL: Mark as video_too_large"]
     
-    HTMLFallback --> ProcessHTMLMedia["Process Web Preview Items"]
+    HTMLFallback --> ProcessMedia
+    MarkTooLargeHTML --> ProcessMedia
     
-    ProcessTelethonMedia --> BuildLayout["Build Discord Component V2 Layout"]
-    ProcessHTMLMedia --> BuildLayout
+    ProcessMedia --> BuildLayout["Build Discord Component V2 Layout"]
     
-    BuildLayout --> SeparateComponents{"Categorize Attachments"}
-    SeparateComponents --> MediaGalleryItems["Images & Videos -> MediaGallery"]
-    SeparateComponents --> FileComponents["Documents & Audio -> ui.File"]
+    BuildLayout --> AddMainText["Add Primary ui.TextDisplay"]
+    AddMainText --> SeparateComponents{"Categorize Attachments"}
+    SeparateComponents --> MediaGalleryItems["Images/Videos -> ui.MediaGallery"]
+    SeparateComponents --> FileComponents["Documents/Audio -> ui.File"]
     
-    MediaGalleryItems --> ContainerBuild["Assemble Container & LayoutView"]
-    FileComponents --> ContainerBuild
+    MediaGalleryItems --> AddSeparator["Add ui.Separator (invisible)"]
+    FileComponents --> AddSeparator
+    
+    AddSeparator --> AddMetaText["Add Secondary ui.TextDisplay (Metadata)"]
+    
+    AddMetaText --> ContainerBuild["Assemble Container & LayoutView"]
     
     ContainerBuild --> SendWebhook[Send Webhook Message]
     
@@ -134,10 +146,10 @@ graph TD
     classDef fallback fill:#ef4444,stroke:#b91c1c,color:#fff
     classDef telethon fill:#8b5cf6,stroke:#6d28d9,color:#fff
     
-    class Startbot,ScraperLoop,FetchTG,Cooldown,BuildLayout,SendWebhook,UpdateLog,BuildFallbackLayout,RetryWebhook,PlainTextFallback,LogError,ContainerBuild loop
-    class ParseTG,Success,ExcludeVideos,SuccessFallback,SuccessFinal,CheckTelethon,MediaSuccess,SeparateComponents decis
-    class ApplyFallback,LoopMedia,DownloadThumb,KeepAttachment fallback
-    class FetchTelethon,ProcessTelethonMedia,HTMLFallback,ProcessHTMLMedia,MediaGalleryItems,FileComponents telethon
+    class Startbot,ScraperLoop,FetchTG,Cooldown,BuildLayout,SendWebhook,UpdateLog,BuildFallbackLayout,RetryWebhook,PlainTextFallback,LogError,ContainerBuild,ExtractMetadata,AddMainText,AddSeparator,AddMetaText loop
+    class ParseTG,Success,ExcludeVideos,SuccessFallback,SuccessFinal,CheckTelethon,MediaSuccess,SeparateComponents,CheckTelethonSize,CheckHTMLSize decis
+    class ApplyFallback,LoopMedia,DownloadThumb,KeepAttachment,MarkTooLarge,MarkTooLargeHTML fallback
+    class FetchTelethon,HTMLFallback,ProcessMedia,MediaGalleryItems,FileComponents telethon
 ```
 
 ---
@@ -146,7 +158,9 @@ graph TD
 
 ### Base Features (Standard HTML Web Scraping)
 - **Zero Account Setup**: Works out of the box with zero Telegram API keys or user account logins using public Telegram preview pages (`/s/{channel}`).
-- **Discord Components V2**: Utilizes Discord's modern layout model (`Container`, `TextDisplay`, `MediaGallery`, and `ui.File`) rather than legacy embeds.
+- **Discord Components V2**: Utilizes Discord's modern layout model (`Container`, `TextDisplay`, `MediaGallery`, and `ui.File`). It separates core message content from metadata (e.g. timestamps, forwards) using a `ui.Separator`.
+- **Forward & Reply Parsing**: Faithfully parses and replicates "Forwarded from" attributions and blockquotes truncated replies to mirror the original Telegram conversation flow natively on Discord.
+- **Bandwidth-Aware File Limits**: Skips downloading heavy files entirely by evaluating HTTP `Content-Length` sizes ahead of time, falling back cleanly to image previews based on your configured `SERVER_BOOST_LEVEL`.
 - **Large Videos Preview Handling**: Detects videos too large to stream inline on Telegram preview pages, extracting their duration and thumbnail URL to render in the `MediaGallery` with a descriptive label (e.g., `Media is too big (0:17)`).
 - **Process Isolation**: Spawns each channel scraper in its own isolated worker process monitored by a master watchdog loop.
 - **Git Log Persistence**: Automatically commits and pushes log files back to GitHub periodically using PAT or GitHub App authorization.
@@ -196,7 +210,7 @@ Adding your Telegram API credentials unlocks the full potential of Disgram:
 4. Set it as `DISCORD_WEBHOOK_URL` in your `.env`.
 
 ### 2. Telegram API Credentials (`TG_API_ID`, `TG_API_HASH`, `TG_SESSION_STRING`)
-1. Go to [[my.telegram.org/apps](<https://my.telegram.org/apps>)](https://[my.telegram.org/apps](<https://my.telegram.org/apps>)) and log in with your phone number.
+1. Go to [my.telegram.org/apps](<https://my.telegram.org/apps>) and log in with your phone number.
 2. Click on **API Development Tools**.
 3. Fill out the application form (App title and short name can be anything, e.g., `Disgram`).
 4. Copy your **`App api_id`** (`TG_API_ID`) and **`App api_hash`** (`TG_API_HASH`).
@@ -237,6 +251,7 @@ cp .env.example .env
 ### 1. General Settings
 * `DISCORD_WEBHOOK_URL`: Your Discord webhook URL.
 * `DISCORD_THREAD_ID` (Optional): ID of a specific Discord thread to forward messages into.
+* `SERVER_BOOST_LEVEL`: Your Discord Server Boost Level (1, 2, 3, or 4). Used to determine maximum file upload limits before skipping downloads (Level 1: 10MB, Level 2: 50MB, Level 3: 100MB, Level 4: 250MB for the Beta extra perk).
 * `TELEGRAM_CHANNELS`: Comma-separated list of Telegram channel links.
 * `EMBED_COLOR`: Color hex (e.g., `89a7d9`) for Discord layout container borders.
 * `API_BEARER_TOKEN`: Bearer Token to protect administrative POST endpoints (`POST /force-commit`, `POST /logs/clear`).

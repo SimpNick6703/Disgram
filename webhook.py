@@ -11,7 +11,7 @@ import discord
 from discord import SyncWebhook, Embed, File
 from discord.ui import LayoutView, Container, TextDisplay, MediaGallery, File as UIFile
 import concurrent.futures
-from config import WEBHOOK_URL, THREAD_ID, COOLDOWN, EMBED_COLOR
+from config import WEBHOOK_URL, THREAD_ID, COOLDOWN, EMBED_COLOR, MAX_FILESIZE_BYTES
 
 TELEGRAM_HEADERS = {"User-Agent": "Mozilla/5.0 (compatible; Disgram/2.0)"}
 MAX_MEDIA_WORKERS = 8
@@ -267,6 +267,28 @@ def getTimestamp(tg_box) -> datetime.datetime | None:
         return parser.isoparse(time_element['datetime'])
     return None
 
+def getForwardInfo(tg_box) -> dict | None:
+    """Extract forwarded message info."""
+    forward = tg_box.find(class_='tgme_widget_message_forwarded_from')
+    if forward:
+        name_el = forward.find(class_='tgme_widget_message_forwarded_from_name')
+        name = name_el.text.strip() if name_el else "Unknown"
+        href = name_el['href'] if name_el and 'href' in name_el.attrs else None
+        return {"name": name, "href": href}
+    return None
+
+def getReplyInfo(tg_box) -> dict | None:
+    """Extract replied message info."""
+    reply = tg_box.find(class_='tgme_widget_message_reply')
+    if reply:
+        author_el = reply.find(class_='tgme_widget_message_author_name')
+        author = author_el.text.strip() if author_el else "Unknown"
+        text_el = reply.find(class_='tgme_widget_message_text') or reply.find(class_='js-message_reply_text')
+        text = text_el.text.strip() if text_el else "Unknown"
+        href = reply['href'] if 'href' in reply.attrs else None
+        return {"author": author, "text": text, "href": href}
+    return None
+
 def download_file(url: str | None, prefix: str, ext_fallback: str, index: int = 0, timeout: int = 10) -> tuple[bytes | None, str | None]:
     """Download a file from url and return raw bytes and filename."""
     if not url:
@@ -275,9 +297,14 @@ def download_file(url: str | None, prefix: str, ext_fallback: str, index: int = 
     retry_delay = 2
     for attempt in range(max_retries):
         try:
-            response = requests.get(url, headers=TELEGRAM_HEADERS, timeout=timeout)
+            response = requests.get(url, headers=TELEGRAM_HEADERS, stream=True, timeout=timeout)
             response.raise_for_status()
             
+            content_length = int(response.headers.get('Content-Length', 0))
+            if content_length > MAX_FILESIZE_BYTES:
+                log_message(f"Skipping download for {url} as it exceeds MAX_FILESIZE_BYTES ({content_length} bytes)", log_type="status2")
+                return None, None
+                
             content_bytes = response.content
             if not content_bytes:
                 raise ValueError("Downloaded file content is empty (0 bytes)")
@@ -350,7 +377,7 @@ def download_media_concurrently(media_list: list[tuple[str, str]]) -> list[tuple
 
 def sendMessage(channel: str, message_ids: list[int], msg_link: str, msg_text: str | None, media_items: list[dict], 
                 author_name: str, icon_url: str | None, timestamp: datetime.datetime | None = None,
-                documents: list[str] | None = None) -> None:
+                documents: list[str] | None = None, forward_info: dict | None = None, reply_info: dict | None = None) -> None:
     """Send a Telegram message to Discord webhook using Components V2 (with thread support)."""
     # Capped at first 10 items since Discord CV2 gallery limit is 10
     media_items = media_items[:10]
@@ -475,27 +502,55 @@ def sendMessage(channel: str, message_ids: list[int], msg_link: str, msg_text: s
         if documents:
             doc_str = "-# Attached file(s): " + ", ".join([f"`{doc}`" for doc in documents])
             
+        main_text_parts = []
         if msg_text:
-            if doc_str:
-                text_content = f"{msg_text}\n\n{doc_str}\n-# [{link_label}](<{msg_link}>){time_str}"
-            else:
-                text_content = f"{msg_text}\n\n-# [{link_label}](<{msg_link}>){time_str}"
-        else:
-            if doc_str:
-                text_content = f"{doc_str}\n-# [{link_label}](<{msg_link}>){time_str}"
-            else:
-                text_content = f"-# [{link_label}](<{msg_link}>){time_str}"
-                
-        text_disp = TextDisplay(text_content)
+            main_text_parts.append(msg_text)
+        if doc_str:
+            main_text_parts.append(doc_str)
+            
+        from discord.ui import Separator
         
-        # Construct layout container
-        container = Container(text_disp, accent_color=EMBED_COLOR)
+        container_items = []
+        
+        if main_text_parts:
+            text_disp = TextDisplay("\n\n".join(main_text_parts))
+            container_items.append(text_disp)
+            
         if gallery_items:
             gallery = MediaGallery(*gallery_items)
-            container.add_item(gallery)
+            container_items.append(gallery)
             
         for uf in ui_files:
-            container.add_item(uf)
+            container_items.append(uf)
+            
+        # Metadata logic
+        meta_parts = []
+        author_link = f"[{link_label}](<{msg_link}>)"
+        
+        if forward_info:
+            fwd_name = forward_info['name']
+            fwd_href = forward_info['href']
+            fwd_link = f"[{fwd_name}](<{fwd_href}>)" if fwd_href else f"[{fwd_name}]"
+            meta_parts.append(f"-# {author_link} forwarded {fwd_link}{time_str}")
+        elif reply_info:
+            reply_href = reply_info['href']
+            reply_link = f"[Message](<{reply_href}>)" if reply_href else "[Message]"
+            reply_text = reply_info['text']
+            if len(reply_text) > 80:
+                reply_text = reply_text[:77] + "..."
+            reply_text = reply_text.replace('\n', ' ')
+            meta_parts.append(f"-# {author_link} replying to a {reply_link}{time_str}\n-# > {reply_text}")
+        else:
+            meta_parts.append(f"-# {author_link}{time_str}")
+            
+        meta_text_disp = TextDisplay("\n".join(meta_parts))
+        
+        if container_items:
+            container_items.append(Separator(visible=False))
+            
+        container_items.append(meta_text_disp)
+        
+        container = Container(*container_items, accent_color=EMBED_COLOR)
             
         view = LayoutView()
         view.add_item(container)
@@ -559,13 +614,23 @@ def sendMessage(channel: str, message_ids: list[int], msg_link: str, msg_text: s
                     else:
                         fallback_gallery_items.append(discord.MediaGalleryItem(url))
                     
-            fallback_container = Container(text_disp, accent_color=EMBED_COLOR)
+            fallback_items = []
+            if main_text_parts:
+                fallback_items.append(TextDisplay("\n\n".join(main_text_parts)))
+            
             if fallback_gallery_items:
                 fallback_gallery = MediaGallery(*fallback_gallery_items)
-                fallback_container.add_item(fallback_gallery)
+                fallback_items.append(fallback_gallery)
                 
             for uf in ui_files:
-                fallback_container.add_item(uf)
+                fallback_items.append(uf)
+                
+            if fallback_items:
+                fallback_items.append(Separator(visible=False))
+            
+            fallback_items.append(meta_text_disp)
+            
+            fallback_container = Container(*fallback_items, accent_color=EMBED_COLOR)
                 
             fallback_view = LayoutView()
             fallback_view.add_item(fallback_container)
@@ -588,10 +653,10 @@ def sendMessage(channel: str, message_ids: list[int], msg_link: str, msg_text: s
                 content_parts.append(msg_text)
             for item in media_status:
                 content_parts.append(item['url'])
-            content_parts.append(f"[{link_label}](<{msg_link}>) at <t:{unix_time}:f>")
+            content_parts.append("\n".join(meta_parts))
             fallback_content = "\n\n".join(content_parts)
             if len(fallback_content) > 4000:
-                link_part = f"[{link_label}](<{msg_link}>) at <t:{unix_time}:f>"
+                link_part = "\n".join(meta_parts)
                 allowed_len = 4000 - len(link_part) - 10
                 rest = "\n\n".join(content_parts[:-1])
                 fallback_content = rest[:allowed_len] + "...\n\n" + link_part
@@ -669,8 +734,11 @@ def main(tg_channel: str) -> None:
                         log_message(f"Marking grouped media range: {current_number} + {total_media-1} components", log_type="status2")
                         for i in range(1, total_media):
                             grouped_media_ranges.add(current_number + i)
+                            
+                    forward_info = getForwardInfo(tg_box)
+                    reply_info = getReplyInfo(tg_box)
                     
-                    sendMessage(tg_channel, message_ids, msg_link, msg_text, media_items, author_name, icon_url, timestamp=timestamp, documents=documents)
+                    sendMessage(tg_channel, message_ids, msg_link, msg_text, media_items, author_name, icon_url, timestamp=timestamp, documents=documents, forward_info=forward_info, reply_info=reply_info)
 
                 msg_temp.append(msg_link)
                 last_processed_number = current_number

@@ -4,6 +4,7 @@ import threading
 from telethon.sync import TelegramClient
 from telethon.sessions import StringSession
 import dotenv
+from config import MAX_FILESIZE_BYTES
 
 dotenv.load_dotenv()
 
@@ -85,56 +86,58 @@ async def _async_get_telethon_media(channel: str, message_ids: list[int]):
                 
             is_spoiler = getattr(msg.media, 'spoiler', False)
             
-            # Use telethon to download the file into memory
-            import tempfile
-            temp_dir = tempfile.gettempdir()
-            
-            import uuid
-            unique_id = uuid.uuid4().hex[:8]
-            target_path = os.path.join(temp_dir, f"telethon_dl_{unique_id}")
-            
-            # This might take some time for large videos
-            file_path = await client.download_media(msg.media, file=target_path)
-            
-            if not file_path:
-                continue
-                
-            file_size = os.path.getsize(file_path)
-            
-            with open(file_path, 'rb') as f:
-                file_bytes = f.read()
-                
-            # Clean up the temp file
-            try:
-                os.remove(file_path)
-            except OSError:
-                pass
-                
-            # The user explicitly requested to ALWAYS attempt to upload the original video first.
-            # If Discord rejects it (HTTP 413), the webhook.py fallback will specifically target files > 10MB.
-            is_too_large = False
-            
+            # Check file size before downloading
+            file_size_estimated = 0
             item_type = 'document'
             if hasattr(msg.media, 'photo'):
                 item_type = 'image'
+                if hasattr(msg.media.photo, 'sizes'):
+                    file_size_estimated = max((getattr(s, 'size', 0) for s in msg.media.photo.sizes), default=0)
             elif hasattr(msg.media, 'document'):
-                # Check mime type to see if it's a video or image (e.g. uncompressed uploads)
+                file_size_estimated = getattr(msg.media.document, 'size', 0)
                 mime = getattr(msg.media.document, 'mime_type', '')
                 if mime.startswith('video/'):
                     item_type = 'video'
                 elif mime.startswith('image/'):
                     item_type = 'image'
-                else:
-                    item_type = 'document'
+            
+            is_too_large = file_size_estimated > MAX_FILESIZE_BYTES
+            
+            import uuid
+            unique_id = uuid.uuid4().hex[:8]
+            
+            file_bytes = None
+            file_size = file_size_estimated
+            file_path = None
+            
+            if not is_too_large:
+                # Use telethon to download the file into memory
+                import tempfile
+                temp_dir = tempfile.gettempdir()
+                target_path = os.path.join(temp_dir, f"telethon_dl_{unique_id}")
+                
+                # This might take some time for large videos
+                file_path = await client.download_media(msg.media, file=target_path)
+                
+                if file_path:
+                    file_size = os.path.getsize(file_path)
+                    with open(file_path, 'rb') as f:
+                        file_bytes = f.read()
                     
+                    # Clean up the temp file
+                    try:
+                        os.remove(file_path)
+                    except OSError:
+                        pass
+            
             # Determine filename
             filename = f"media_{unique_id}.bin"
             if file_path:
                 filename = os.path.basename(file_path)
                 
             downloaded_items.append({
-                'type': 'video_too_large' if (item_type == 'video' and is_too_large) else item_type,
-                'data': None if is_too_large else file_bytes,
+                'type': 'video_too_large' if is_too_large else item_type,
+                'data': file_bytes,
                 'filename': filename,
                 'is_spoiler': is_spoiler,
                 'is_too_large': is_too_large,
