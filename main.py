@@ -8,9 +8,9 @@ import psutil
 import requests
 import re
 import logging
-from concurrent.futures import ThreadPoolExecutor, as_completed
+import asyncio
 from flask import Flask, jsonify, Response, request
-from config import Channels, WEBHOOK_URL, THREAD_ID, COOLDOWN, API_BEARER_TOKEN
+from config import Channels, MAX_WORKERS, WEBHOOK_URL, THREAD_ID, COOLDOWN, API_BEARER_TOKEN
 from git_manager import initialize_git_manager
 
 def get_git_manager():
@@ -18,22 +18,10 @@ def get_git_manager():
     from git_manager import git_log_manager
     return git_log_manager
 
-# Configure logging for the main application
-def setup_logging():
-    """Configure logging to write to app.log and console"""
-    # Only configure if not already configured
-    if not logging.getLogger().handlers:
-        logging.basicConfig(
-            level=logging.INFO,
-            format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-            handlers=[
-                logging.FileHandler('app.log', encoding='utf-8', mode='a'),
-                logging.StreamHandler()
-            ]
-        )
+from logging_config import configure_logging, get_disgram_handler
 
-# Setup logging
-setup_logging()
+# Configure logging for the main application
+configure_logging(process_name="main")
 logger = logging.getLogger('DisgramMain')
 
 def sanitize_log_content(content: str) -> str:
@@ -52,10 +40,18 @@ def sanitize_log_content(content: str) -> str:
     
     return sanitized
 
-processes = []
 bot_start_time = None
 last_health_check = None
 health_status = {"status": "starting", "details": {}}
+channel_chunks = []
+
+def chunk_channels(channels: list[str], max_workers: int) -> list[list[str]]:
+    """Split a list of channels into evenly distributed chunks."""
+    if not channels:
+        return []
+    workers = min(len(channels), max_workers)
+    k, m = divmod(len(channels), workers)
+    return [channels[i * k + min(i, m):(i + 1) * k + min(i + 1, m)] for i in range(workers)]
 
 app = Flask(__name__)
 
@@ -101,17 +97,6 @@ def extract_channel_name(channel_url):
     else:
         return channel_url
 
-def check_process_health():
-    alive_processes = 0
-    dead_processes = []
-    
-    for i, process in enumerate(processes):
-        if process and process.poll() is None:
-            alive_processes += 1
-        else:
-            dead_processes.append(i)
-    
-    return alive_processes, dead_processes
 
 def check_telegram_connectivity():
     try:
@@ -196,90 +181,84 @@ def get_system_stats():
         memory = psutil.virtual_memory()
         disk = psutil.disk_usage('/')
         
+        # Get memory breakdown for Disgram processes
+        process_breakdown = []
+        app_total_mb = 0
+        
+        for proc in psutil.process_iter(['pid', 'name', 'cmdline', 'memory_info']):
+            try:
+                cmdline = proc.info.get('cmdline') or []
+                # Check if it's a python process related to our app
+                name = proc.info.get('name', '').lower()
+                is_python = 'python' in name or any('python' in arg.lower() for arg in cmdline)
+                
+                if is_python:
+                    is_main = any('main.py' in arg for arg in cmdline)
+                    is_worker = any('webhook.py' in arg for arg in cmdline)
+                    
+                    if is_main or is_worker:
+                        mem_info = proc.info.get('memory_info')
+                        if mem_info:
+                            mem_mb = round(mem_info.rss / 1024 / 1024, 2)
+                            app_total_mb += mem_mb
+                            
+                            proc_type = "main" if is_main else "worker"
+                            # For workers, include the channel names passed as arguments
+                            details = " ".join(cmdline[1:]) if len(cmdline) > 1 else ""
+                            
+                            process_breakdown.append({
+                                "pid": proc.info['pid'],
+                                "type": proc_type,
+                                "details": details,
+                                "memory_mb": mem_mb
+                            })
+            except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+                pass
+                
         return {
             "cpu_percent": cpu_percent,
             "memory_percent": memory.percent,
-            "memory_available_mb": round(memory.available / 1024 / 1024, 2),
+            "system_memory_used_mb": round(memory.used / 1024 / 1024, 2),
+            "app_memory_used_mb": round(app_total_mb, 2),
+            "process_breakdown": process_breakdown,
             "disk_percent": disk.percent,
             "disk_free_gb": round(disk.free / 1024 / 1024 / 1024, 2)
         }
     except Exception as e:
         return {"error": str(e)}
 
-def restart_all_processes():
-    """Restart all bot processes when they appear to be zombified"""
-    global processes, bot_start_time
-    
-    logger.warning("Log freshness check failed - restarting all bot processes...")
-    
-    # Terminate existing processes
-    for process in processes:
-        if process and process.poll() is None:
-            try:
-                process.terminate()
-                process.wait(timeout=5)
-            except subprocess.TimeoutExpired:
-                process.kill()
-            except Exception as e:
-                logger.error(f"Error terminating process: {e}")
-    
-    # Clear the processes list
-    processes.clear()
-    
-    # Restart all processes
-    start_bot_processes()
-    
-    logger.info(f"Restarted {len(processes)} bot processes due to stale logs")
+async def _gather_health_checks():
+    """Run all health checks concurrently using async threads."""
+    return await asyncio.gather(
+        asyncio.to_thread(get_cached_external_checks),
+        asyncio.to_thread(check_log_freshness),
+        asyncio.to_thread(get_system_stats),
+        asyncio.to_thread(
+            lambda: get_git_manager().get_commit_status()
+            if get_git_manager() else {"git_available": False}
+        ),
+    )
 
 @app.route('/health')
 def health_check():
     global last_health_check
     last_health_check = datetime.datetime.now()
     
-    # Define wrapper functions for async execution
-    def get_process_health():
-        return check_process_health()
+    (
+        (telegram_ok, discord_ok, discord_msg, telethon_ok),
+        (log_fresh, log_msg, log_last_modified),
+        system_stats,
+        git_commit_status,
+    ) = asyncio.run(_gather_health_checks())
     
-    def get_external_status():
-        return get_cached_external_checks()
-    
-    def get_log_status():
-        return check_log_freshness()
-    
-    def get_sys_stats():
-        return get_system_stats()
-    
-    def get_git_status():
-        git_manager = get_git_manager()
-        return git_manager.get_commit_status() if git_manager else {"git_available": False}
-    
-    # Execute all checks in parallel using ThreadPoolExecutor (max_workers=5)
-    with ThreadPoolExecutor(max_workers=5) as executor:
-        # Submit all tasks
-        future_process_health = executor.submit(get_process_health)
-        future_external = executor.submit(get_external_status)
-        future_log = executor.submit(get_log_status)
-        future_system = executor.submit(get_sys_stats)
-        future_git = executor.submit(get_git_status)
-        
-        # Collect results
-        alive_count, dead_processes = future_process_health.result()
-        telegram_ok, discord_ok, discord_msg, telethon_ok = future_external.result()
-        log_fresh, log_msg, log_last_modified = future_log.result()
-        system_stats = future_system.result()
-        git_commit_status = future_git.result()
-    
-    total_processes = len(processes)
     uptime_seconds = (datetime.datetime.now() - bot_start_time).total_seconds() if bot_start_time else 0
     uptime_minutes = round(uptime_seconds / 60, 2)
     
-    is_healthy = (
-        alive_count == total_processes and
-        alive_count > 0 and
-        telegram_ok and
-        discord_ok and
-        log_fresh
-    )
+    # Health is determined ONLY by external connectivity and log freshness.
+    # Worker subprocess liveness is intentionally excluded — workers are
+    # ephemeral (alive for seconds, sleeping for minutes) and their absence
+    # between cycles is normal, not a failure signal.
+    is_healthy = telegram_ok and discord_ok and log_fresh
     
     status_code = 200 if is_healthy else 503
     
@@ -287,10 +266,11 @@ def health_check():
         "status": "healthy" if is_healthy else "unhealthy",
         "timestamp": last_health_check.isoformat(),
         "uptime_minutes": uptime_minutes,
-        "processes": {
-            "total": total_processes,
-            "running": alive_count,
-            "dead": dead_processes,
+        "workers": {
+            "mode": "on-demand",
+            "max_workers": MAX_WORKERS,
+            "chunks": len(channel_chunks),
+            "channels_per_chunk": [len(c) for c in channel_chunks],
             "channels": [extract_channel_name(ch) for ch in Channels]
         },
         "external_services": {
@@ -370,57 +350,22 @@ def view_logs():
 
 @app.route('/logs/clear', methods=['POST'])
 def clear_disgram_log():
-    """Clear the contents of Disgram.log while preserving latest message links for each channel"""
+    """Clear the contents of Disgram.log while preserving latest message links and warnings/errors"""
     is_valid, error_response = verify_bearer_token()
     if not is_valid:
         return error_response
         
     try:
-        log_file_path = "Disgram.log"
-        
-        if not os.path.exists(log_file_path):
-            return jsonify({
-                "status": "error",
-                "message": "Disgram.log file not found"
-            }), 404
-        
-        # Read the file and extract the latest message link for each channel
-        header_line = None
-        latest_messages = {}  # Dictionary to store latest message per channel
-        
-        with open(log_file_path, 'r', encoding='utf-8') as log_file:
-            for line in log_file:
-                line_stripped = line.strip()
-                # Preserve the header line
-                if "Add your message links" in line_stripped:
-                    header_line = line_stripped
-                
-                # Extract all message links from the line (from log entries)
-                matches = re.findall(r'https://t\.me/([^/\s]+)/(\d+)', line)
-                for channel, msg_num in matches:
-                    msg_num = int(msg_num)
-                    # Keep only the latest message number for each channel
-                    if channel not in latest_messages or msg_num > latest_messages[channel]:
-                        latest_messages[channel] = msg_num
-        
-        # Convert to sorted list of full URLs
-        channel_links = [f"https://t.me/{channel}/{msg_num}" 
-                        for channel, msg_num in sorted(latest_messages.items())]
-        
-        # Write back only the header and latest channel links
-        with open(log_file_path, 'w', encoding='utf-8') as log_file:
-            if header_line:
-                log_file.write(f"{header_line}\n")
-            for link in channel_links:
-                log_file.write(f"{link}\n")
-        
-        logger.info(f"Disgram.log cleared successfully, preserving {len(channel_links)} latest channel links")
+        handler = get_disgram_handler()
+        if not handler:
+            return jsonify({"status": "error", "message": "DisgramLogHandler not initialized"}), 500
+            
+        handler.trigger_cleanup(hard=False)
+        logger.info("Disgram.log cleared successfully (soft clean)")
         
         return jsonify({
             "status": "success",
-            "message": "Disgram.log cleared successfully",
-            "preserved_links": len(channel_links),
-            "latest_messages": channel_links
+            "message": "Disgram.log cleared successfully (warnings/errors preserved)"
         })
         
     except Exception as e:
@@ -430,54 +375,32 @@ def clear_disgram_log():
             "message": f"Error clearing log file: {str(e)}"
         }), 500
 
-@app.route('/app-logs')
-def view_app_logs():
-    """View application logs (app.log)"""
+@app.route('/logs/purge', methods=['POST'])
+def purge_disgram_log():
+    """Hard clear Disgram.log, preserving ONLY latest message links (dropping warnings/errors)"""
+    is_valid, error_response = verify_bearer_token()
+    if not is_valid:
+        return error_response
+        
     try:
-        log_file_path = "app.log"
-        
-        if not os.path.exists(log_file_path):
-            return Response(
-                "app.log file not found",
-                status=404,
-                mimetype='text/plain'
-            )
-        
-        with open(log_file_path, 'r', encoding='utf-8') as file:
-            lines = file.readlines()
+        handler = get_disgram_handler()
+        if not handler:
+            return jsonify({"status": "error", "message": "DisgramLogHandler not initialized"}), 500
             
-        # Show last 500 lines for application logs
-        last_lines = lines[-500:] if len(lines) > 500 else lines
+        handler.trigger_cleanup(hard=True)
+        logger.info("Disgram.log purged successfully (hard clean)")
         
-        # Sanitize log content to remove sensitive information
-        log_content = sanitize_log_content(''.join(last_lines))
-        
-        total_lines = len(lines)
-        showing_lines = len(last_lines)
-        header = f"Disgram Application Log Viewer\n"
-        header += f"Total lines in log: {total_lines}\n"
-        header += f"Showing last {showing_lines} lines\n"
-        header += f"Log file: {os.path.abspath(log_file_path)}\n"
-        header += f"Last modified: {datetime.datetime.fromtimestamp(os.path.getmtime(log_file_path)).isoformat()}\n"
-        header += "=" * 80 + "\n\n"
-        
-        response_content = header + log_content
-        
-        return Response(
-            response_content,
-            mimetype='text/plain',
-            headers={
-                'Content-Type': 'text/plain; charset=utf-8',
-                'Cache-Control': 'no-cache'
-            }
-        )
+        return jsonify({
+            "status": "success",
+            "message": "Disgram.log purged successfully (only message markers preserved)"
+        })
         
     except Exception as e:
-        return Response(
-            f"Error reading application log file: {str(e)}",
-            status=500,
-            mimetype='text/plain'
-        )
+        logger.error(f"Error purging Disgram.log: {str(e)}")
+        return jsonify({
+            "status": "error",
+            "message": f"Error purging log file: {str(e)}"
+        }), 500
 
 @app.route('/force-commit', methods=['POST'])
 def force_commit():
@@ -527,95 +450,58 @@ def root():
         "status": health_status.get("status", "unknown")
     })
 
-def start_bot_processes():
-    global bot_start_time, processes
+
+
+def run_flask_server() -> None:
+    """Start the web server. Uses Waitress in production, Flask dev server otherwise."""
+    port = int(os.environ.get('PORT', 5000))
+    if os.environ.get('DISGRAM_ENV', '').lower() == 'production':
+        logger.info(f"Starting Waitress WSGI server on port {port}...")
+        from waitress import serve
+        serve(app, host='0.0.0.0', port=port, threads=2)
+    else:
+        logger.info(f"Starting Flask dev server on port {port}...")
+        app.run(host='0.0.0.0', port=port, debug=False, use_reloader=False)
+
+if __name__ == "__main__":
+    import os
+    
+    initialize_git_manager()
+    
     bot_start_time = datetime.datetime.now()
     
     # Initialize Disgram.log with channel/message links from environment
     initialize_disgram_log()
     
-    logger.info(f"Starting Disgram bot with {len(Channels)} channels...")
-    
-    try:
-        for channel in Channels:
-            logger.info(f"Starting bot for {channel}...")
-            channel_name = extract_channel_name(channel)
-            process = subprocess.Popen(
-                [sys.executable, "webhook.py", channel_name]
-            )
-            processes.append(process)
-        
-        logger.info(f"Started {len(processes)} bot processes successfully.")
-        
-    except Exception as e:
-        logger.error(f"Error starting bot processes: {e}")
-
-def run_flask_server():
-    port = int(os.environ.get('PORT', 5000))
-    logger.info(f"Starting health check server on port {port}...")
-    app.run(host='0.0.0.0', port=port, debug=False, use_reloader=False)
-
-if __name__ == "__main__":
-    import os
-    
-    # Initialize Git manager first
-    initialize_git_manager()
-    
-    start_bot_processes()
+    # Chunk channels based on MAX_WORKERS
+    channel_chunks = chunk_channels(Channels, MAX_WORKERS)
+    logger.info(f"Chunked {len(Channels)} channels into {len(channel_chunks)} worker groups")
     
     flask_thread = threading.Thread(target=run_flask_server, daemon=True)
     flask_thread.start()
     
     logger.info("Disgram bot is running with health check endpoint.")
-    logger.info("Health check available at: /health")
-    logger.info("Message log viewer available at: /logs")
-    logger.info("Application log viewer available at: /app-logs") 
-    logger.info("Force commit (all changes) available at: /force-commit")
     
     try:
         while True:
-            time.sleep(30)
-            
-            alive_count, dead_processes = check_process_health()
-            if dead_processes:
-                logger.warning(f"Detected {len(dead_processes)} dead processes, restarting...")
-                for dead_idx in dead_processes:
-                    if dead_idx < len(processes) and dead_idx < len(Channels):
-                        channel = Channels[dead_idx]
-                        channel_name = extract_channel_name(channel)
-                        logger.info(f"Restarting process for {channel}...")
-                        
-                        new_process = subprocess.Popen(
-                            [sys.executable, "webhook.py", channel_name]
-                        )
-                        processes[dead_idx] = new_process
-            
-            # Check if logs are stale (indicates zombie processes)
-            log_fresh, log_msg, log_last_modified = check_log_freshness()
-            if not log_fresh and alive_count > 0:  # Only restart if we have processes that should be working
-                logger.warning(f"ZOMBIE PROCESSES DETECTED: {log_msg}")
-                logger.warning("All processes appear alive but logs are stale - restarting all processes...")
-                restart_all_processes()
+            for chunk_idx, chunk in enumerate(channel_chunks):
+                channel_names = ",".join(extract_channel_name(ch) for ch in chunk)
+                logger.info(f"Spawning worker {chunk_idx} for channels: {channel_names}")
+                
+                process = subprocess.Popen([sys.executable, "webhook.py", channel_names, str(chunk_idx)])
+                process.wait()  # Wait for this chunk to finish before moving to the next
+                
+                exit_code = process.returncode
+                if exit_code != 0:
+                    logger.error(f"Worker {chunk_idx} exited with code {exit_code}")
+                
+            logger.info(f"Completed full cycle. Sleeping for {COOLDOWN} seconds.")
+            time.sleep(COOLDOWN)
             
     except KeyboardInterrupt:
-        logger.info("Shutting down all bots...")
-        
-        # Force final commit before shutdown
+        logger.info("Shutting down bot orchestration...")
         git_manager = get_git_manager()
         if git_manager:
             logger.info("Performing final commit of all changes to repository...")
             git_manager.force_commit()
-        
-        for process in processes:
-            if process and process.poll() is None:
-                process.terminate()
-        
-        for process in processes:
-            if process:
-                try:
-                    process.wait(timeout=5)
-                except subprocess.TimeoutExpired:
-                    process.kill()
-        
-
-        logger.info("All bots have been stopped.")
+        logger.info("Shutdown complete.")

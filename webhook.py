@@ -14,28 +14,12 @@ import concurrent.futures
 from config import WEBHOOK_URL, THREAD_ID, COOLDOWN, EMBED_COLOR, MAX_FILESIZE_BYTES
 
 TELEGRAM_HEADERS = {"User-Agent": "Mozilla/5.0 (compatible; Disgram/2.0)"}
-MAX_MEDIA_WORKERS = 8
+MAX_MEDIA_WORKERS = 3
 
-def log_message(message: str, log_type: str = "info") -> None:
-    """Log messages to console and to Disgram.log for specific message types."""
-    timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    log_entry = f"{timestamp} {message}"
-    print(log_entry)
-    if log_type in ["error", "new_message", "status"]:
-        with open("Disgram.log", "a", encoding="utf-8") as log_file:
-            log_file.write(log_entry + "\n")
+import logging
+from logging_config import configure_logging, is_message_logged
 
-def is_message_logged(channel: str, number: int) -> bool:
-    """Check if the given message number has already been logged for the channel."""
-    try:
-        with open("Disgram.log", "r", encoding="utf-8") as log_file:
-            for line in log_file:
-                match = re.search(rf"https://t.me/{channel}/(\d+)", line)
-                if match and int(match.group(1)) >= number:
-                    return True
-    except FileNotFoundError:
-        pass
-    return False
+logger = logging.getLogger("Webhook")
 
 def scrapeTelegramMessageBox(channel: str) -> list:
     """Scrape the latest messages from the Telegram channel preview page."""
@@ -43,18 +27,18 @@ def scrapeTelegramMessageBox(channel: str) -> list:
     retry_delay = 2
     for attempt in range(max_retries):
         try:
-            log_message(f"Scraping messages from Telegram channel: {channel} (Attempt {attempt + 1})")
+            logger.info(f"Scraping messages from Telegram channel: {channel} (Attempt {attempt + 1})")
             tg_html = requests.get(f'https://t.me/s/{channel}', headers=TELEGRAM_HEADERS, timeout=10)
             tg_html.raise_for_status()
             tg_soup = BeautifulSoup(tg_html.text, 'html.parser')
             return tg_soup.find_all('div', {'class': 'tgme_widget_message_wrap js-widget_message_wrap'})
         except requests.exceptions.RequestException as e:
-            log_message(f"Error scraping Telegram: {e}", log_type="error")
+            logger.error(f"Error scraping Telegram: {e}")
             if attempt < max_retries - 1:
                 time.sleep(retry_delay)
                 retry_delay *= 2
             else:
-                log_message("Max retries reached. Skipping this iteration.", log_type="error")
+                logger.error("Max retries reached. Skipping this iteration.")
                 return []
     return []
 
@@ -158,7 +142,7 @@ def getTextFromIndividualMessage(msg_link: str) -> str | None:
                         return content
             return None
         except Exception as e:
-            log_message(f"Error fetching text from individual message {msg_link}: {e}", log_type="error")
+            logger.error(f"Error fetching text from individual message {msg_link}: {e}")
             if attempt < max_retries - 1:
                 time.sleep(retry_delay)
             else:
@@ -302,7 +286,7 @@ def download_file(url: str | None, prefix: str, ext_fallback: str, index: int = 
             
             content_length = int(response.headers.get('Content-Length', 0))
             if content_length > MAX_FILESIZE_BYTES:
-                log_message(f"Skipping download for {url} as it exceeds MAX_FILESIZE_BYTES ({content_length} bytes)", log_type="status2")
+                logger.debug(f"Skipping download for {url} as it exceeds MAX_FILESIZE_BYTES ({content_length} bytes)")
                 return None, None
                 
             content_bytes = response.content
@@ -322,7 +306,7 @@ def download_file(url: str | None, prefix: str, ext_fallback: str, index: int = 
             filename = f"{prefix}_{int(time.time())}_{unique_id}_{index}_{attempt}{ext}"
             return content_bytes, filename
         except Exception as e:
-            log_message(f"Error downloading {prefix}: {e}", log_type="error")
+            logger.error(f"Error downloading {prefix}: {e}")
             if attempt < max_retries - 1:
                 time.sleep(retry_delay)
                 retry_delay *= 2
@@ -346,11 +330,11 @@ def send_webhook_message(webhook_url: str, thread_id: str | None = None, **kwarg
         webhook.send(**kwargs)
         return True, False
     except discord.HTTPException as e:
-        log_message(f"Discord HTTP Exception: {e}", log_type="error")
+        logger.error(f"Discord HTTP Exception: {e}")
         is_payload_too_large = (e.status == 413)
         return False, is_payload_too_large
     except Exception as e:
-        log_message(f"Error sending message to Discord: {e}", log_type="error")
+        logger.error(f"Error sending message to Discord: {e}")
         return False, False
 
 def download_media_concurrently(media_list: list[tuple[str, str]]) -> list[tuple[str, bytes | None, str | None]]:
@@ -366,7 +350,7 @@ def download_media_concurrently(media_list: list[tuple[str, str]]) -> list[tuple
                 data, filename = download_video(url, index)
             return url, data, filename
         except Exception as e:
-            log_message(f"Concurrent download error for {url}: {e}", log_type="error")
+            logger.error(f"Concurrent download error for {url}: {e}")
             return url, None, None
             
     indexed_media_list = [(i, item[0], item[1]) for i, item in enumerate(media_list)]
@@ -389,14 +373,14 @@ def sendMessage(channel: str, message_ids: list[int], msg_link: str, msg_text: s
     telethon_results = []
     if TELETHON_CONFIGURED and (media_items or documents):
         try:
-            log_message(f"Fetching original high-quality media via Telethon for message {message_ids}...", log_type="status2")
+            logger.debug(f"Fetching original high-quality media via Telethon for message {message_ids}...")
             telethon_results = get_telethon_media(channel, message_ids)
         except Exception as e:
-            log_message(f"Telethon fetch failed: {e}", log_type="status2")
+            logger.debug(f"Telethon fetch failed: {e}")
             telethon_results = []
             
     if not telethon_results and media_items:
-        log_message("Telethon media fetch skipped or failed. Falling back to HTML scraping...", log_type="status2")
+        logger.debug("Telethon media fetch skipped or failed. Falling back to HTML scraping...")
         download_list = []
         for item in media_items:
             if item['type'] in ('image', 'video'):
@@ -406,7 +390,7 @@ def sendMessage(channel: str, message_ids: list[int], msg_link: str, msg_text: s
                 
         downloaded_map = {}
         if download_list:
-            log_message(f"Downloading {len(download_list)} media files concurrently via HTML...", log_type="status2")
+            logger.debug(f"Downloading {len(download_list)} media files concurrently via HTML...")
             downloaded_results = download_media_concurrently(download_list)
             for url, data, filename in downloaded_results:
                 downloaded_map[url] = (data, filename)
@@ -555,7 +539,7 @@ def sendMessage(channel: str, message_ids: list[int], msg_link: str, msg_text: s
         view = LayoutView()
         view.add_item(container)
         
-        log_message(f"Sending message to Discord: {msg_link}", log_type="new_message")
+        logger.info(f"Sending message to Discord: {msg_link}")
         
         kwargs = {
             'username': author_name,
@@ -584,7 +568,7 @@ def sendMessage(channel: str, message_ids: list[int], msg_link: str, msg_text: s
                     if itype == 'video':
                         video_size = len(item['data']) if item['data'] else 0
                         if video_size > 10 * 1024 * 1024:
-                            log_message(f"Video {item['filename']} is too large ({video_size / (1024*1024):.2f} MB), downloading thumbnail for re-upload...", log_type="new_message")
+                            logger.info(f"Video {item['filename']} is too large ({video_size / (1024*1024):.2f} MB), downloading thumbnail for re-upload...", log_type="new_message")
                             thumb_bytes, thumb_filename = download_image(url)
                             desc_label = f"Media is too big{dur_str}"
                             if thumb_bytes and thumb_filename:
@@ -668,24 +652,25 @@ def sendMessage(channel: str, message_ids: list[int], msg_link: str, msg_text: s
                 content=fallback_content
             )
             if not success:
-                log_message("Failed to send plain text fallback", log_type="error")
+                logger.error("Failed to send plain text fallback")
                 return
                 
-        log_message("Message sent successfully.", log_type="new_message")
+        logger.info("Message sent successfully.")
     except Exception as e:
-        log_message(f"Error preparing or sending message to Discord: {e}", log_type="error")
+        logger.error(f"Error preparing or sending message to Discord: {e}")
 
-def main(tg_channel: str) -> None:
+def main(channels: list[str]) -> None:
     SCRIPT_START_TIME = datetime.datetime.now()
-    msg_log = []
-    last_processed_number = 0
-    grouped_media_ranges = set()
-    log_message(f"Starting bot for channel: {tg_channel}", log_type="status2")
-
-    while True:
+    
+    for tg_channel in channels:
+        msg_log = []
+        last_processed_number = 0
+        grouped_media_ranges = set()
+        logger.debug(f"Starting bot for channel: {tg_channel}")
+        
         try:
             msg_temp = []
-            log_message("Checking for new messages...", log_type="status2")
+            logger.debug("Checking for new messages...")
             message_boxes = scrapeTelegramMessageBox(tg_channel)
             if not message_boxes:
                 continue
@@ -704,13 +689,13 @@ def main(tg_channel: str) -> None:
                 timestamp = getTimestamp(tg_box)
 
                 if current_number in grouped_media_ranges:
-                    log_message(f"Skipping grouped media component: {msg_link}", log_type="status2")
+                    logger.debug(f"Skipping grouped media component: {msg_link}")
                     msg_temp.append(msg_link)
                     last_processed_number = current_number
                     continue
 
                 if is_message_logged(tg_channel, current_number):
-                    log_message(f"Skipping already logged message: {msg_link}", log_type="status2")
+                    logger.debug(f"Skipping already logged message: {msg_link}")
                     continue
 
                 msg_text = getText(tg_box)
@@ -719,32 +704,32 @@ def main(tg_channel: str) -> None:
                 total_media = len(media_items)
                 
                 if total_media > 1 and not msg_text:
-                    log_message(f"Grouped media detected with no text, trying individual message URL: {msg_link}", log_type="status2")
+                    logger.debug(f"Grouped media detected with no text, trying individual message URL: {msg_link}")
                     msg_text = getTextFromIndividualMessage(msg_link)
                     if msg_text:
-                        log_message(f"Successfully extracted text from meta tags: '{msg_text[:50]}...'", log_type="status2")
+                        logger.debug(f"Successfully extracted text from meta tags: '{msg_text[:50]}...'")
 
                 if not msg_text and tg_box.find(class_='message_media_not_supported'):
                     import os
                     if os.getenv("TG_SESSION_STRING"):
-                        log_message(f"Text hidden (View in Telegram), fetching via Telethon for {msg_link}", log_type="status2")
+                        logger.debug(f"Text hidden (View in Telegram), fetching via Telethon for {msg_link}")
                         try:
                             from telethon_client import get_telethon_text
                             fetched_text = get_telethon_text(tg_channel, current_number)
                             if fetched_text:
                                 msg_text = fetched_text
-                                log_message(f"Successfully extracted text via Telethon: '{msg_text[:50]}...'", log_type="status2")
+                                logger.debug(f"Successfully extracted text via Telethon: '{msg_text[:50]}...'")
                         except Exception as e:
-                            log_message(f"Failed to fetch text via Telethon: {e}", log_type="error")
+                            logger.error(f"Failed to fetch text via Telethon: {e}")
 
                 if msg_link not in msg_log:
-                    log_message(f"New message found: {msg_link}", log_type="new_message")
+                    logger.info(f"New message sent: {msg_link}")
                     msg_temp.append(msg_link)
                     
                     message_ids = [current_number + i for i in range(total_media)] if total_media > 1 else [current_number]
                     
                     if total_media > 1:
-                        log_message(f"Marking grouped media range: {current_number} + {total_media-1} components", log_type="status2")
+                        logger.debug(f"Marking grouped media range: {current_number} + {total_media-1} components")
                         for i in range(1, total_media):
                             grouped_media_ranges.add(current_number + i)
                             
@@ -759,15 +744,21 @@ def main(tg_channel: str) -> None:
             msg_log = msg_temp
             current_time = datetime.datetime.now()
             time_passed = current_time - SCRIPT_START_TIME
-            log_message(f"Bot working for {tg_channel}. Time passed: {time_passed}", log_type="status")
+            logger.debug(f"Bot finished pass for {tg_channel}. Time passed: {time_passed}")
         except Exception as e:
-            log_message(f"[   E R R O R   ]\n{e}\nScript ignored the error and keeps running.", log_type="error")
-        time.sleep(COOLDOWN)
+            logger.error(f"Error processing channel {tg_channel}: {e}")
+            
+    import gc
+    gc.collect()
 
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        log_message("Usage: python webhook.py <TG_CHANNEL>", log_type="status2") 
+    if len(sys.argv) < 2 or len(sys.argv) > 3:
+        print("Usage: python webhook.py <channel1,channel2,...> [worker_id]")
         sys.exit(1)
-    TG_CHANNEL = sys.argv[1]
-    log_message(f"Initializing bot with channel: {TG_CHANNEL}", log_type="status2")
-    main(TG_CHANNEL)
+    channels = sys.argv[1].split(",")
+    worker_id = sys.argv[2] if len(sys.argv) == 3 else "0"
+    
+    from logging_config import configure_logging
+    configure_logging(process_name=f"worker-{worker_id}")
+    
+    main(channels)

@@ -590,7 +590,7 @@ class GitLogManager:
         """Background thread to periodically commit log file using interval or scheduled mode"""
         while True:
             try:
-                time.sleep(60)
+                time.sleep(300)
                 
                 current_time = time.time()
                 should_commit = False

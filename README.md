@@ -1,313 +1,162 @@
 # Disgram
 
-A Python-based application that scrapes public Telegram channel preview pages (`https://t.me/s/{channel}`) and forwards messages—including text, images, videos, audio, and documents—to Discord channels using Discord's modern **Components V2 (Layouts)** system.
+A Python-based application that scrapes public Telegram channels and forwards messages (text, images, videos, audio, documents) to Discord using modern Components V2 (Layouts).
 
-It features best-available quality media extraction powered by **Telethon (MTProto)** with automatic fallback to web scraping, native process management for scraping multiple channels concurrently, a Flask health/status server with Bearer Token authentication, and built-in automatic Git log persistence using either Personal Access Tokens (PATs) or GitHub Apps.
+## Features
+- **Zero Account Setup**: Works out of the box using public Telegram preview pages.
+- **Discord Components V2**: Beautiful layouts separating core content from metadata (e.g. timestamps, forwards).
+- **Ephemeral Workers**: Optimized for low-memory environments like Render. Orchestrates scraping in isolated, short-lived chunks that automatically release memory.
+- **Git Persistence**: Automatically commits and pushes log files back to GitHub, keeping state safely stored without needing a database.
+- **Health & Monitoring**: Built-in Flask API with diagnostics (`/health`), soft/hard log cleanup (`/logs/clear`, `/logs/purge`), and Bearer Token protected administrative endpoints.
+- **Telethon Integration (Optional)**: Provide Telegram API credentials for original, uncompressed media downloads, native file attachments, full long-text parsing, and hidden spoiler protection.
 
----
+## Configuration
 
-## Core Architecture
+Duplicate `.env.example` to `.env` and set up your environment:
+```bash
+cp .env.example .env
+```
 
-Disgram uses a master-worker process structure. The master process runs a status watchdog and a Flask API server, while spawning isolated worker subprocesses for each scraped Telegram channel.
+**Core Environment Variables:**
+- `DISCORD_WEBHOOK_URL`: Your target Discord webhook URL.
+- `DISCORD_THREAD_ID`: (Optional) ID of a specific Discord thread to forward messages into.
+- `SERVER_BOOST_LEVEL`: Your Discord Server Boost Level (1, 2, 3, or 4) to determine maximum file upload limits.
+- `TELEGRAM_CHANNELS`: Comma-separated list of Telegram channel links. (Append `/123` to start from a specific message ID).
+- `EMBED_COLOR`: Hex color code for Discord embeds (default: random).
+- `API_BEARER_TOKEN`: Secret token used to secure administrative API routes.
 
-### 1.1 Process Management & API Server
+**Performance & Scaling:**
+- `MAX_WORKERS`: Number of concurrent workers (e.g., `2` for Render 512MB RAM).
+- `DISGRAM_ENV`: Set to `production` to use Waitress instead of Flask dev server.
 
-The process management and administrative API server architecture is split into two focused diagrams below:
+**Optional: Git Persistence**
+- `USE_GIT`: Set to `true` to enable saving logs to GitHub.
+- `GITHUB_REPO_URL`: The target repository URL to push logs to.
+- `GITHUB_DEPLOY_BRANCH`: The branch to push logs to (default: `prod`).
+- `GITHUB_TOKEN`: Your GitHub Personal Access Token (classic) with `repo` scope.
+- *Alternatively, use GitHub App Auth (`GITHUB_APP_CLIENT_ID`, `GITHUB_APP_INSTALLATION_ID`, `GITHUB_APP_PRIVATE_KEY`)*.
+- **Scheduling**: `COMMIT_MODE` (`interval` or `scheduled`). Use `LOG_COMMIT_INTERVAL` for interval seconds, or `COMMIT_SCHEDULE` (`hourly`, `every_2h`, `custom`) and `COMMIT_CUSTOM_HOURS` (e.g., `0,4,8,12`) for schedules. 
+- `STARTUP_GRACE_PERIOD`: Cooldown in seconds before the first commit to prevent boot loops.
 
-#### 1.1.1 Subprocess Management & Watchdog Architecture
+**Optional: Telethon Credentials (Best Quality)**
+- `TG_API_ID` & `TG_API_HASH`: Get from [my.telegram.org/apps](https://my.telegram.org/apps).
+- `TG_SESSION_STRING`: Run `python generate_session.py` locally to authenticate and generate this string.
+
+## Quick Start
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/SimpNick6703/Disgram.git
+   cd Disgram
+   ```
+2. **Install dependencies:**
+   We recommend using `uv` for fast package management:
+   ```bash
+   curl -LsSf https://astral.sh/uv/install.sh | sh
+   uv venv
+   uv pip install -r requirements.txt
+   ```
+3. **Run the bot:**
+   ```bash
+   python main.py
+   ```
+   *(For Azure or production servers, you can also use `bash start.sh`)*
+
+## Explanations
+
+### Architecture & Memory Optimization
+Disgram is designed to run stably on highly constrained environments (like Render's Free Tier with 512MB RAM). 
+Instead of running infinite parallel loops, `main.py` acts as an orchestrator. It divides your Telegram channels into chunks and spawns sequential, single-pass `webhook.py` workers. Once a chunk finishes, memory is cleared via Garbage Collection (`gc.collect()`) before the next chunk starts.
+
+### Unified Logging Architecture & `Disgram.log`
+On ephemeral environments, local databases or log files disappear when the container sleeps. Disgram solves this by unifying all application logs and state into a single file: `Disgram.log`. 
+This file acts as the single source of truth for tracking which messages have been sent. A background manager periodically commits and pushes this log to GitHub. Internal endpoints (`/logs/clear` for soft cleans, `/logs/purge` for hard cleans) or automatic overflow thresholds will periodically prune the file, discarding transient `INFO` system logs while permanently keeping your latest message markers safely preserved.
+
+### 1. Subprocess Orchestration Diagram
 
 ```mermaid
 graph TD
     Start[Start: main.py] --> InitGit[Initialize GitLogManager]
-    InitGit --> SpawnBots[Spawn Subprocesses: webhook.py per channel]
-    SpawnBots --> WatchdogLoop["Watchdog Loop: Every 30s"]
+    InitGit --> ChunkChannels[Chunk Channels by MAX_WORKERS]
+    ChunkChannels --> OrchestrationLoop["Orchestration Loop"]
     
-    WatchdogLoop --> CheckHealth{"Subprocesses Alive?"}
-    CheckHealth -- No --> RestartDead[Restart Dead Subprocess]
-    RestartDead --> WatchdogLoop
+    OrchestrationLoop --> SpawnChunk[Spawn Subprocess: webhook.py for Chunk]
+    SpawnChunk --> WaitChunk[Wait for Subprocess to Finish]
+    WaitChunk --> MoreChunks{"More Chunks?"}
     
-    CheckHealth -- Yes --> CheckZombies{"Logs Fresh?"}
-    CheckZombies -- No (Zombie detected) --> RestartAll[Restart All Subprocesses]
-    RestartAll --> WatchdogLoop
-    CheckZombies -- Yes --> WatchdogLoop
+    MoreChunks -- Yes --> SpawnChunk
+    MoreChunks -- No --> Cooldown[Sleep for COOLDOWN]
+    Cooldown --> OrchestrationLoop
 
     classDef proc fill:#3b82f6,stroke:#1d4ed8,color:#fff
     classDef decis fill:#f59e0b,stroke:#b45309,color:#fff
-    class Start,InitGit,SpawnBots,WatchdogLoop,RestartDead,RestartAll proc
-    class CheckHealth,CheckZombies decis
+    class Start,InitGit,ChunkChannels,OrchestrationLoop,SpawnChunk,WaitChunk,Cooldown proc
+    class MoreChunks decis
 ```
 
-#### 1.1.2 Flask API Server Architecture
+### 2. Scraper & Forwarding Pipeline Diagram
 
 ```mermaid
 graph TD
-    StartFlask[Start Flask Thread] --> ListenPort["Listen on PORT (Default: 5000)"]
-    ListenPort --> HandleRequest{Incoming Request}
+    Startbot[Start Subprocess: webhook.py] --> Init[Initialize TelethonManager]
+    Init --> ChannelLoop[Iterate Assigned Channels]
     
-    HandleRequest --> GET_Routes["GET / , /health , /logs , /app-logs , /git-status"]
-    GET_Routes --> ReturnData[Serve Public Diagnostic JSON/Text]
-    
-    HandleRequest --> POST_Routes["POST /force-commit , /logs/clear"]
-    POST_Routes --> CheckConfig{"Is API Bearer Token Configured on Server?"}
-    
-    CheckConfig -- No --> Return401Unconfig["Return 401 Unauthorized (Token Unconfigured)"]
-    CheckConfig -- Yes --> CheckHeader{"Is Authorization Header Present?"}
-    
-    CheckHeader -- No --> Return401Missing["Return 401 Unauthorized (Header Missing)"]
-    CheckHeader -- Yes --> VerifyToken{"Does Token Match Server API Bearer Token?"}
-    
-    VerifyToken -- No --> Return403Forbidden["Return 403 Forbidden (Invalid Token)"]
-    VerifyToken -- Yes --> ExecAdmin[Execute Administrative Action]
-    
-    ExecAdmin --> ReturnSuccess[Return Success Response]
-
-    classDef flask fill:#8b5cf6,stroke:#6d28d9,color:#fff
-    classDef decis fill:#f59e0b,stroke:#b45309,color:#fff
-    classDef err fill:#ef4444,stroke:#b91c1c,color:#fff
-    
-    class StartFlask,ListenPort,GET_Routes,POST_Routes,ReturnData,ExecAdmin,ReturnSuccess flask
-    class HandleRequest,CheckConfig,CheckHeader,VerifyToken decis
-    class Return401Unconfig,Return401Missing,Return403Forbidden err
-```
-
----
-
-### 1.2 Scraper & Message Forwarding Pipeline
-
-Each channel worker scrapes content from Telegram and forwards it via Discord Layouts with Telethon integration and fallback capabilities.
-
-```mermaid
-graph TD
-    Startbot[Start Subprocess] --> ScraperLoop[Scraper Loop]
-    ScraperLoop --> FetchTG[Fetch Public Telegram Preview via HTTP]
+    ChannelLoop --> FetchTG[Fetch Telegram Preview via HTTP]
     FetchTG --> ParseTG{"New Message Found?"}
-    ParseTG -- No --> Cooldown[Wait Cooldown]
-    Cooldown --> FetchTG
+    ParseTG -- No --> NextChannel{"More Channels?"}
     
     ParseTG -- Yes --> ExtractMetadata["Extract Text, Forwards & Replies"]
-    ExtractMetadata --> CheckTelethon{"Telethon Configured on Boot?"}
+    ExtractMetadata --> CheckTelethon{"Telethon Configured?"}
     
-    CheckTelethon -- Yes --> CheckTelethonSize{"File Size <= Boost Level Max?"}
+    CheckTelethon -- Yes --> CheckTelethonSize{"File Size <= Max?"}
     CheckTelethonSize -- Yes --> FetchTelethon["Fetch Media via Telethon"]
-    CheckTelethonSize -- No --> MarkTooLarge["Skip DL: Mark as video_too_large"]
+    CheckTelethonSize -- No --> MarkTooLarge["Skip DL: Mark video_too_large"]
     
-    FetchTelethon --> MediaSuccess{"Telethon Download Succeeded?"}
+    FetchTelethon --> MediaSuccess{"Telethon DL Succeeded?"}
     MarkTooLarge --> ProcessMedia["Process Media Items"]
     MediaSuccess -- Yes --> ProcessMedia
     
-    CheckTelethon -- No --> CheckHTMLSize{"HTTP Content-Length <= Boost Level Max?"}
+    CheckTelethon -- No --> CheckHTMLSize{"HTTP Content-Length <= Max?"}
     MediaSuccess -- No --> CheckHTMLSize
     
-    CheckHTMLSize -- Yes --> HTMLFallback["Download Web Preview Media Concurrently"]
-    CheckHTMLSize -- No --> MarkTooLargeHTML["Skip DL: Mark as video_too_large"]
+    CheckHTMLSize -- Yes --> HTMLFallback["Download Web Media Concurrently"]
+    CheckHTMLSize -- No --> MarkTooLargeHTML["Skip DL: Mark video_too_large"]
     
     HTMLFallback --> ProcessMedia
     MarkTooLargeHTML --> ProcessMedia
     
     ProcessMedia --> BuildLayout["Build Discord Component V2 Layout"]
-    
-    BuildLayout --> AddMainText["Add Primary ui.TextDisplay"]
-    AddMainText --> SeparateComponents{"Categorize Attachments"}
-    SeparateComponents --> MediaGalleryItems["Images/Videos -> ui.MediaGallery"]
-    SeparateComponents --> FileComponents["Documents/Audio -> ui.File"]
-    
-    MediaGalleryItems --> AddSeparator["Add ui.Separator (invisible)"]
-    FileComponents --> AddSeparator
-    
-    AddSeparator --> AddMetaText["Add Secondary ui.TextDisplay (Metadata)"]
-    
-    AddMetaText --> ContainerBuild["Assemble Container & LayoutView"]
-    
-    ContainerBuild --> SendWebhook[Send Webhook Message]
+    BuildLayout --> SendWebhook[Send Webhook Message]
     
     SendWebhook --> Success{"Send Successful?"}
-    Success -- Yes --> UpdateLog[Update Disgram.log with Marker]
-    UpdateLog --> Cooldown
+    Success -- Yes --> UpdateLog[Append to Disgram.log]
+    UpdateLog --> MessageLoop{"More Messages in Channel?"}
     
-    Success -- No (Payload Too Large 413) --> ApplyFallback[Targeted Video Fallback]
-    ApplyFallback --> LoopMedia[Iterate Downloaded Media]
-    LoopMedia --> ExcludeVideos{"Is Video & Size > 10MB?"}
-    ExcludeVideos -- Yes --> DownloadThumb[Download Thumbnail & Re-upload to Discord]
-    ExcludeVideos -- No --> KeepAttachment[Keep as File Attachment]
-    DownloadThumb --> BuildFallbackLayout[Build Fallback Layout]
-    KeepAttachment --> BuildFallbackLayout
-    BuildFallbackLayout --> RetryWebhook[Retry Send Webhook]
+    Success -- No (413) --> ApplyFallback[Targeted Video Fallback]
+    ApplyFallback --> RetryWebhook[Retry Webhook]
     
     RetryWebhook --> SuccessFallback{"Retry Successful?"}
     SuccessFallback -- Yes --> UpdateLog
-    SuccessFallback -- No --> PlainTextFallback[Final Plain Text Fallback]
+    SuccessFallback -- No --> PlainTextFallback[Plain Text Fallback]
+    
     PlainTextFallback --> SuccessFinal{"Final Retry Successful?"}
     SuccessFinal -- Yes --> UpdateLog
     SuccessFinal -- No --> LogError[Log Error]
-    LogError --> Cooldown
+    LogError --> MessageLoop
+    
+    MessageLoop -- Yes --> ExtractMetadata
+    MessageLoop -- No --> NextChannel
+    
+    NextChannel -- Yes --> ChannelLoop
+    NextChannel -- No --> GCCollect["Run gc.collect() and Exit"]
 
     classDef loop fill:#10b981,stroke:#047857,color:#fff
     classDef decis fill:#f59e0b,stroke:#b45309,color:#fff
     classDef fallback fill:#ef4444,stroke:#b91c1c,color:#fff
     classDef telethon fill:#8b5cf6,stroke:#6d28d9,color:#fff
     
-    class Startbot,ScraperLoop,FetchTG,Cooldown,BuildLayout,SendWebhook,UpdateLog,BuildFallbackLayout,RetryWebhook,PlainTextFallback,LogError,ContainerBuild,ExtractMetadata,AddMainText,AddSeparator,AddMetaText loop
-    class ParseTG,Success,ExcludeVideos,SuccessFallback,SuccessFinal,CheckTelethon,MediaSuccess,SeparateComponents,CheckTelethonSize,CheckHTMLSize decis
-    class ApplyFallback,LoopMedia,DownloadThumb,KeepAttachment,MarkTooLarge,MarkTooLargeHTML fallback
-    class FetchTelethon,HTMLFallback,ProcessMedia,MediaGalleryItems,FileComponents telethon
+    class Startbot,Init,ChannelLoop,FetchTG,BuildLayout,SendWebhook,UpdateLog,RetryWebhook,PlainTextFallback,LogError,GCCollect loop
+    class ParseTG,NextChannel,MessageLoop,Success,SuccessFallback,SuccessFinal,CheckTelethon,MediaSuccess,CheckTelethonSize,CheckHTMLSize decis
+    class ApplyFallback,MarkTooLarge,MarkTooLargeHTML fallback
+    class FetchTelethon,HTMLFallback,ProcessMedia telethon
 ```
-
----
-
-## Features
-
-### Base Features (Standard HTML Web Scraping)
-- **Zero Account Setup**: Works out of the box with zero Telegram API keys or user account logins using public Telegram preview pages (`/s/{channel}`).
-- **Discord Components V2**: Utilizes Discord's modern layout model (`Container`, `TextDisplay`, `MediaGallery`, and `ui.File`). It separates core message content from metadata (e.g. timestamps, forwards) using a `ui.Separator`.
-- **Forward & Reply Parsing**: Faithfully parses and replicates "Forwarded from" attributions and blockquotes truncated replies to mirror the original Telegram conversation flow natively on Discord.
-- **Bandwidth-Aware File Limits**: Skips downloading heavy files entirely by evaluating HTTP `Content-Length` sizes ahead of time, falling back cleanly to image previews based on your configured `SERVER_BOOST_LEVEL`.
-- **Large Videos Preview Handling**: Detects videos too large to stream inline on Telegram preview pages, extracting their duration and thumbnail URL to render in the `MediaGallery` with a descriptive label (e.g., `Media is too big (0:17)`).
-- **Process Isolation**: Spawns each channel scraper in its own isolated worker process monitored by a master watchdog loop.
-- **Git Log Persistence**: Automatically commits and pushes log files back to GitHub periodically using PAT or GitHub App authorization.
-- **Monitoring Endpoints**: Real-time health diagnostic server, log viewers, and administrative API routes (with optional Bearer Token security).
-
-### Enhanced Features (With Telethon / MTProto Credentials)
-Adding your Telegram API credentials unlocks the full potential of Disgram:
-- **Best-Available Quality Media**: Extracts original, uncompressed images, full-length HD videos, and native audio tracks instead of downscaled web preview thumbnails.
-- **Native File Attachments (Requires Telethon)**: Non-media files (documents, code files, archives, and uncompressed attachments) are fetched directly via Telethon and attached using Discord `ui.File` components.
-- **Long Articles & Hidden Text (Requires Telethon)**: Detects posts that are truncated on the web preview (e.g., "View in Telegram" or long Telegraph-style articles) and automatically extracts the complete text along with its formatting using Telegram's native `RichMessage` parser.
-- **Spoiler Protection (Requires Telethon)**: Detects Telegram spoiler flags on photos and media, automatically masking them in Discord with `SPOILER_` tags.
-- **Grouped Media Processing (Telethon Recommended)**: Preserves original visual order and full resolution for up to 10 images/videos in a single `MediaGallery`.
-- **Targeted Video Upload Fallback**: Telethon fetches original video files to upload directly. If Discord rejects the payload with HTTP 413 (Payload Too Large), Disgram automatically applies targeted fallback—downloading the preview thumbnail image of oversized videos and re-uploading it as a permanent file attachment (`attachment://thumb_xxx.jpg`) to Discord in the `MediaGallery` with its duration label (e.g., `Media is too big (0:17)`) while keeping all other media attachments intact.
-- **Private Channel Support**: Enables scraping content from private channels that your Telegram User Account has joined.
-
----
-
-## Prerequisites
-
-- Python 3.8 or higher
-- Git (configured on host system or running environment)
-- A Discord Webhook URL
-- (Optional but Recommended) Telegram `TG_API_ID`, `TG_API_HASH`, and `TG_SESSION_STRING` for best-available quality downloads.
-
----
-
-## Installation
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/SimpNick6703/Disgram.git
-   cd Disgram
-   ```
-
-2. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
----
-
-## Obtaining Credentials & Setup Guide
-
-### 1. Discord Webhook URL (`DISCORD_WEBHOOK_URL`)
-1. Open Discord and go to your Target Server's settings.
-2. Navigate to **Integrations** -> **Webhooks** -> **New Webhook**.
-3. Give it a name, select the target text channel, and click **Copy Webhook URL**.
-4. Set it as `DISCORD_WEBHOOK_URL` in your `.env`.
-
-### 2. Telegram API Credentials (`TG_API_ID`, `TG_API_HASH`, `TG_SESSION_STRING`)
-1. Go to [my.telegram.org/apps](<https://my.telegram.org/apps>) and log in with your phone number.
-2. Click on **API Development Tools**.
-3. Fill out the application form (App title and short name can be anything, e.g., `Disgram`).
-4. Copy your **`App api_id`** (`TG_API_ID`) and **`App api_hash`** (`TG_API_HASH`).
-5. **Generate Session String (Run Locally First)**:
-   > [!IMPORTANT]
-   > You **must** run this command on your local machine first before deploying to a production server (like Azure/Docker) because it requires interactive terminal input (phone number and SMS OTP code).
-   ```bash
-   python generate_session.py
-   ```
-6. Follow the prompt to enter your phone number and login OTP code.
-7. Copy the generated session string and save it as `TG_SESSION_STRING` in your `.env`.
-
-### 3. GitHub Credentials for Log Persistence (`USE_GIT=true`)
-
-#### Option A: Personal Access Token (PAT)
-1. Go to GitHub -> **Settings** -> **Developer Settings** -> **Personal Access Tokens** -> **Tokens (classic)**.
-2. Click **Generate new token (classic)**.
-3. Select the `repo` scope (Full control of private repositories).
-4. Copy the token and set it as `GITHUB_TOKEN` in `.env`.
-
-#### Option B: GitHub App Authentication (Recommended for Azure / Cloud Hosting)
-1. Go to GitHub -> **Settings** -> **Developer Settings** -> **GitHub Apps** -> **New GitHub App**.
-2. Set a Homepage URL (e.g. your repository link).
-3. Under **Permissions**, grant **Repository permissions** -> **Contents** -> **Read & Write**.
-4. Save the App and click **Generate a private key**. Download the `.pem` file.
-5. Install the GitHub App on your repository to obtain the **Installation ID** (visible in the URL when viewing installed apps `github.com/settings/installations/XXXXXX`).
-6. Update your `.env` with `GITHUB_APP_CLIENT_ID`, `GITHUB_APP_INSTALLATION_ID`, and set `GITHUB_APP_PRIVATE_KEY_PATH` (or paste the raw PEM string into `GITHUB_APP_PRIVATE_KEY`).
-
----
-
-## Configuration Reference
-
-Duplicate `.env.example` to `.env` and configure your environment:
-```bash
-cp .env.example .env
-```
-
-### 1. General Settings
-* `DISCORD_WEBHOOK_URL`: Your Discord webhook URL.
-* `DISCORD_THREAD_ID` (Optional): ID of a specific Discord thread to forward messages into.
-* `SERVER_BOOST_LEVEL`: Your Discord Server Boost Level (1, 2, 3, or 4). Used to determine maximum file upload limits before skipping downloads (Level 1: 10MB, Level 2: 50MB, Level 3: 100MB, Level 4: 250MB for the Beta extra perk).
-* `TELEGRAM_CHANNELS`: Comma-separated list of Telegram channel links.
-* `EMBED_COLOR`: Color hex (e.g., `89a7d9`) for Discord layout container borders.
-* `API_BEARER_TOKEN`: Bearer Token to protect administrative POST endpoints (`POST /force-commit`, `POST /logs/clear`).
-
-> [!TIP]
-> **Starting from specific messages**: To begin scraping from a specific message number, append the message ID to the channel URL: `https://t.me/channel_name/1234`.
-
----
-
-### 2. Telethon / MTProto Settings (Optional - Best-Available Quality)
-To fetch full-resolution media, uncompressed files, audio, and documents:
-* `TG_API_ID`: Obtained from [my.telegram.org/apps](https://my.telegram.org/apps).
-* `TG_API_HASH`: Obtained from [my.telegram.org/apps](https://my.telegram.org/apps).
-* `TG_SESSION_STRING`: Generated by running `python generate_session.py` locally first.
-
-
----
-
-### 3. Git Persistence Settings (Optional if running locally)
-* `USE_GIT`: Set to `false` if running locally or self-hosting where Git log tracking is not required. Defaults to `true`.
-* `COMMIT_MODE`: Scheduling strategy: `"interval"` (default) or `"scheduled"`.
-* `LOG_COMMIT_INTERVAL`: Time in seconds between pushes if using interval mode.
-* `COMMIT_SCHEDULE`: Preset execution time (`"hourly"`, `"every_2h"`, `"custom"`).
-* `COMMIT_CUSTOM_HOURS`: Comma-separated list of UTC hours (e.g., `"0,6,12,18"`).
-
----
-
-## Usage
-
-1. Start the bot manually:
-   ```bash
-   python main.py
-   ```
-2. Start the bot via Azure startup script:
-   ```bash
-   bash start.sh
-   ```
-3. Stop the bot: Press `Ctrl + C` (which triggers a final log push to git and terminates all worker processes).
-
----
-
-## Flask Server API Endpoints
-
-The Flask server listens on `PORT` (default: `5000`):
-
-* `GET /`: Displays repository description, status, and list of endpoints.
-* `GET /health`: Health diagnostic response indicating process statuses, webhook rate limit info, and Telethon authorization status (`telethon_authorized`).
-* `GET /logs`: Displays contents of `Disgram.log` (scraped messages history).
-* `GET /app-logs`: Displays `app.log` (internal system, Flask, and process manager activity).
-* `GET /git-status`: Status diagnostics for git persistence (commit mode, last/next scheduled commits, elapsed time, hash, and status).
-* `POST /force-commit`: Bypasses schedule cooldowns to immediately commit and push logs to the remote repository. *(Requires an `Authorization: Bearer <API_BEARER_TOKEN>` header; returns `401 Unauthorized` if unconfigured or header missing, and `403 Forbidden` if invalid)*.
-* `POST /logs/clear`: Wipes historical entries from `Disgram.log` while preserving latest processed message URLs. *(Requires an `Authorization: Bearer <API_BEARER_TOKEN>` header; returns `401 Unauthorized` if unconfigured or header missing, and `403 Forbidden` if invalid)*.
-
----
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

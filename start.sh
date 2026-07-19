@@ -139,6 +139,9 @@ else
     fi
 fi
 
+# Set production environment for Waitress WSGI server
+export DISGRAM_ENV=production
+
 # Start the Python application
 echo "Starting Disgram Python application..."
-exec python main.py
+exec uv run main.py

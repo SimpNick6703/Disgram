@@ -5,6 +5,7 @@ import dotenv
 dotenv.load_dotenv()
 
 Channels = (os.getenv("TELEGRAM_CHANNELS") or "").split(",")
+MAX_WORKERS = int(os.getenv("MAX_WORKERS", "2"))
 COOLDOWN = 300 # Strongly recommended to keep more than 5-20s in the long run to avoid being IP banned by Telegram. 
 
 SERVER_BOOST_LEVEL = int(os.getenv("SERVER_BOOST_LEVEL", "1"))
