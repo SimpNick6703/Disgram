@@ -444,7 +444,6 @@ def root():
         "description": "Telegram to Discord messages forwarding bot",
         "health_endpoint": "/health",
         "logs_endpoint": "/logs",
-        "app_logs_endpoint": "/app-logs",
         "git-status_endpoint": "/git-status",
         "channels": len(Channels),
         "status": health_status.get("status", "unknown")
