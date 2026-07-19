@@ -144,4 +144,4 @@ export DISGRAM_ENV=production
 
 # Start the Python application
 echo "Starting Disgram Python application..."
-exec uv run main.py
+exec python main.py
