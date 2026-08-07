@@ -509,14 +509,17 @@ def sendMessage(channel: str, message_ids: list[int], msg_link: str, msg_text: s
         doc_str = ""
         if documents:
             doc_str = "-# Attached file(s): " + ", ".join([f"`{doc}`" for doc in documents])
-        doc_len = len(doc_str) if doc_str else 0
+            
+        # User requested: limit original text to 5600, rest will be spare.
+        MAX_ORIGINAL_TEXT = 5600
         
-        # Max total chars for layout = 6000. Buffer = 100.
-        MAX_TOTAL_CHARS = 5900
-        available_budget = MAX_TOTAL_CHARS - meta_len - doc_len
-        
-        if msg_text and len(msg_text) > available_budget:
-            msg_text = msg_text[:available_budget-3] + "..."
+        if msg_text and len(msg_text) > MAX_ORIGINAL_TEXT:
+            split_idx = msg_text.rfind('\n', 0, MAX_ORIGINAL_TEXT - 3)
+            if split_idx == -1:
+                split_idx = msg_text.rfind(' ', 0, MAX_ORIGINAL_TEXT - 3)
+            if split_idx == -1 or split_idx == 0:
+                split_idx = MAX_ORIGINAL_TEXT - 3
+            msg_text = msg_text[:split_idx] + "..."
             
         from discord.ui import Separator
         container_items = []
@@ -527,24 +530,23 @@ def sendMessage(channel: str, message_ids: list[int], msg_link: str, msg_text: s
             full_main_text += ("\n\n" + doc_str) if full_main_text else doc_str
             
         if full_main_text:
-            # Intelligently split text into max 3900 character chunks
-            def split_text_intelligently(text: str, max_length: int) -> list[str]:
-                if not text:
-                    return []
-                res = []
-                while len(text) > max_length:
-                    split_idx = text.rfind('\n', 0, max_length)
-                    if split_idx == -1:
-                        split_idx = text.rfind(' ', 0, max_length)
-                    if split_idx == -1 or split_idx == 0:
-                        split_idx = max_length
-                    res.append(text[:split_idx])
-                    text = text[split_idx:].lstrip()
-                if text:
-                    res.append(text)
-                return res
+            # TextDisplay can't hold more than 4000 characters.
+            MAX_TEXT_DISPLAY = 3990
+            text_remaining = full_main_text
+            
+            while len(text_remaining) > MAX_TEXT_DISPLAY:
+                split_idx = text_remaining.rfind('\n', 0, MAX_TEXT_DISPLAY)
+                if split_idx == -1:
+                    split_idx = text_remaining.rfind(' ', 0, MAX_TEXT_DISPLAY)
+                if split_idx == -1 or split_idx == 0:
+                    split_idx = MAX_TEXT_DISPLAY
+                    
+                chunks.append(text_remaining[:split_idx])
+                text_remaining = text_remaining[split_idx:].lstrip()
                 
-            chunks = split_text_intelligently(full_main_text, 3900)
+            if text_remaining:
+                chunks.append(text_remaining)
+                
             for chunk in chunks:
                 container_items.append(TextDisplay(chunk))
             
@@ -665,7 +667,7 @@ def sendMessage(channel: str, message_ids: list[int], msg_link: str, msg_text: s
             for item in media_status:
                 content_parts.append(item['url'])
                 
-            MAX_PLAIN_TEXT = 4000
+            MAX_PLAIN_TEXT = 2000
             allowed_len = MAX_PLAIN_TEXT - meta_len - 10
             
             body_text = "\n\n".join(content_parts)
