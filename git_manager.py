@@ -326,6 +326,12 @@ class GitLogManager:
                 else:
                     logger.warning(f"Unexpected remote URL format: {sanitize_url_for_logging(current_url)}")
                 
+            # Ensure a local git identity is configured to prevent git stash/commit from failing
+            name_to_use = self.github_app_commit_name or "Disgram Bot"
+            email_to_use = self.github_app_commit_email or "disgram@bot.local"
+            subprocess.run(["git", "config", "user.name", name_to_use], cwd=".", capture_output=True)
+            subprocess.run(["git", "config", "user.email", email_to_use], cwd=".", capture_output=True)
+                
         except subprocess.CalledProcessError as e:
             logger.error(f"Error configuring git authentication: {e}")
         except Exception as e:
@@ -394,7 +400,7 @@ class GitLogManager:
                 subprocess.run(["git", "branch", "--set-upstream-to", f"origin/{current_branch}", current_branch], 
                               cwd=".", capture_output=True, text=True)
             
-            pull_result = subprocess.run(["git", "pull", "origin", current_branch],
+            pull_result = subprocess.run(["git", "pull", "origin", current_branch, "--allow-unrelated-histories", "-X", "ours"],
                                        cwd=".", capture_output=True, text=True)
             
             if pull_result.returncode == 0:
@@ -518,15 +524,8 @@ class GitLogManager:
             else:
                 commit_message = f"Auto-commit: Update log files ({', '.join(changed_log_files)}) - {timestamp}"
             
-            env = os.environ.copy()
-            commit_name = self.github_app_commit_name or 'Disgram Bot'
-            commit_email = self.github_app_commit_email or 'disgram@bot.local'
-            env['GIT_AUTHOR_NAME'] = commit_name
-            env['GIT_AUTHOR_EMAIL'] = commit_email
-            env['GIT_COMMITTER_NAME'] = commit_name
-            env['GIT_COMMITTER_EMAIL'] = commit_email
             subprocess.run(["git", "commit", "-m", commit_message], 
-                          cwd=".", env=env, capture_output=True, text=True, check=True)
+                          cwd=".", capture_output=True, text=True, check=True)
             
             if self.github_token or os.getenv("GITHUB_APP_ID") or os.getenv("GITHUB_APP_CLIENT_ID"):
                 push_success = self._push_changes()
@@ -567,7 +566,7 @@ class GitLogManager:
             subprocess.run(["git", "stash", "push", "-m", "Auto-stash before pull"], 
                           cwd=".", capture_output=True, text=True)
             
-            result = subprocess.run(["git", "pull", "origin", current_branch], 
+            result = subprocess.run(["git", "pull", "origin", current_branch, "--allow-unrelated-histories", "-X", "ours"], 
                                    cwd=".", capture_output=True, text=True)
             
             if result.returncode == 0:

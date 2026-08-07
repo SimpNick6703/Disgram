@@ -39,8 +39,6 @@ else
         
         if [ ! -z "$GITHUB_APP_ID" ] || [ ! -z "$GITHUB_APP_CLIENT_ID" ]; then
             echo "GitHub App credentials detected. Git authentication will be configured dynamically by the Python application."
-            git config --global user.name "disgram-bot[bot]" 2>/dev/null || true
-            git config --global user.email "disgram-bot[bot]@users.noreply.github.com" 2>/dev/null || true
         elif [ ! -z "$GITHUB_TOKEN" ]; then
             echo "Configuring Git authentication with GitHub token..."
             git config --global user.name "Disgram Bot" 2>/dev/null || true
