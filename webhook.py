@@ -482,32 +482,7 @@ def sendMessage(channel: str, message_ids: list[int], msg_link: str, msg_text: s
         time_str = f" at <t:{unix_time}:f>"
         link_label = author_name if author_name else channel
         
-        doc_str = ""
-        if documents:
-            doc_str = "-# Attached file(s): " + ", ".join([f"`{doc}`" for doc in documents])
-            
-        main_text_parts = []
-        if msg_text:
-            main_text_parts.append(msg_text)
-        if doc_str:
-            main_text_parts.append(doc_str)
-            
-        from discord.ui import Separator
-        
-        container_items = []
-        
-        if main_text_parts:
-            text_disp = TextDisplay("\n\n".join(main_text_parts))
-            container_items.append(text_disp)
-            
-        if gallery_items:
-            gallery = MediaGallery(*gallery_items)
-            container_items.append(gallery)
-            
-        for uf in ui_files:
-            container_items.append(uf)
-            
-        # Metadata logic
+        # Calculate Metadata first to know budget
         meta_parts = []
         author_link = f"[{link_label}](<{msg_link}>)"
         
@@ -527,8 +502,59 @@ def sendMessage(channel: str, message_ids: list[int], msg_link: str, msg_text: s
         else:
             meta_parts.append(f"-# {author_link}{time_str}")
             
-        meta_text_disp = TextDisplay("\n".join(meta_parts))
+        meta_string = "\n".join(meta_parts)
+        meta_text_disp = TextDisplay(meta_string)
+        meta_len = len(meta_string)
         
+        doc_str = ""
+        if documents:
+            doc_str = "-# Attached file(s): " + ", ".join([f"`{doc}`" for doc in documents])
+        doc_len = len(doc_str) if doc_str else 0
+        
+        # Max total chars for layout = 6000. Buffer = 100.
+        MAX_TOTAL_CHARS = 5900
+        available_budget = MAX_TOTAL_CHARS - meta_len - doc_len
+        
+        if msg_text and len(msg_text) > available_budget:
+            msg_text = msg_text[:available_budget-3] + "..."
+            
+        from discord.ui import Separator
+        container_items = []
+        chunks = []
+        
+        full_main_text = msg_text if msg_text else ""
+        if doc_str:
+            full_main_text += ("\n\n" + doc_str) if full_main_text else doc_str
+            
+        if full_main_text:
+            # Intelligently split text into max 3900 character chunks
+            def split_text_intelligently(text: str, max_length: int) -> list[str]:
+                if not text:
+                    return []
+                res = []
+                while len(text) > max_length:
+                    split_idx = text.rfind('\n', 0, max_length)
+                    if split_idx == -1:
+                        split_idx = text.rfind(' ', 0, max_length)
+                    if split_idx == -1 or split_idx == 0:
+                        split_idx = max_length
+                    res.append(text[:split_idx])
+                    text = text[split_idx:].lstrip()
+                if text:
+                    res.append(text)
+                return res
+                
+            chunks = split_text_intelligently(full_main_text, 3900)
+            for chunk in chunks:
+                container_items.append(TextDisplay(chunk))
+            
+        if gallery_items:
+            gallery = MediaGallery(*gallery_items)
+            container_items.append(gallery)
+            
+        for uf in ui_files:
+            container_items.append(uf)
+            
         if container_items:
             container_items.append(Separator(visible=False))
             
@@ -553,7 +579,7 @@ def sendMessage(channel: str, message_ids: list[int], msg_link: str, msg_text: s
         
         # Targeted video fallback on HTTP 413 (Payload Too Large)
         if not success and too_large:
-            log_message("Payload too large, applying targeted video fallback (downloading video thumbnails and re-uploading to Discord)...", log_type="new_message")
+            logger.warning("Payload too large, applying targeted video fallback (downloading video thumbnails and re-uploading to Discord)...")
             
             fallback_files = []
             fallback_gallery_items = []
@@ -568,7 +594,7 @@ def sendMessage(channel: str, message_ids: list[int], msg_link: str, msg_text: s
                     if itype == 'video':
                         video_size = len(item['data']) if item['data'] else 0
                         if video_size > 10 * 1024 * 1024:
-                            logger.info(f"Video {item['filename']} is too large ({video_size / (1024*1024):.2f} MB), downloading thumbnail for re-upload...", log_type="new_message")
+                            logger.warning(f"Video {item['filename']} is too large ({video_size / (1024*1024):.2f} MB), downloading thumbnail for re-upload...")
                             thumb_bytes, thumb_filename = download_image(url)
                             desc_label = f"Media is too big{dur_str}"
                             if thumb_bytes and thumb_filename:
@@ -599,8 +625,8 @@ def sendMessage(channel: str, message_ids: list[int], msg_link: str, msg_text: s
                         fallback_gallery_items.append(discord.MediaGalleryItem(url))
                     
             fallback_items = []
-            if main_text_parts:
-                fallback_items.append(TextDisplay("\n\n".join(main_text_parts)))
+            for chunk in chunks:
+                fallback_items.append(TextDisplay(chunk))
             
             if fallback_gallery_items:
                 fallback_gallery = MediaGallery(*fallback_gallery_items)
@@ -631,19 +657,28 @@ def sendMessage(channel: str, message_ids: list[int], msg_link: str, msg_text: s
             
         # Final fallback to plain text content if layout still fails
         if not success:
-            log_message("Failed to send with layout, falling back to plain text content only...", log_type="new_message")
+            logger.warning("Failed to send with layout, falling back to plain text content only...")
+            
             content_parts = []
             if msg_text:
                 content_parts.append(msg_text)
             for item in media_status:
                 content_parts.append(item['url'])
-            content_parts.append("\n".join(meta_parts))
-            fallback_content = "\n\n".join(content_parts)
-            if len(fallback_content) > 4000:
-                link_part = "\n".join(meta_parts)
-                allowed_len = 4000 - len(link_part) - 10
-                rest = "\n\n".join(content_parts[:-1])
-                fallback_content = rest[:allowed_len] + "...\n\n" + link_part
+                
+            MAX_PLAIN_TEXT = 4000
+            allowed_len = MAX_PLAIN_TEXT - meta_len - 10
+            
+            body_text = "\n\n".join(content_parts)
+            if len(body_text) > allowed_len:
+                split_idx = body_text.rfind('\n', 0, allowed_len - 3)
+                if split_idx == -1:
+                    split_idx = body_text.rfind(' ', 0, allowed_len - 3)
+                if split_idx == -1 or split_idx == 0:
+                    split_idx = allowed_len - 3
+                body_text = body_text[:split_idx] + "..."
+                
+            fallback_content = body_text + "\n\n" + meta_string
+            
             success, _ = send_webhook_message(
                 WEBHOOK_URL,
                 THREAD_ID,
