@@ -400,7 +400,7 @@ class GitLogManager:
                 subprocess.run(["git", "branch", "--set-upstream-to", f"origin/{current_branch}", current_branch], 
                               cwd=".", capture_output=True, text=True)
             
-            pull_result = subprocess.run(["git", "pull", "origin", current_branch],
+            pull_result = subprocess.run(["git", "pull", "origin", current_branch, "--allow-unrelated-histories", "-X", "ours"],
                                        cwd=".", capture_output=True, text=True)
             
             if pull_result.returncode == 0:
@@ -566,7 +566,7 @@ class GitLogManager:
             subprocess.run(["git", "stash", "push", "-m", "Auto-stash before pull"], 
                           cwd=".", capture_output=True, text=True)
             
-            result = subprocess.run(["git", "pull", "origin", current_branch], 
+            result = subprocess.run(["git", "pull", "origin", current_branch, "--allow-unrelated-histories", "-X", "ours"], 
                                    cwd=".", capture_output=True, text=True)
             
             if result.returncode == 0:

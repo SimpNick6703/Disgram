@@ -71,6 +71,7 @@
                   "name": "Disgram",
                   "description": "Telegram to Discord messages forwarding bot",
                   "health_endpoint": "/health",
+                  "openapi_endpoint": "/openapi.json",
                   "logs_endpoint": "/logs",
                   "git-status_endpoint": "/git-status",
                   "channels": 5,
