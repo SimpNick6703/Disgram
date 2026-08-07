@@ -437,12 +437,22 @@ def git_status():
     status["configured"] = True
     return jsonify(status)
 
+@app.route('/openapi.json')
+def openapi_spec():
+    """Serve the OpenAPI specification."""
+    try:
+        with open("openapi.json", "r", encoding="utf-8") as f:
+            return Response(f.read(), mimetype='application/json')
+    except Exception as e:
+        return jsonify({"error": f"Could not load openapi.json: {str(e)}"}), 500
+
 @app.route('/')
 def root():
     return jsonify({
         "name": "Disgram",
         "description": "Telegram to Discord messages forwarding bot",
         "health_endpoint": "/health",
+        "openapi_endpoint": "/openapi.json",
         "logs_endpoint": "/logs",
         "git-status_endpoint": "/git-status",
         "channels": len(Channels),

@@ -1,0 +1,314 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Disgram API",
+    "description": "API documentation for Disgram - a Telegram to Discord messages forwarding bot. This API provides administrative controls, log viewing capabilities, and system health checks.",
+    "version": "1.0.1"
+  },
+  "servers": [
+    {
+      "url": "{prodUrl}",
+      "description": "Production Server",
+      "variables": {
+        "prodUrl": {
+          "default": "https://disgram.onrender.com",
+          "description": "Production Environment URL"
+        }
+      }
+    },
+    {
+      "url": "{devUrl}",
+      "description": "Development Server",
+      "variables": {
+        "devUrl": {
+          "default": "http://127.0.0.1:5000",
+          "description": "Development Environment URL"
+        }
+      }
+    }
+  ],
+  "tags": [
+    {
+      "name": "General",
+      "description": "Core application health and status information."
+    },
+    {
+      "name": "Logs",
+      "description": "Endpoints to view, clear, or purge application logs."
+    },
+    {
+      "name": "Git Persistence",
+      "description": "Manage GitHub commit attribution and persistence synchronization."
+    }
+  ],
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "Token",
+        "description": "Authorization token for administrative endpoints. Default value from `.env.example` is `secret_admin_token`. All POST requests require this token in the Authorization header."
+      }
+    }
+  },
+  "paths": {
+    "/": {
+      "get": {
+        "tags": ["General"],
+        "summary": "Root API Information",
+        "description": "Returns basic information about the Disgram application, a list of available REST endpoints, the number of configured channels, and overall health status.",
+        "responses": {
+          "200": {
+            "description": "Successful response with application metadata.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "name": "Disgram",
+                  "description": "Telegram to Discord messages forwarding bot",
+                  "health_endpoint": "/health",
+                  "logs_endpoint": "/logs",
+                  "git-status_endpoint": "/git-status",
+                  "channels": 5,
+                  "status": "healthy"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "tags": ["General"],
+        "summary": "Application Health Check",
+        "description": "Provides detailed health status of the application including external services (Telegram, Discord), worker status, system memory usage, log freshness, and Git configuration. Returns a 503 status code if essential services (like Telegram connectivity, Discord webhook accessibility, or log freshness) are failing.",
+        "responses": {
+          "200": {
+            "description": "Application is completely healthy.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": "healthy",
+                  "timestamp": "2023-11-20T10:00:00.000Z",
+                  "uptime_minutes": 142.5,
+                  "workers": {
+                    "mode": "on-demand",
+                    "max_workers": 2,
+                    "chunks": 2,
+                    "channels_per_chunk": [3, 2],
+                    "channels": ["Channel1", "Channel2"]
+                  },
+                  "external_services": {
+                    "telegram_reachable": true,
+                    "telethon_authorized": true,
+                    "discord_webhook": {
+                      "accessible": true,
+                      "message": "Webhook OK"
+                    }
+                  },
+                  "log_freshness": {
+                    "is_fresh": true,
+                    "message": "Log updated recently",
+                    "last_modified": "2023-11-20T09:59:00.000Z",
+                    "age_minutes": 1.0
+                  },
+                  "system": {},
+                  "git_commits": {},
+                  "configuration": {
+                    "thread_id_configured": false,
+                    "webhook_configured": true,
+                    "channels_count": 5,
+                    "git_commits_configured": true
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Application is unhealthy (e.g. external connectivity failure or stale logs)."
+          }
+        }
+      }
+    },
+    "/openapi.json": {
+      "get": {
+        "tags": ["General"],
+        "summary": "OpenAPI Specification",
+        "description": "Serves the OpenAPI JSON specification file describing all available endpoints, required authentication, and response schemas.",
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved the OpenAPI specification.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error reading the file."
+          }
+        }
+      }
+    },
+    "/logs": {
+      "get": {
+        "tags": ["Logs"],
+        "summary": "View Application Logs",
+        "description": "Returns the last 1000 lines of the `Disgram.log` file in plain text format. The log file tracks the sync progress between Telegram channels and Discord.",
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved logs.",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": "Disgram Log Viewer\nTotal lines in log: 500\nShowing last 500 lines\nLog file: /path/to/Disgram.log\nLast modified: 2023-11-20T10:00:00.000Z\n================================================================================\n\n[INFO] Bot started successfully..."
+              }
+            }
+          },
+          "404": {
+            "description": "The `Disgram.log` file was not found on disk."
+          },
+          "500": {
+            "description": "Internal server error occurred while reading the log file."
+          }
+        }
+      }
+    },
+    "/logs/clear": {
+      "post": {
+        "tags": ["Logs"],
+        "summary": "Clear Logs (Soft Clean)",
+        "description": "Soft clears the contents of `Disgram.log` while explicitly preserving the latest message tracking links and any warnings/errors that were previously logged. Requires Bearer authentication.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Log cleared successfully.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": "success",
+                  "message": "Disgram.log cleared successfully (warnings/errors preserved)"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Missing or invalid Bearer Token."
+          },
+          "403": {
+            "description": "Forbidden - Invalid Bearer Token provided."
+          },
+          "500": {
+            "description": "Internal server error (e.g., DisgramLogHandler not initialized)."
+          }
+        }
+      }
+    },
+    "/logs/purge": {
+      "post": {
+        "tags": ["Logs"],
+        "summary": "Purge Logs (Hard Clean)",
+        "description": "Hard clears `Disgram.log`, aggressively dropping all warnings, errors, and text output, preserving ONLY the latest message link markers required to resume synchronization. Use this to shrink overgrown log files. Requires Bearer authentication.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Log purged successfully.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": "success",
+                  "message": "Disgram.log purged successfully (only message markers preserved)"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Missing or invalid Bearer Token."
+          },
+          "403": {
+            "description": "Forbidden - Invalid Bearer Token provided."
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        }
+      }
+    },
+    "/force-commit": {
+      "post": {
+        "tags": ["Git Persistence"],
+        "summary": "Force Git Commit",
+        "description": "Forces an immediate git commit and push of all local changes (specifically log file updates) to the remote GitHub repository. Bypasses standard commit intervals. Requires Bearer authentication.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Changes committed and pushed successfully.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "All changes committed to repository successfully"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Git manager is not configured or disabled."
+          },
+          "401": {
+            "description": "Unauthorized - Missing or invalid Bearer Token."
+          },
+          "403": {
+            "description": "Forbidden - Invalid Bearer Token provided."
+          },
+          "500": {
+            "description": "Failed to commit or push changes."
+          }
+        }
+      }
+    },
+    "/git-status": {
+      "get": {
+        "tags": ["Git Persistence"],
+        "summary": "Git Manager Status",
+        "description": "Debug endpoint to check the current Git manager synchronization status, GitHub token availability, commit intervals, and the timestamp of the last successful automated commit.",
+        "responses": {
+          "200": {
+            "description": "Returns the Git status or unconfigured state.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "configured": true,
+                  "github_token_available": true,
+                  "commit_interval": 2700,
+                  "last_commit_time": 1700474400,
+                  "time_since_commit_minutes": 45
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
