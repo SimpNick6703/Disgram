@@ -4,10 +4,10 @@ A Python-based application that scrapes public Telegram channels and forwards me
 
 ## Features
 - **Zero Account Setup**: Works out of the box using public Telegram preview pages.
-- **Discord Components V2**: Beautiful layouts separating core content from metadata (e.g. timestamps, forwards).
+- **Discord Components V2**: Beautiful layouts separating core content from metadata (e.g. timestamps, forwards). Robustly circumvents API constraints by intelligently chunking and truncating massive messages to maximize Discord's layout budget.
 - **Ephemeral Workers**: Optimized for low-memory environments like Render. Orchestrates scraping in isolated, short-lived chunks that automatically release memory.
 - **Git Persistence**: Automatically commits and pushes log files back to GitHub, keeping state safely stored without needing a database.
-- **Health & Monitoring**: Built-in Flask API with diagnostics (`/health`), soft/hard log cleanup (`/logs/clear`, `/logs/purge`), and Bearer Token protected administrative endpoints.
+- **Health & Monitoring**: Built-in Flask API with diagnostics (`/health`), OpenAPI specification (`/openapi.json`), soft/hard log cleanup (`/logs/clear`, `/logs/purge`), and Bearer Token protected administrative endpoints.
 - **Telethon Integration (Optional)**: Provide Telegram API credentials for original, uncompressed media downloads, native file attachments, full long-text parsing, and hidden spoiler protection.
 
 ## Configuration
@@ -34,7 +34,7 @@ cp .env.example .env
 - `GITHUB_REPO_URL`: The target repository URL to push logs to.
 - `GITHUB_DEPLOY_BRANCH`: The branch to push logs to (default: `prod`).
 - `GITHUB_TOKEN`: Your GitHub Personal Access Token (classic) with `repo` scope.
-- *Alternatively, use GitHub App Auth (`GITHUB_APP_CLIENT_ID`, `GITHUB_APP_INSTALLATION_ID`, `GITHUB_APP_PRIVATE_KEY`)*.
+- *Alternatively, use GitHub App Auth (`GITHUB_APP_CLIENT_ID`, `GITHUB_APP_INSTALLATION_ID`, `GITHUB_APP_PRIVATE_KEY`)*. **Note**: GitHub intentionally hides `[bot]` App accounts from the repository's Contributors graph.
 - **Scheduling**: `COMMIT_MODE` (`interval` or `scheduled`). Use `LOG_COMMIT_INTERVAL` for interval seconds, or `COMMIT_SCHEDULE` (`hourly`, `every_2h`, `custom`) and `COMMIT_CUSTOM_HOURS` (e.g., `0,4,8,12`) for schedules. 
 - `STARTUP_GRACE_PERIOD`: Cooldown in seconds before the first commit to prevent boot loops.
 
@@ -76,7 +76,8 @@ This file acts as the single source of truth for tracking which messages have be
 
 ```mermaid
 graph TD
-    Start[Start: main.py] --> InitGit[Initialize GitLogManager]
+    Start[Start: main.py] --> StartFlask[Start Flask API: /health, /openapi.json]
+    Start --> InitGit[Initialize GitLogManager in Background Thread]
     InitGit --> ChunkChannels[Chunk Channels by MAX_WORKERS]
     ChunkChannels --> OrchestrationLoop["Orchestration Loop"]
     
@@ -90,7 +91,7 @@ graph TD
 
     classDef proc fill:#3b82f6,stroke:#1d4ed8,color:#fff
     classDef decis fill:#f59e0b,stroke:#b45309,color:#fff
-    class Start,InitGit,ChunkChannels,OrchestrationLoop,SpawnChunk,WaitChunk,Cooldown proc
+    class Start,StartFlask,InitGit,ChunkChannels,OrchestrationLoop,SpawnChunk,WaitChunk,Cooldown proc
     class MoreChunks decis
 ```
 
@@ -125,7 +126,8 @@ graph TD
     HTMLFallback --> ProcessMedia
     MarkTooLargeHTML --> ProcessMedia
     
-    ProcessMedia --> BuildLayout["Build Discord Component V2 Layout"]
+    ProcessMedia --> TruncateText["Intelligently Truncate & Chunk Text"]
+    TruncateText --> BuildLayout["Build Discord Component V2 Layout"]
     BuildLayout --> SendWebhook[Send Webhook Message]
     
     SendWebhook --> Success{"Send Successful?"}
@@ -155,7 +157,7 @@ graph TD
     classDef fallback fill:#ef4444,stroke:#b91c1c,color:#fff
     classDef telethon fill:#8b5cf6,stroke:#6d28d9,color:#fff
     
-    class Startbot,Init,ChannelLoop,FetchTG,BuildLayout,SendWebhook,UpdateLog,RetryWebhook,PlainTextFallback,LogError,GCCollect loop
+    class Startbot,Init,ChannelLoop,FetchTG,TruncateText,BuildLayout,SendWebhook,UpdateLog,RetryWebhook,PlainTextFallback,LogError,GCCollect loop
     class ParseTG,NextChannel,MessageLoop,Success,SuccessFallback,SuccessFinal,CheckTelethon,MediaSuccess,CheckTelethonSize,CheckHTMLSize decis
     class ApplyFallback,MarkTooLarge,MarkTooLargeHTML fallback
     class FetchTelethon,HTMLFallback,ProcessMedia telethon

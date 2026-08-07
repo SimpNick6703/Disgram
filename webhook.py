@@ -482,15 +482,14 @@ def sendMessage(channel: str, message_ids: list[int], msg_link: str, msg_text: s
         time_str = f" at <t:{unix_time}:f>"
         link_label = author_name if author_name else channel
         
-        # Calculate Metadata first to know budget
-        meta_parts = []
         author_link = f"[{link_label}](<{msg_link}>)"
+        action = ""
         
         if forward_info:
             fwd_name = forward_info['name']
             fwd_href = forward_info['href']
             fwd_link = f"[{fwd_name}](<{fwd_href}>)" if fwd_href else f"[{fwd_name}]"
-            meta_parts.append(f"-# {author_link} forwarded {fwd_link}{time_str}")
+            action = f" forwarded {fwd_link}"
         elif reply_info:
             reply_href = reply_info['href']
             reply_link = f"[Message](<{reply_href}>)" if reply_href else "[Message]"
@@ -498,57 +497,53 @@ def sendMessage(channel: str, message_ids: list[int], msg_link: str, msg_text: s
             if len(reply_text) > 80:
                 reply_text = reply_text[:77] + "..."
             reply_text = reply_text.replace('\n', ' ')
-            meta_parts.append(f"-# {author_link} replying to a {reply_link}{time_str}\n-# > {reply_text}")
-        else:
-            meta_parts.append(f"-# {author_link}{time_str}")
+            action = f" replying to a {reply_link}"
+            
+        doc_str = ""
+        if documents:
+            doc_str = "-# Attached file(s): " + ", ".join([f"`{doc}`" for doc in documents])
+        doc_len = len(doc_str) if doc_str else 0
+        
+        # Pre-calculate max meta length assuming truncation
+        base_meta_str = f"-# {author_link}{action} truncated{time_str}"
+        if reply_info:
+             base_meta_str += f"\n-# > {reply_text}"
+        max_meta_len = len(base_meta_str)
+        
+        # Max total chars for ALL layout components combined is 4000. Buffer = 100.
+        MAX_TOTAL_CHARS = 3900
+        available_budget = MAX_TOTAL_CHARS - max_meta_len - doc_len
+        
+        is_truncated = False
+        if msg_text and len(msg_text) > available_budget:
+            is_truncated = True
+            split_idx = msg_text.rfind('\n', 0, available_budget - 3)
+            if split_idx == -1:
+                split_idx = msg_text.rfind(' ', 0, available_budget - 3)
+            if split_idx == -1 or split_idx == 0:
+                split_idx = available_budget - 3
+            msg_text = msg_text[:split_idx] + "..."
+            
+        # Finalize meta_parts
+        meta_parts = []
+        trunc_str = " truncated" if is_truncated else ""
+        meta_parts.append(f"-# {author_link}{action}{trunc_str}{time_str}")
+        if reply_info:
+            meta_parts.append(f"-# > {reply_text}")
             
         meta_string = "\n".join(meta_parts)
         meta_text_disp = TextDisplay(meta_string)
         meta_len = len(meta_string)
         
-        doc_str = ""
-        if documents:
-            doc_str = "-# Attached file(s): " + ", ".join([f"`{doc}`" for doc in documents])
-            
-        # User requested: limit original text to 5600, rest will be spare.
-        MAX_ORIGINAL_TEXT = 5600
-        
-        if msg_text and len(msg_text) > MAX_ORIGINAL_TEXT:
-            split_idx = msg_text.rfind('\n', 0, MAX_ORIGINAL_TEXT - 3)
-            if split_idx == -1:
-                split_idx = msg_text.rfind(' ', 0, MAX_ORIGINAL_TEXT - 3)
-            if split_idx == -1 or split_idx == 0:
-                split_idx = MAX_ORIGINAL_TEXT - 3
-            msg_text = msg_text[:split_idx] + "..."
-            
         from discord.ui import Separator
         container_items = []
-        chunks = []
         
         full_main_text = msg_text if msg_text else ""
         if doc_str:
             full_main_text += ("\n\n" + doc_str) if full_main_text else doc_str
             
         if full_main_text:
-            # TextDisplay can't hold more than 4000 characters.
-            MAX_TEXT_DISPLAY = 3990
-            text_remaining = full_main_text
-            
-            while len(text_remaining) > MAX_TEXT_DISPLAY:
-                split_idx = text_remaining.rfind('\n', 0, MAX_TEXT_DISPLAY)
-                if split_idx == -1:
-                    split_idx = text_remaining.rfind(' ', 0, MAX_TEXT_DISPLAY)
-                if split_idx == -1 or split_idx == 0:
-                    split_idx = MAX_TEXT_DISPLAY
-                    
-                chunks.append(text_remaining[:split_idx])
-                text_remaining = text_remaining[split_idx:].lstrip()
-                
-            if text_remaining:
-                chunks.append(text_remaining)
-                
-            for chunk in chunks:
-                container_items.append(TextDisplay(chunk))
+            container_items.append(TextDisplay(full_main_text))
             
         if gallery_items:
             gallery = MediaGallery(*gallery_items)
@@ -627,8 +622,8 @@ def sendMessage(channel: str, message_ids: list[int], msg_link: str, msg_text: s
                         fallback_gallery_items.append(discord.MediaGalleryItem(url))
                     
             fallback_items = []
-            for chunk in chunks:
-                fallback_items.append(TextDisplay(chunk))
+            if full_main_text:
+                fallback_items.append(TextDisplay(full_main_text))
             
             if fallback_gallery_items:
                 fallback_gallery = MediaGallery(*fallback_gallery_items)
@@ -668,10 +663,21 @@ def sendMessage(channel: str, message_ids: list[int], msg_link: str, msg_text: s
                 content_parts.append(item['url'])
                 
             MAX_PLAIN_TEXT = 2000
-            allowed_len = MAX_PLAIN_TEXT - meta_len - 10
+            fb_meta_len = meta_len
+            if not is_truncated:
+                fb_meta_len += len(" truncated")
+                
+            allowed_len = MAX_PLAIN_TEXT - fb_meta_len - 10
             
             body_text = "\n\n".join(content_parts)
             if len(body_text) > allowed_len:
+                if not is_truncated:
+                    meta_parts_fb = []
+                    meta_parts_fb.append(f"-# {author_link}{action} truncated{time_str}")
+                    if reply_info:
+                        meta_parts_fb.append(f"-# > {reply_text}")
+                    meta_string = "\n".join(meta_parts_fb)
+                    
                 split_idx = body_text.rfind('\n', 0, allowed_len - 3)
                 if split_idx == -1:
                     split_idx = body_text.rfind(' ', 0, allowed_len - 3)
