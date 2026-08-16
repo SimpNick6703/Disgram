@@ -10229,3 +10229,33 @@ https://t.me/stepleaker/760
 2026-08-16 06:01:40,111 [main] INFO: Successfully generated new GitHub App installation token
 2026-08-16 06:01:40,118 [main] INFO: Git authentication configured for repository: SimpNick6703/Disgram.git
 2026-08-16 06:01:42,093 [main] INFO: Log files to be committed: Disgram.log
+2026-08-16 11:57:06,148 [main] INFO: Successfully pulled latest repository state
+2026-08-16 11:57:06,148 [main] INFO: Repository updated with latest changes
+2026-08-16 11:57:06,151 [main] INFO: Chunked 5 channels into 2 worker groups
+2026-08-16 11:57:06,151 [main] INFO: Starting Waitress WSGI server on port 10000...
+2026-08-16 11:57:06,151 [main] INFO: Disgram bot is running with health check endpoint.
+2026-08-16 11:57:06,152 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-08-16 11:57:06,753 [main] INFO: Serving on http://0.0.0.0:10000
+2026-08-16 11:57:11,263 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-08-16 11:57:21,723 [worker-0] ERROR: Error scraping Telegram: HTTPSConnectionPool(host='t.me', port=443): Read timed out. (read timeout=10)
+2026-08-16 11:57:23,724 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 2)
+2026-08-16 11:57:33,151 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-08-16 11:57:33,982 [main] WARNING: Task queue depth is 1
+2026-08-16 11:57:34,165 [main] INFO: cryptg detected, it will be used for encryption
+2026-08-16 11:57:36,948 [main] INFO: Connecting to 91.108.56.190:443/TcpFull...
+2026-08-16 11:57:36,951 [main] INFO: Connection to 91.108.56.190:443/TcpFull complete!
+2026-08-16 11:57:37,026 [main] INFO: Telethon connected successfully to DC 5 at 91.108.56.190
+2026-08-16 11:57:40,060 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-08-16 11:57:50,523 [worker-0] ERROR: Error scraping Telegram: HTTPSConnectionPool(host='t.me', port=443): Read timed out. (read timeout=10)
+2026-08-16 11:57:52,524 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 2)
+2026-08-16 11:57:57,557 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-08-16 11:58:00,456 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-08-16 11:58:07,056 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-08-16 11:58:17,519 [worker-1] ERROR: Error scraping Telegram: HTTPSConnectionPool(host='t.me', port=443): Read timed out. (read timeout=10)
+2026-08-16 11:58:19,520 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 2)
+2026-08-16 11:58:29,938 [worker-1] ERROR: Error scraping Telegram: HTTPSConnectionPool(host='t.me', port=443): Read timed out. (read timeout=10)
+2026-08-16 11:58:33,939 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 3)
+2026-08-16 11:58:35,750 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-08-16 12:02:04,690 [main] INFO: Background commit triggered by scheduled, committing log changes...
+2026-08-16 12:02:04,698 [main] INFO: Git authentication configured for repository: SimpNick6703/Disgram.git
+2026-08-16 12:02:06,849 [main] INFO: Log files to be committed: Disgram.log
