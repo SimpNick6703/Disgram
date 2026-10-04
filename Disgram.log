@@ -11878,3 +11878,572 @@ https://t.me/stepleaker/760
 2026-10-03 18:01:44,772 [main] INFO: Successfully generated new GitHub App installation token
 2026-10-03 18:01:44,779 [main] INFO: Git authentication configured for repository: SimpNick6703/Disgram.git
 2026-10-03 18:01:46,718 [main] INFO: Log files to be committed: Disgram.log
+2026-10-03 18:02:45,891 [main] INFO: Successfully pulled latest repository state
+2026-10-03 18:02:45,891 [main] INFO: Repository updated with latest changes
+2026-10-03 18:02:45,894 [main] INFO: Chunked 5 channels into 2 worker groups
+2026-10-03 18:02:45,895 [main] INFO: Starting Waitress WSGI server on port 10000...
+2026-10-03 18:02:45,895 [main] INFO: Disgram bot is running with health check endpoint.
+2026-10-03 18:02:45,896 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-03 18:02:46,294 [main] INFO: Serving on http://0.0.0.0:10000
+2026-10-03 18:02:53,399 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-03 18:02:54,996 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-03 18:02:56,893 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-03 18:02:58,193 [main] INFO: cryptg detected, it will be used for encryption
+2026-10-03 18:03:02,300 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-03 18:03:02,898 [main] INFO: Connecting to 91.108.56.190:443/TcpFull...
+2026-10-03 18:03:02,901 [main] INFO: Connection to 91.108.56.190:443/TcpFull complete!
+2026-10-03 18:03:03,112 [main] INFO: Telethon connected successfully to DC 5 at 91.108.56.190
+2026-10-03 18:03:05,910 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-03 18:03:08,902 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-03 18:03:11,194 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-03 18:07:55,814 [main] WARNING: Task queue depth is 1
+2026-10-03 18:07:59,437 [main] WARNING: Task queue depth is 2
+2026-10-03 18:08:04,480 [main] WARNING: Task queue depth is 3
+2026-10-03 18:08:11,195 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-03 18:08:14,692 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-03 18:08:15,598 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-03 18:08:16,703 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-03 18:08:18,902 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-03 18:08:21,803 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-03 18:08:23,697 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-03 18:08:25,705 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-03 18:13:25,705 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-03 18:13:28,499 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-03 18:13:29,791 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-03 18:13:31,194 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-03 18:13:33,693 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-03 18:13:36,690 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-03 18:13:38,501 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-03 18:13:40,808 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-03 18:18:40,809 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-03 18:18:43,599 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-03 18:18:44,595 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-03 18:18:45,807 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-03 18:18:48,295 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-03 18:18:51,201 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-03 18:18:52,904 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-03 18:18:54,798 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-03 18:23:54,798 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-03 18:23:57,691 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-03 18:23:58,600 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-03 18:23:59,695 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-03 18:24:02,097 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-03 18:24:05,597 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-03 18:24:07,293 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-03 18:24:09,206 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-03 18:29:09,206 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-03 18:29:12,498 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-03 18:29:13,504 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-03 18:29:14,704 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-03 18:29:17,302 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-03 18:29:20,303 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-03 18:29:22,097 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-03 18:29:24,999 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-03 18:34:25,000 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-03 18:34:28,102 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-03 18:34:29,495 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-03 18:34:30,800 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-03 18:34:32,904 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-03 18:34:35,798 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-03 18:34:37,293 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-03 18:34:39,901 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-03 18:39:39,907 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-03 18:39:43,294 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-03 18:39:44,797 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-03 18:39:46,301 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-03 18:39:49,392 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-03 18:39:52,499 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-03 18:39:54,193 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-03 18:39:56,090 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-03 18:44:56,091 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-03 18:44:58,899 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-03 18:45:00,297 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-03 18:45:02,596 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-03 18:45:05,299 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-03 18:45:08,303 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-03 18:45:10,093 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-03 18:45:12,593 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-03 18:50:12,594 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-03 18:50:15,693 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-03 18:50:17,200 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-03 18:50:18,396 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-03 18:50:21,194 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-03 18:50:24,398 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-03 18:50:26,191 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-03 18:50:28,405 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-03 18:55:28,490 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-03 18:55:31,792 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-03 18:55:32,690 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-03 18:55:33,802 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-03 18:55:36,199 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-03 18:55:39,202 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-03 18:55:41,093 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-03 18:55:43,305 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-03 19:00:43,306 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-03 19:00:46,295 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-03 19:00:47,510 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-03 19:00:48,803 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-03 19:00:51,600 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-03 19:00:54,893 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-03 19:00:56,498 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-03 19:00:58,498 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-03 19:05:58,498 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-03 19:06:01,295 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-03 19:06:02,692 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-03 19:06:04,206 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-03 19:06:06,791 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-03 19:06:09,804 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-03 19:06:11,403 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-03 19:06:13,493 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-03 19:11:13,494 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-03 19:11:16,600 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-03 19:11:17,697 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-03 19:11:19,210 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-03 19:11:21,992 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-03 19:11:25,295 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-03 19:11:26,901 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-03 19:11:29,702 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-03 19:16:29,703 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-03 19:16:32,693 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-03 19:16:34,192 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-03 19:16:35,504 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-03 19:16:38,300 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-03 19:16:41,398 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-03 19:16:43,304 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-03 19:16:46,193 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-03 19:21:46,194 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-03 19:21:49,596 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-03 19:21:50,893 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-03 19:21:52,104 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-03 19:21:54,895 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-03 19:21:57,702 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-03 19:21:59,299 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-03 19:22:01,401 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-03 19:27:01,403 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-03 19:27:04,292 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-03 19:27:05,291 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-03 19:27:06,594 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-03 19:27:08,996 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-03 19:27:12,097 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-03 19:27:14,203 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-03 19:27:16,501 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-03 19:32:16,502 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-03 19:32:19,296 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-03 19:32:20,295 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-03 19:32:21,294 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-03 19:32:23,796 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-03 19:32:26,799 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-03 19:32:28,300 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-03 19:32:30,194 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-03 19:37:30,195 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-03 19:37:33,102 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-03 19:37:34,104 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-03 19:37:35,295 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-03 19:37:37,895 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-03 19:37:41,014 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-03 19:37:42,997 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-03 19:37:44,895 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-03 19:42:44,896 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-03 19:42:47,995 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-03 19:42:48,892 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-03 19:42:50,111 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-03 19:42:52,990 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-03 19:42:56,003 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-03 19:42:57,597 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-03 19:42:59,591 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-03 19:47:59,592 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-03 19:48:02,798 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-03 19:48:03,699 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-03 19:48:04,899 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-03 19:48:08,005 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-03 19:48:11,194 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-03 19:48:13,000 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-03 19:48:15,204 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-03 19:53:15,205 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-03 19:53:18,093 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-03 19:53:19,000 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-03 19:53:20,191 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-03 19:53:22,900 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-03 19:53:25,793 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-03 19:53:27,197 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-03 19:53:28,999 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-03 19:58:29,000 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-03 19:58:31,903 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-03 19:58:34,192 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-03 19:58:36,596 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-03 19:58:38,902 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-03 19:58:42,404 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-03 19:58:43,994 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-03 19:58:46,492 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-03 20:03:46,493 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-03 20:03:49,301 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-03 20:03:50,291 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-03 20:03:51,298 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-03 20:03:53,690 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-03 20:03:56,595 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-03 20:03:57,995 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-03 20:03:59,894 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-03 20:08:59,895 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-03 20:09:03,010 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-03 20:09:04,195 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-03 20:09:05,395 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-03 20:09:07,792 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-03 20:09:10,994 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-03 20:09:12,595 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-03 20:09:16,292 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-03 20:14:16,295 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-03 20:14:19,003 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-03 20:14:19,994 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-03 20:14:21,297 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-03 20:14:23,600 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-03 20:14:26,598 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-03 20:14:28,401 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-03 20:14:30,399 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-03 20:19:30,400 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-03 20:19:33,495 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-03 20:19:34,500 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-03 20:19:35,604 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-03 20:19:38,303 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-03 20:19:41,503 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-03 20:19:43,307 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-03 20:19:45,604 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-03 20:24:45,605 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-03 20:24:48,294 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-03 20:24:49,192 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-03 20:24:50,197 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-03 20:24:52,594 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-03 20:24:55,602 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-03 20:24:57,303 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-03 20:24:59,505 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-03 20:29:59,505 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-03 20:30:02,698 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-03 20:30:03,697 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-03 20:30:04,891 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-03 20:30:07,808 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-03 20:30:11,003 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-03 20:30:12,699 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-03 20:30:15,094 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-03 20:35:15,095 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-03 20:35:18,203 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-03 20:35:19,197 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-03 20:35:20,295 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-03 20:35:22,794 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-03 20:35:26,105 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-03 20:35:27,700 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-03 20:35:29,604 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-03 20:40:29,604 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-03 20:40:32,593 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-03 20:40:33,495 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-03 20:40:34,707 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-03 20:40:37,605 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-03 20:40:40,905 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-03 20:40:42,700 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-03 20:40:44,895 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-03 20:45:44,896 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-03 20:45:48,709 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-03 20:45:49,902 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-03 20:45:51,099 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-03 20:45:54,091 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-03 20:45:57,592 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-03 20:45:59,204 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-03 20:46:01,409 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-03 20:51:01,411 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-03 20:51:04,498 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-03 20:51:05,495 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-03 20:51:06,698 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-03 20:51:09,191 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-03 20:51:12,395 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-03 20:51:13,992 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-03 20:51:16,404 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-03 20:56:16,490 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-03 20:56:19,304 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-03 20:56:20,302 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-03 20:56:21,496 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-03 20:56:24,004 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-03 20:56:27,200 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-03 20:56:28,890 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-03 20:56:31,193 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-03 21:01:31,194 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-03 21:01:34,105 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-03 21:01:35,105 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-03 21:01:36,198 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-03 21:01:38,601 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-03 21:01:41,698 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-03 21:01:43,203 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-03 21:01:45,291 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-03 21:06:45,292 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-03 21:06:48,104 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-03 21:06:49,101 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-03 21:06:50,091 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-03 21:06:52,593 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-03 21:06:55,799 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-03 21:06:57,309 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-03 21:06:59,498 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-03 21:11:59,499 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-03 21:12:02,497 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-03 21:12:03,595 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-03 21:12:04,803 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-03 21:12:07,202 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-03 21:12:10,492 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-03 21:12:12,292 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-03 21:12:14,495 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-03 21:17:14,495 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-03 21:17:17,395 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-03 21:17:18,492 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-03 21:17:19,792 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-03 21:17:22,201 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-03 21:17:25,196 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-03 21:17:26,601 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-03 21:17:28,292 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-03 21:22:28,293 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-03 21:22:31,701 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-03 21:22:32,701 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-03 21:22:33,695 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-03 21:22:36,292 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-03 21:22:39,395 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-03 21:22:41,091 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-03 21:22:43,192 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-03 21:27:43,193 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-03 21:27:46,200 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-03 21:27:47,103 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-03 21:27:48,196 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-03 21:27:50,495 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-03 21:27:53,290 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-03 21:27:54,803 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-03 21:27:56,604 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-03 21:32:56,605 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-03 21:32:59,605 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-03 21:33:00,605 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-03 21:33:01,802 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-03 21:33:04,592 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-03 21:33:07,694 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-03 21:33:09,595 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-03 21:33:12,000 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-03 21:38:12,000 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-03 21:38:14,994 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-03 21:38:16,091 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-03 21:38:17,203 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-03 21:38:19,693 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-03 21:38:22,492 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-03 21:38:24,210 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-03 21:38:26,301 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-03 21:43:26,305 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-03 21:43:29,204 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-03 21:43:30,294 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-03 21:43:31,298 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-03 21:43:33,599 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-03 21:43:36,802 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-03 21:43:38,394 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-03 21:43:40,698 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-03 21:48:40,699 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-03 21:48:43,693 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-03 21:48:44,800 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-03 21:48:45,993 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-03 21:48:48,399 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-03 21:48:51,493 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-03 21:48:53,098 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-03 21:48:55,300 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-03 21:53:55,300 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-03 21:53:58,093 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-03 21:53:58,996 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-03 21:54:00,196 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-03 21:54:02,599 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-03 21:54:05,611 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-03 21:54:07,301 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-03 21:54:09,293 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-03 21:59:09,294 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-03 21:59:12,096 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-03 21:59:12,904 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-03 21:59:14,001 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-03 21:59:16,304 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-03 21:59:19,097 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-03 21:59:20,604 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-03 21:59:22,703 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-03 22:04:22,705 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-03 22:04:26,001 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-03 22:04:26,906 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-03 22:04:28,191 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-03 22:04:30,799 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-03 22:04:33,699 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-03 22:04:35,391 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-03 22:04:37,498 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-03 22:09:37,500 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-03 22:09:40,797 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-03 22:09:41,697 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-03 22:09:42,793 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-03 22:09:45,300 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-03 22:09:48,197 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-03 22:09:50,192 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-03 22:09:52,394 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-03 22:14:52,395 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-03 22:14:55,295 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-03 22:14:56,304 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-03 22:14:57,401 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-03 22:14:59,904 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-03 22:15:03,199 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-03 22:15:04,993 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-03 22:15:07,102 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-03 22:20:07,103 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-03 22:20:10,105 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-03 22:20:11,197 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-03 22:20:12,505 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-03 22:20:15,704 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-03 22:20:19,003 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-03 22:20:20,591 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-03 22:20:22,796 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-03 22:25:22,797 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-03 22:25:25,893 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-03 22:25:26,896 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-03 22:25:28,108 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-03 22:25:30,803 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-03 22:25:33,797 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-03 22:25:35,401 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-03 22:25:37,495 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-03 22:30:37,496 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-03 22:30:40,405 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-03 22:30:41,401 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-03 22:30:42,599 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-03 22:30:45,500 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-03 22:30:48,497 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-03 22:30:49,998 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-03 22:30:51,791 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-03 22:35:51,792 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-03 22:35:54,990 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-03 22:35:55,997 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-03 22:35:57,002 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-03 22:35:59,492 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-03 22:36:02,901 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-03 22:36:04,793 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-03 22:36:06,895 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-03 22:41:06,895 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-03 22:41:09,900 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-03 22:41:10,892 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-03 22:41:12,096 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-03 22:41:14,499 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-03 22:41:17,603 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-03 22:41:19,104 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-03 22:41:21,101 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-03 22:46:21,102 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-03 22:46:24,305 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-03 22:46:25,491 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-03 22:46:26,698 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-03 22:46:29,095 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-03 22:46:32,194 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-03 22:46:33,897 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-03 22:46:35,998 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-03 22:51:35,999 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-03 22:51:39,001 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-03 22:51:40,092 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-03 22:51:41,294 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-03 22:51:43,703 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-03 22:51:47,003 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-03 22:51:48,593 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-03 22:51:50,594 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-03 22:56:50,595 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-03 22:56:53,392 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-03 22:56:54,494 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-03 22:56:55,698 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-03 22:56:57,796 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-03 22:57:00,893 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-03 22:57:02,599 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-03 22:57:04,806 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-03 23:02:04,807 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-03 23:02:08,004 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-03 23:02:09,200 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-03 23:02:10,400 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-03 23:02:13,092 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-03 23:02:16,494 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-03 23:02:18,308 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-03 23:02:20,698 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-03 23:07:20,699 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-03 23:07:23,594 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-03 23:07:24,694 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-03 23:07:25,697 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-03 23:07:27,795 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-03 23:07:30,998 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-03 23:07:32,799 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-03 23:07:34,905 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-03 23:12:34,905 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-03 23:12:37,693 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-03 23:12:38,592 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-03 23:12:39,798 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-03 23:12:42,296 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-03 23:12:45,295 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-03 23:12:46,896 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-03 23:12:48,801 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-03 23:17:48,802 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-03 23:17:51,803 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-03 23:17:52,799 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-03 23:17:53,799 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-03 23:17:56,105 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-03 23:17:58,993 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-03 23:18:00,498 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-03 23:18:02,591 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-03 23:23:02,592 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-03 23:23:05,601 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-03 23:23:06,503 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-03 23:23:07,597 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-03 23:23:10,000 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-03 23:23:13,306 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-03 23:23:15,202 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-03 23:23:17,394 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-03 23:28:17,394 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-03 23:28:20,510 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-03 23:28:21,698 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-03 23:28:22,891 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-03 23:28:25,401 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-03 23:28:28,403 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-03 23:28:30,005 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-03 23:28:31,996 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-03 23:33:31,997 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-03 23:33:35,004 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-03 23:33:36,106 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-03 23:33:37,193 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-03 23:33:39,598 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-03 23:33:42,895 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-03 23:33:44,398 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-03 23:33:46,091 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-03 23:38:46,092 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-03 23:38:48,893 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-03 23:38:49,802 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-03 23:38:50,998 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-03 23:38:53,603 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-03 23:38:56,698 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-03 23:38:58,502 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-03 23:39:00,496 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-03 23:44:00,497 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-03 23:44:03,400 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-03 23:44:04,392 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-03 23:44:05,714 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-03 23:44:08,490 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-03 23:44:11,305 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-03 23:44:12,902 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-03 23:44:14,890 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-03 23:49:14,891 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-03 23:49:17,698 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-03 23:49:18,692 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-03 23:49:19,700 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-03 23:49:21,900 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-03 23:49:25,300 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-03 23:49:26,998 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-03 23:49:29,000 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-03 23:54:29,000 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-03 23:54:32,097 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-03 23:54:33,101 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-03 23:54:34,390 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-03 23:54:36,894 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-03 23:54:39,804 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-03 23:54:41,394 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-03 23:54:43,303 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-03 23:59:43,303 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-03 23:59:46,092 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-03 23:59:47,091 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-03 23:59:48,095 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-03 23:59:50,300 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-03 23:59:53,411 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-03 23:59:55,294 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-03 23:59:57,203 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-04 00:02:44,506 [main] INFO: Background commit triggered by scheduled, committing log changes...
+2026-10-04 00:02:45,334 [main] INFO: Successfully generated new GitHub App installation token
+2026-10-04 00:02:45,341 [main] INFO: Git authentication configured for repository: SimpNick6703/Disgram.git
+2026-10-04 00:02:47,290 [main] INFO: Log files to be committed: Disgram.log
