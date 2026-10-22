@@ -1722,3 +1722,1416 @@ https://t.me/stepleaker/760
 2026-10-22 12:04:13,571 [main] INFO: Successfully generated new GitHub App installation token
 2026-10-22 12:04:13,595 [main] INFO: Git authentication configured for repository: SimpNick6703/Disgram.git
 2026-10-22 12:04:16,107 [main] INFO: Log files to be committed: Disgram.log
+2026-10-22 12:05:15,460 [main] INFO: Successfully pulled latest repository state
+2026-10-22 12:05:15,461 [main] INFO: Repository updated with latest changes
+2026-10-22 12:05:15,462 [main] INFO: Chunked 5 channels into 2 worker groups
+2026-10-22 12:05:15,463 [main] INFO: Starting Waitress WSGI server on port 10000...
+2026-10-22 12:05:15,463 [main] INFO: Disgram bot is running with health check endpoint.
+2026-10-22 12:05:15,464 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-22 12:05:15,656 [main] INFO: Serving on http://0.0.0.0:10000
+2026-10-22 12:05:25,057 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-22 12:05:29,860 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-22 12:05:32,657 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-22 12:05:37,356 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-22 12:05:39,457 [main] WARNING: Task queue depth is 1
+2026-10-22 12:05:39,659 [main] INFO: cryptg detected, it will be used for encryption
+2026-10-22 12:05:44,359 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-22 12:05:45,660 [main] INFO: Connecting to 91.108.56.190:443/TcpFull...
+2026-10-22 12:05:45,664 [main] INFO: Connection to 91.108.56.190:443/TcpFull complete!
+2026-10-22 12:05:45,767 [main] INFO: Telethon connected successfully to DC 5 at 91.108.56.190
+2026-10-22 12:05:47,358 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-22 12:05:49,954 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-22 12:10:49,955 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-22 12:10:53,761 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-22 12:10:57,556 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-22 12:11:01,155 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-22 12:11:03,667 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-22 12:11:07,157 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-22 12:11:12,272 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-22 12:11:15,066 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-22 12:16:15,066 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-22 12:16:18,367 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-22 12:16:20,664 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-22 12:16:22,767 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-22 12:16:27,579 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-22 12:16:31,165 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-22 12:16:32,860 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-22 12:16:35,266 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-22 12:21:35,267 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-22 12:21:39,163 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-22 12:21:40,859 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-22 12:21:42,355 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-22 12:21:45,668 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-22 12:21:49,062 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-22 12:21:50,860 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-22 12:21:53,271 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-22 12:26:53,272 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-22 12:26:57,472 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-22 12:26:59,274 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-22 12:27:00,959 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-22 12:27:04,065 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-22 12:27:07,962 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-22 12:27:09,367 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-22 12:27:11,866 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-22 12:32:11,866 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-22 12:32:15,568 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-22 12:32:17,254 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-22 12:32:18,863 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-22 12:32:21,365 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-22 12:32:24,967 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-22 12:32:26,759 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-22 12:32:29,761 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-22 12:37:29,761 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-22 12:37:33,057 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-22 12:37:36,262 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-22 12:37:37,669 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-22 12:37:40,454 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-22 12:37:43,764 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-22 12:37:45,556 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-22 12:37:48,269 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-22 12:42:48,270 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-22 12:42:51,355 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-22 12:42:52,959 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-22 12:42:54,354 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-22 12:42:57,180 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-22 12:43:00,855 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-22 12:43:02,466 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-22 12:43:04,861 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-22 12:48:04,862 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-22 12:48:08,568 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-22 12:48:10,066 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-22 12:48:11,466 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-22 12:48:14,254 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-22 12:48:17,662 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-22 12:48:20,163 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-22 12:48:22,473 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-22 12:53:22,554 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-22 12:53:26,064 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-22 12:53:27,863 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-22 12:53:29,960 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-22 12:53:32,262 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-22 12:53:35,455 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-22 12:53:37,055 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-22 12:53:39,569 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-22 12:58:39,654 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-22 12:58:42,960 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-22 12:58:44,456 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-22 12:58:45,962 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-22 12:58:48,171 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-22 12:58:51,658 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-22 12:58:53,167 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-22 12:58:55,963 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-22 13:03:55,964 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-22 13:03:59,357 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-22 13:04:00,868 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-22 13:04:02,167 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-22 13:04:05,071 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-22 13:04:08,962 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-22 13:04:10,664 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-22 13:04:13,271 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-22 13:09:13,354 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-22 13:09:17,066 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-22 13:09:18,459 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-22 13:09:19,764 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-22 13:09:21,974 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-22 13:09:25,466 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-22 13:09:26,758 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-22 13:09:29,174 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-22 13:14:29,175 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-22 13:14:33,159 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-22 13:14:34,860 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-22 13:14:36,660 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-22 13:14:39,368 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-22 13:14:43,168 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-22 13:14:44,875 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-22 13:14:48,175 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-22 13:19:48,177 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-22 13:19:51,668 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-22 13:19:53,565 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-22 13:19:55,156 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-22 13:19:57,970 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-22 13:20:01,868 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-22 13:20:03,758 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-22 13:20:06,368 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-22 13:25:06,368 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-22 13:25:10,054 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-22 13:25:11,966 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-22 13:25:13,571 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-22 13:25:16,674 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-22 13:25:20,863 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-22 13:25:22,565 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-22 13:25:25,068 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-22 13:30:25,069 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-22 13:30:28,563 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-22 13:30:30,070 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-22 13:30:31,867 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-22 13:30:34,466 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-22 13:30:38,060 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-22 13:30:40,760 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-22 13:30:43,073 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-22 13:35:43,074 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-22 13:35:47,939 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-22 13:35:49,361 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-22 13:35:50,756 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-22 13:35:53,078 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-22 13:35:57,355 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-22 13:35:58,860 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-22 13:36:01,895 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-22 13:41:01,955 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-22 13:41:05,954 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-22 13:41:07,560 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-22 13:41:08,859 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-22 13:41:11,466 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-22 13:41:14,859 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-22 13:41:16,466 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-22 13:41:18,867 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-22 13:46:18,868 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-22 13:46:22,768 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-22 13:46:23,960 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-22 13:46:25,759 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-22 13:46:28,069 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-22 13:46:31,559 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-22 13:46:33,358 [worker-1] INFO: New message sent: https://t.me/waves_wuthering/13323
+2026-10-22 13:46:35,257 [worker-1] INFO: cryptg detected, it will be used for encryption
+2026-10-22 13:46:35,855 [worker-1] INFO: Sending message to Discord: https://t.me/waves_wuthering/13323
+2026-10-22 13:46:36,487 [worker-1] INFO: Message sent successfully.
+2026-10-22 13:46:36,490 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-22 13:46:40,903 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-22 13:51:40,904 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-22 13:51:43,967 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-22 13:51:46,457 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-22 13:51:47,961 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-22 13:51:50,374 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-22 13:51:53,658 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-22 13:51:55,559 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-22 13:51:58,068 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-22 13:56:58,069 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-22 13:57:02,058 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-22 13:57:03,367 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-22 13:57:04,964 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-22 13:57:07,667 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-22 13:57:11,161 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-22 13:57:12,663 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-22 13:57:16,066 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-22 14:02:16,067 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-22 14:02:19,758 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-22 14:02:21,455 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-22 14:02:23,058 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-22 14:02:25,854 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-22 14:02:29,555 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-22 14:02:31,255 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-22 14:02:34,165 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-22 14:07:34,166 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-22 14:07:38,072 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-22 14:07:39,763 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-22 14:07:41,070 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-22 14:07:44,063 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-22 14:07:47,470 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-22 14:07:49,366 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-22 14:07:51,667 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-22 14:12:51,668 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-22 14:12:55,362 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-22 14:12:56,956 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-22 14:12:58,587 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-22 14:13:01,669 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-22 14:13:05,362 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-22 14:13:07,867 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-22 14:13:10,669 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-22 14:18:10,754 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-22 14:18:14,065 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-22 14:18:15,561 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-22 14:18:16,957 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-22 14:18:19,568 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-22 14:18:23,067 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-22 14:18:24,562 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-22 14:18:27,689 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-22 14:23:27,754 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-22 14:23:31,571 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-22 14:23:32,966 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-22 14:23:34,369 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-22 14:23:37,974 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-22 14:23:41,366 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-22 14:23:42,660 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-22 14:23:44,867 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-22 14:28:44,869 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-22 14:28:48,165 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-22 14:28:49,666 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-22 14:28:50,765 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-22 14:28:53,162 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-22 14:28:56,459 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-22 14:28:58,067 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-22 14:29:00,772 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-22 14:34:00,773 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-22 14:34:04,559 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-22 14:34:07,358 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-22 14:34:08,765 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-22 14:34:11,470 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-22 14:34:15,066 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-22 14:34:16,462 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-22 14:34:20,554 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-22 14:39:20,558 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-22 14:39:24,069 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-22 14:39:25,069 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-22 14:39:26,767 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-22 14:39:29,086 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-22 14:39:33,067 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-22 14:39:34,765 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-22 14:39:37,178 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-22 14:44:37,179 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-22 14:44:41,065 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-22 14:44:42,762 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-22 14:44:44,367 [worker-0] INFO: New message sent: https://t.me/Team_Gemberry78/2956
+2026-10-22 14:44:46,486 [worker-0] INFO: cryptg detected, it will be used for encryption
+2026-10-22 14:44:47,167 [worker-0] INFO: Connecting to 91.108.56.190:443/TcpFull...
+2026-10-22 14:44:47,171 [worker-0] INFO: Connection to 91.108.56.190:443/TcpFull complete!
+2026-10-22 14:44:47,254 [worker-0] INFO: Telethon connected successfully to DC 5 at 91.108.56.190
+2026-10-22 14:44:47,314 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 14:44:47,375 [worker-0] INFO: Sending message to Discord: https://t.me/Team_Gemberry78/2956
+2026-10-22 14:44:49,170 [worker-0] INFO: Message sent successfully.
+2026-10-22 14:44:49,174 [worker-0] INFO: New message sent: https://t.me/Team_Gemberry78/2957
+2026-10-22 14:44:49,209 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 14:44:50,365 [worker-0] INFO: Sending message to Discord: https://t.me/Team_Gemberry78/2957
+2026-10-22 14:44:55,079 [worker-0] INFO: Message sent successfully.
+2026-10-22 14:44:55,080 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-22 14:44:56,661 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/10879
+2026-10-22 14:44:56,717 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 14:44:56,773 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/10879
+2026-10-22 14:44:57,720 [worker-0] INFO: Message sent successfully.
+2026-10-22 14:44:57,725 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/10880
+2026-10-22 14:44:57,753 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 14:44:58,875 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/10880
+2026-10-22 14:45:03,887 [worker-0] INFO: Message sent successfully.
+2026-10-22 14:45:06,554 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-22 14:45:10,668 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-22 14:45:12,069 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-22 14:45:14,964 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-22 14:50:14,965 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-22 14:50:18,761 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-22 14:50:20,658 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-22 14:50:22,358 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-22 14:50:25,297 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-22 14:50:28,766 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-22 14:50:30,363 [worker-1] INFO: New message sent: https://t.me/waves_wuthering/13324
+2026-10-22 14:50:32,381 [worker-1] INFO: cryptg detected, it will be used for encryption
+2026-10-22 14:50:33,060 [worker-1] INFO: Connecting to 91.108.56.190:443/TcpFull...
+2026-10-22 14:50:33,063 [worker-1] INFO: Connection to 91.108.56.190:443/TcpFull complete!
+2026-10-22 14:50:33,155 [worker-1] INFO: Telethon connected successfully to DC 5 at 91.108.56.190
+2026-10-22 14:50:33,209 [worker-1] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 14:50:33,229 [worker-1] INFO: Sending message to Discord: https://t.me/waves_wuthering/13324
+2026-10-22 14:50:34,278 [worker-1] INFO: Message sent successfully.
+2026-10-22 14:50:34,279 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-22 14:50:38,075 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-22 14:50:46,678 [main] INFO: Got difference for channel 2405953050 updates
+2026-10-22 14:55:38,076 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-22 14:55:41,864 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-22 14:55:43,458 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-22 14:55:44,868 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-22 14:55:48,658 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/10881
+2026-10-22 14:55:50,159 [worker-0] INFO: cryptg detected, it will be used for encryption
+2026-10-22 14:55:50,662 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/10881
+2026-10-22 14:55:51,444 [worker-0] INFO: Message sent successfully.
+2026-10-22 14:55:53,079 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-22 14:55:56,957 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-22 14:55:58,755 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-22 14:56:02,254 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-22 15:01:02,255 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-22 15:01:06,060 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-22 15:01:07,866 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-22 15:01:09,456 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-22 15:01:12,269 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-22 15:01:16,174 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-22 15:01:17,960 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-22 15:01:21,170 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-22 15:06:21,172 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-22 15:06:24,872 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-22 15:06:26,556 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-22 15:06:28,255 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-22 15:06:30,773 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-22 15:06:34,167 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-22 15:06:35,671 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-22 15:06:37,972 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-22 15:11:37,973 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-22 15:11:41,455 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-22 15:11:43,068 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-22 15:11:44,657 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-22 15:11:48,667 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-22 15:11:52,258 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-22 15:11:54,859 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-22 15:11:57,468 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-22 15:16:57,469 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-22 15:17:01,157 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-22 15:17:02,761 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-22 15:17:05,162 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-22 15:17:06,755 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/10882
+2026-10-22 15:17:08,457 [worker-0] INFO: cryptg detected, it will be used for encryption
+2026-10-22 15:17:08,969 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/10882
+2026-10-22 15:17:09,586 [worker-0] INFO: Message sent successfully.
+2026-10-22 15:17:11,871 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-22 15:17:15,761 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-22 15:17:17,554 [worker-1] INFO: New message sent: https://t.me/waves_wuthering/13325
+2026-10-22 15:17:19,259 [worker-1] INFO: cryptg detected, it will be used for encryption
+2026-10-22 15:17:19,761 [worker-1] INFO: Sending message to Discord: https://t.me/waves_wuthering/13325
+2026-10-22 15:17:20,674 [worker-1] INFO: Message sent successfully.
+2026-10-22 15:17:20,675 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-22 15:17:24,969 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-22 15:22:24,970 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-22 15:22:28,574 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-22 15:22:30,363 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-22 15:22:31,769 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-22 15:22:34,574 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-22 15:22:38,165 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-22 15:22:39,957 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-22 15:22:42,575 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-22 15:27:42,576 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-22 15:27:45,956 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-22 15:27:47,659 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-22 15:27:49,668 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-22 15:27:51,360 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/10883
+2026-10-22 15:27:53,902 [worker-0] INFO: cryptg detected, it will be used for encryption
+2026-10-22 15:27:54,663 [worker-0] INFO: Connecting to 91.108.56.190:443/TcpFull...
+2026-10-22 15:27:54,667 [worker-0] INFO: Connection to 91.108.56.190:443/TcpFull complete!
+2026-10-22 15:27:55,871 [worker-0] INFO: Telethon connected successfully to DC 5 at 91.108.56.190
+2026-10-22 15:27:55,912 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 15:27:55,927 [worker-0] INFO: File lives in another DC
+2026-10-22 15:27:55,938 [worker-0] INFO: Connecting to 149.154.167.92:443/TcpFull...
+2026-10-22 15:27:58,538 [worker-0] INFO: Connection to 149.154.167.92:443/TcpFull complete!
+2026-10-22 15:27:58,539 [worker-0] INFO: Exporting auth for new borrowed sender in DcOption(id=4, ip_address='149.154.167.92', port=443, ipv6=False, media_only=False, tcpo_only=False, cdn=False, static=False, this_port_only=False, secret=None)
+2026-10-22 15:27:59,896 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/10883
+2026-10-22 15:28:01,699 [worker-0] INFO: Message sent successfully.
+2026-10-22 15:28:01,704 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/10884
+2026-10-22 15:28:01,731 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 15:28:01,747 [worker-0] INFO: File lives in another DC
+2026-10-22 15:28:02,237 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/10884
+2026-10-22 15:28:02,906 [worker-0] INFO: Message sent successfully.
+2026-10-22 15:28:02,911 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/10885
+2026-10-22 15:28:02,938 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 15:28:02,954 [worker-0] INFO: File lives in another DC
+2026-10-22 15:28:03,367 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/10885
+2026-10-22 15:28:04,309 [worker-0] INFO: Message sent successfully.
+2026-10-22 15:28:06,913 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-22 15:28:14,279 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-22 15:28:16,266 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-22 15:28:20,654 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-22 15:33:20,655 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-22 15:33:23,766 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-22 15:33:26,457 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-22 15:33:29,159 [worker-0] INFO: New message sent: https://t.me/Team_Gemberry78/2958
+2026-10-22 15:33:31,173 [worker-0] INFO: cryptg detected, it will be used for encryption
+2026-10-22 15:33:31,767 [worker-0] INFO: Connecting to 91.108.56.190:443/TcpFull...
+2026-10-22 15:33:31,771 [worker-0] INFO: Connection to 91.108.56.190:443/TcpFull complete!
+2026-10-22 15:33:31,920 [worker-0] INFO: Telethon connected successfully to DC 5 at 91.108.56.190
+2026-10-22 15:33:31,968 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 15:33:31,996 [worker-0] INFO: Sending message to Discord: https://t.me/Team_Gemberry78/2958
+2026-10-22 15:33:32,940 [worker-0] INFO: Message sent successfully.
+2026-10-22 15:33:32,944 [worker-0] INFO: New message sent: https://t.me/Team_Gemberry78/2959
+2026-10-22 15:33:33,042 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 15:33:33,071 [worker-0] INFO: File lives in another DC
+2026-10-22 15:33:33,097 [worker-0] INFO: Connecting to 149.154.167.92:443/TcpFull...
+2026-10-22 15:33:37,522 [worker-0] INFO: Connection to 149.154.167.92:443/TcpFull complete!
+2026-10-22 15:33:37,523 [worker-0] INFO: Exporting auth for new borrowed sender in DcOption(id=4, ip_address='149.154.167.92', port=443, ipv6=False, media_only=False, tcpo_only=False, cdn=False, static=False, this_port_only=False, secret=None)
+2026-10-22 15:33:39,014 [worker-0] INFO: Sending message to Discord: https://t.me/Team_Gemberry78/2959
+2026-10-22 15:33:39,707 [worker-0] INFO: Message sent successfully.
+2026-10-22 15:33:39,708 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-22 15:33:41,255 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/10886
+2026-10-22 15:33:41,325 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 15:33:41,339 [worker-0] INFO: File lives in another DC
+2026-10-22 15:33:42,295 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 15:33:42,310 [worker-0] INFO: File lives in another DC
+2026-10-22 15:33:42,909 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 15:33:42,924 [worker-0] INFO: File lives in another DC
+2026-10-22 15:33:43,403 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/10886
+2026-10-22 15:33:44,577 [worker-0] INFO: Message sent successfully.
+2026-10-22 15:33:44,581 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/10889
+2026-10-22 15:33:44,612 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 15:33:44,628 [worker-0] INFO: File lives in another DC
+2026-10-22 15:33:44,976 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/10889
+2026-10-22 15:33:45,970 [worker-0] INFO: Message sent successfully.
+2026-10-22 15:33:48,565 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-22 15:33:52,060 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-22 15:33:53,658 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-22 15:33:56,064 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-22 15:35:46,918 [main] INFO: Got difference for channel 2356846718 updates
+2026-10-22 15:38:56,067 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-22 15:38:59,458 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-22 15:39:01,164 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-22 15:39:02,865 [worker-0] INFO: New message sent: https://t.me/Team_Gemberry78/2960
+2026-10-22 15:39:04,574 [worker-0] INFO: cryptg detected, it will be used for encryption
+2026-10-22 15:39:05,164 [worker-0] INFO: Connecting to 91.108.56.190:443/TcpFull...
+2026-10-22 15:39:05,169 [worker-0] INFO: Connection to 91.108.56.190:443/TcpFull complete!
+2026-10-22 15:39:05,417 [worker-0] INFO: Telethon connected successfully to DC 5 at 91.108.56.190
+2026-10-22 15:39:05,497 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 15:39:05,541 [worker-0] INFO: Sending message to Discord: https://t.me/Team_Gemberry78/2960
+2026-10-22 15:39:06,824 [worker-0] INFO: Message sent successfully.
+2026-10-22 15:39:06,825 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-22 15:39:10,854 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-22 15:39:14,568 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-22 15:39:16,362 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-22 15:39:18,965 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-22 15:44:18,966 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-22 15:44:22,268 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-22 15:44:23,961 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-22 15:44:25,562 [worker-0] INFO: New message sent: https://t.me/Team_Gemberry78/2961
+2026-10-22 15:44:27,369 [worker-0] INFO: cryptg detected, it will be used for encryption
+2026-10-22 15:44:27,972 [worker-0] INFO: Sending message to Discord: https://t.me/Team_Gemberry78/2961
+2026-10-22 15:44:28,738 [worker-0] INFO: Message sent successfully.
+2026-10-22 15:44:28,745 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-22 15:44:31,439 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/10890
+2026-10-22 15:44:31,441 [worker-0] INFO: Connecting to 91.108.56.190:443/TcpFull...
+2026-10-22 15:44:31,444 [worker-0] INFO: Connection to 91.108.56.190:443/TcpFull complete!
+2026-10-22 15:44:31,515 [worker-0] INFO: Telethon connected successfully to DC 5 at 91.108.56.190
+2026-10-22 15:44:31,568 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 15:44:31,585 [worker-0] INFO: File lives in another DC
+2026-10-22 15:44:31,603 [worker-0] INFO: Connecting to 149.154.167.92:443/TcpFull...
+2026-10-22 15:44:36,250 [worker-0] INFO: Connection to 149.154.167.92:443/TcpFull complete!
+2026-10-22 15:44:36,250 [worker-0] INFO: Exporting auth for new borrowed sender in DcOption(id=4, ip_address='149.154.167.92', port=443, ipv6=False, media_only=False, tcpo_only=False, cdn=False, static=False, this_port_only=False, secret=None)
+2026-10-22 15:44:38,223 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 15:44:38,248 [worker-0] INFO: File lives in another DC
+2026-10-22 15:44:38,755 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 15:44:38,844 [worker-0] INFO: File lives in another DC
+2026-10-22 15:44:39,310 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 15:44:39,418 [worker-0] INFO: File lives in another DC
+2026-10-22 15:44:40,019 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/10890
+2026-10-22 15:44:42,323 [worker-0] INFO: Message sent successfully.
+2026-10-22 15:44:42,328 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/10894
+2026-10-22 15:44:42,365 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 15:44:42,384 [worker-0] INFO: File lives in another DC
+2026-10-22 15:44:43,136 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 15:44:43,150 [worker-0] INFO: File lives in another DC
+2026-10-22 15:44:43,496 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 15:44:43,507 [worker-0] INFO: File lives in another DC
+2026-10-22 15:44:44,788 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/10894
+2026-10-22 15:44:46,106 [worker-0] INFO: Message sent successfully.
+2026-10-22 15:44:46,110 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/10897
+2026-10-22 15:44:46,111 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/10897
+2026-10-22 15:44:46,633 [worker-0] INFO: Message sent successfully.
+2026-10-22 15:44:48,269 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-22 15:44:51,856 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-22 15:44:53,457 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-22 15:44:56,271 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-22 15:49:56,355 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-22 15:50:00,193 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-22 15:50:02,069 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-22 15:50:03,662 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-22 15:50:06,375 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-22 15:50:10,268 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-22 15:50:12,055 [worker-1] INFO: New message sent: https://t.me/waves_wuthering/13326
+2026-10-22 15:50:14,063 [worker-1] INFO: cryptg detected, it will be used for encryption
+2026-10-22 15:50:14,663 [worker-1] INFO: Connecting to 91.108.56.190:443/TcpFull...
+2026-10-22 15:50:14,667 [worker-1] INFO: Connection to 91.108.56.190:443/TcpFull complete!
+2026-10-22 15:50:14,755 [worker-1] INFO: Telethon connected successfully to DC 5 at 91.108.56.190
+2026-10-22 15:50:14,802 [worker-1] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 15:50:14,902 [worker-1] INFO: Sending message to Discord: https://t.me/waves_wuthering/13326
+2026-10-22 15:50:17,010 [worker-1] INFO: Message sent successfully.
+2026-10-22 15:50:17,013 [worker-1] INFO: New message sent: https://t.me/waves_wuthering/13327
+2026-10-22 15:50:17,045 [worker-1] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 15:50:17,059 [worker-1] INFO: Sending message to Discord: https://t.me/waves_wuthering/13327
+2026-10-22 15:50:17,866 [worker-1] INFO: Message sent successfully.
+2026-10-22 15:50:17,870 [worker-1] INFO: New message sent: https://t.me/waves_wuthering/13328
+2026-10-22 15:50:17,871 [worker-1] INFO: Sending message to Discord: https://t.me/waves_wuthering/13328
+2026-10-22 15:50:18,577 [worker-1] INFO: Message sent successfully.
+2026-10-22 15:50:18,581 [worker-1] INFO: New message sent: https://t.me/waves_wuthering/13329
+2026-10-22 15:50:18,650 [worker-1] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 15:50:18,719 [worker-1] INFO: File lives in another DC
+2026-10-22 15:50:18,771 [worker-1] INFO: Connecting to 149.154.167.92:443/TcpFull...
+2026-10-22 15:50:21,124 [worker-1] INFO: Connection to 149.154.167.92:443/TcpFull complete!
+2026-10-22 15:50:21,124 [worker-1] INFO: Exporting auth for new borrowed sender in DcOption(id=4, ip_address='149.154.167.92', port=443, ipv6=False, media_only=False, tcpo_only=False, cdn=False, static=False, this_port_only=False, secret=None)
+2026-10-22 15:50:23,089 [worker-1] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 15:50:23,103 [worker-1] INFO: File lives in another DC
+2026-10-22 15:50:23,798 [worker-1] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 15:50:23,811 [worker-1] INFO: File lives in another DC
+2026-10-22 15:50:24,246 [worker-1] INFO: Sending message to Discord: https://t.me/waves_wuthering/13329
+2026-10-22 15:50:25,657 [worker-1] INFO: Message sent successfully.
+2026-10-22 15:50:25,657 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-22 15:50:29,778 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-22 15:55:29,779 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-22 15:55:33,462 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-22 15:55:35,061 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-22 15:55:36,763 [worker-0] INFO: New message sent: https://t.me/Team_Gemberry78/2962
+2026-10-22 15:55:38,561 [worker-0] INFO: cryptg detected, it will be used for encryption
+2026-10-22 15:55:39,060 [worker-0] INFO: Connecting to 91.108.56.190:443/TcpFull...
+2026-10-22 15:55:39,065 [worker-0] INFO: Connection to 91.108.56.190:443/TcpFull complete!
+2026-10-22 15:55:39,132 [worker-0] INFO: Telethon connected successfully to DC 5 at 91.108.56.190
+2026-10-22 15:55:39,176 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 15:55:39,222 [worker-0] INFO: Sending message to Discord: https://t.me/Team_Gemberry78/2962
+2026-10-22 15:55:40,472 [worker-0] INFO: Message sent successfully.
+2026-10-22 15:55:40,475 [worker-0] INFO: New message sent: https://t.me/Team_Gemberry78/2963
+2026-10-22 15:55:40,555 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 15:55:40,593 [worker-0] INFO: Sending message to Discord: https://t.me/Team_Gemberry78/2963
+2026-10-22 15:55:41,720 [worker-0] INFO: Message sent successfully.
+2026-10-22 15:55:41,721 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-22 15:55:43,162 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/10898
+2026-10-22 15:55:43,163 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/10898
+2026-10-22 15:55:43,873 [worker-0] INFO: Message sent successfully.
+2026-10-22 15:55:43,876 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/10899
+2026-10-22 15:55:43,877 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/10899
+2026-10-22 15:55:44,512 [worker-0] INFO: Message sent successfully.
+2026-10-22 15:55:44,518 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/10900
+2026-10-22 15:55:44,519 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/10900
+2026-10-22 15:55:45,229 [worker-0] INFO: Message sent successfully.
+2026-10-22 15:55:45,239 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/10901
+2026-10-22 15:55:45,246 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/10901
+2026-10-22 15:55:46,108 [worker-0] INFO: Message sent successfully.
+2026-10-22 15:55:46,113 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/10902
+2026-10-22 15:55:46,114 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/10902
+2026-10-22 15:55:47,114 [worker-0] INFO: Message sent successfully.
+2026-10-22 15:55:49,079 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-22 15:55:52,962 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-22 15:55:55,761 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-22 15:55:58,770 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-22 15:56:57,900 [main] INFO: Got difference for channel 1695568528 updates
+2026-10-22 16:00:58,771 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-22 16:01:01,959 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-22 16:01:03,467 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-22 16:01:06,058 [worker-0] INFO: New message sent: https://t.me/Team_Gemberry78/2964
+2026-10-22 16:01:07,661 [worker-0] INFO: cryptg detected, it will be used for encryption
+2026-10-22 16:01:08,259 [worker-0] INFO: Connecting to 91.108.56.190:443/TcpFull...
+2026-10-22 16:01:08,262 [worker-0] INFO: Connection to 91.108.56.190:443/TcpFull complete!
+2026-10-22 16:01:08,332 [worker-0] INFO: Telethon connected successfully to DC 5 at 91.108.56.190
+2026-10-22 16:01:08,384 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:01:08,989 [worker-0] INFO: Sending message to Discord: https://t.me/Team_Gemberry78/2964
+2026-10-22 16:01:12,318 [worker-0] INFO: Message sent successfully.
+2026-10-22 16:01:12,319 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-22 16:01:13,863 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/10903
+2026-10-22 16:01:13,863 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/10903
+2026-10-22 16:01:14,524 [worker-0] INFO: Message sent successfully.
+2026-10-22 16:01:14,529 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/10904
+2026-10-22 16:01:14,578 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:01:14,592 [worker-0] INFO: File lives in another DC
+2026-10-22 16:01:14,606 [worker-0] INFO: Connecting to 149.154.167.92:443/TcpFull...
+2026-10-22 16:01:17,175 [worker-0] INFO: Connection to 149.154.167.92:443/TcpFull complete!
+2026-10-22 16:01:17,176 [worker-0] INFO: Exporting auth for new borrowed sender in DcOption(id=4, ip_address='149.154.167.92', port=443, ipv6=False, media_only=False, tcpo_only=False, cdn=False, static=False, this_port_only=False, secret=None)
+2026-10-22 16:01:18,411 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/10904
+2026-10-22 16:01:19,328 [worker-0] INFO: Message sent successfully.
+2026-10-22 16:01:19,332 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/10905
+2026-10-22 16:01:19,332 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/10905
+2026-10-22 16:01:20,246 [worker-0] INFO: Message sent successfully.
+2026-10-22 16:01:20,250 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/10906
+2026-10-22 16:01:20,251 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/10906
+2026-10-22 16:01:20,817 [worker-0] INFO: Message sent successfully.
+2026-10-22 16:01:20,823 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/10907
+2026-10-22 16:01:20,824 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/10907
+2026-10-22 16:01:21,510 [worker-0] INFO: Message sent successfully.
+2026-10-22 16:01:23,465 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-22 16:01:26,772 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-22 16:01:28,566 [worker-1] INFO: New message sent: https://t.me/waves_wuthering/13332
+2026-10-22 16:01:30,158 [worker-1] INFO: cryptg detected, it will be used for encryption
+2026-10-22 16:01:30,663 [worker-1] INFO: Connecting to 91.108.56.190:443/TcpFull...
+2026-10-22 16:01:30,667 [worker-1] INFO: Connection to 91.108.56.190:443/TcpFull complete!
+2026-10-22 16:01:30,804 [worker-1] INFO: Telethon connected successfully to DC 5 at 91.108.56.190
+2026-10-22 16:01:30,879 [worker-1] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:01:30,948 [worker-1] INFO: Sending message to Discord: https://t.me/waves_wuthering/13332
+2026-10-22 16:01:32,594 [worker-1] INFO: Message sent successfully.
+2026-10-22 16:01:32,602 [worker-1] INFO: New message sent: https://t.me/waves_wuthering/13333
+2026-10-22 16:01:32,636 [worker-1] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:01:32,652 [worker-1] INFO: File lives in another DC
+2026-10-22 16:01:32,670 [worker-1] INFO: Connecting to 149.154.167.92:443/TcpFull...
+2026-10-22 16:01:35,938 [worker-1] INFO: Connection to 149.154.167.92:443/TcpFull complete!
+2026-10-22 16:01:35,939 [worker-1] INFO: Exporting auth for new borrowed sender in DcOption(id=4, ip_address='149.154.167.92', port=443, ipv6=False, media_only=False, tcpo_only=False, cdn=False, static=False, this_port_only=False, secret=None)
+2026-10-22 16:01:37,866 [worker-1] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:01:37,881 [worker-1] INFO: File lives in another DC
+2026-10-22 16:01:38,371 [worker-1] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:01:38,387 [worker-1] INFO: File lives in another DC
+2026-10-22 16:01:39,190 [worker-1] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:01:39,206 [worker-1] INFO: File lives in another DC
+2026-10-22 16:01:39,675 [worker-1] INFO: Sending message to Discord: https://t.me/waves_wuthering/13333
+2026-10-22 16:01:42,061 [worker-1] INFO: Message sent successfully.
+2026-10-22 16:01:42,062 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-22 16:01:46,081 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-22 16:06:46,082 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-22 16:06:50,056 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-22 16:06:51,668 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-22 16:06:53,557 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-22 16:06:55,163 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/10908
+2026-10-22 16:06:57,059 [worker-0] INFO: cryptg detected, it will be used for encryption
+2026-10-22 16:06:57,470 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/10908
+2026-10-22 16:06:58,144 [worker-0] INFO: Message sent successfully.
+2026-10-22 16:06:58,150 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/10909
+2026-10-22 16:06:58,151 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/10909
+2026-10-22 16:06:58,787 [worker-0] INFO: Message sent successfully.
+2026-10-22 16:07:00,968 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-22 16:07:05,060 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-22 16:07:07,180 [worker-1] INFO: New message sent: https://t.me/waves_wuthering/13337
+2026-10-22 16:07:09,072 [worker-1] INFO: cryptg detected, it will be used for encryption
+2026-10-22 16:07:09,672 [worker-1] INFO: Sending message to Discord: https://t.me/waves_wuthering/13337
+2026-10-22 16:07:10,519 [worker-1] INFO: Message sent successfully.
+2026-10-22 16:07:10,557 [worker-1] INFO: New message sent: https://t.me/waves_wuthering/13338
+2026-10-22 16:07:10,558 [worker-1] INFO: Sending message to Discord: https://t.me/waves_wuthering/13338
+2026-10-22 16:07:11,535 [worker-1] INFO: Message sent successfully.
+2026-10-22 16:07:11,548 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-22 16:07:15,968 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-22 16:09:58,582 [main] INFO: Got difference for channel 2405953050 updates
+2026-10-22 16:12:16,054 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-22 16:12:20,359 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-22 16:12:22,058 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-22 16:12:23,664 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-22 16:12:25,456 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/10910
+2026-10-22 16:12:28,511 [worker-0] INFO: cryptg detected, it will be used for encryption
+2026-10-22 16:12:29,070 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/10910
+2026-10-22 16:12:29,749 [worker-0] INFO: Message sent successfully.
+2026-10-22 16:12:29,754 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/10911
+2026-10-22 16:12:29,755 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/10911
+2026-10-22 16:12:30,441 [worker-0] INFO: Message sent successfully.
+2026-10-22 16:12:32,499 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/10912
+2026-10-22 16:12:32,501 [worker-0] INFO: Connecting to 91.108.56.190:443/TcpFull...
+2026-10-22 16:12:32,505 [worker-0] INFO: Connection to 91.108.56.190:443/TcpFull complete!
+2026-10-22 16:12:32,602 [worker-0] INFO: Telethon connected successfully to DC 5 at 91.108.56.190
+2026-10-22 16:12:32,693 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:12:32,710 [worker-0] INFO: File lives in another DC
+2026-10-22 16:12:32,724 [worker-0] INFO: Connecting to 149.154.167.92:443/TcpFull...
+2026-10-22 16:12:36,352 [worker-0] INFO: Connection to 149.154.167.92:443/TcpFull complete!
+2026-10-22 16:12:36,353 [worker-0] INFO: Exporting auth for new borrowed sender in DcOption(id=4, ip_address='149.154.167.92', port=443, ipv6=False, media_only=False, tcpo_only=False, cdn=False, static=False, this_port_only=False, secret=None)
+2026-10-22 16:12:38,413 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:12:38,505 [worker-0] INFO: File lives in another DC
+2026-10-22 16:12:39,041 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:12:39,122 [worker-0] INFO: File lives in another DC
+2026-10-22 16:12:39,527 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:12:39,542 [worker-0] INFO: File lives in another DC
+2026-10-22 16:12:40,296 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:12:40,351 [worker-0] INFO: File lives in another DC
+2026-10-22 16:12:40,807 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/10912
+2026-10-22 16:12:45,457 [worker-0] INFO: Message sent successfully.
+2026-10-22 16:12:45,462 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/10918
+2026-10-22 16:12:45,463 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/10918
+2026-10-22 16:12:46,379 [worker-0] INFO: Message sent successfully.
+2026-10-22 16:12:48,784 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-22 16:12:53,571 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-22 16:12:55,473 [worker-1] INFO: New message sent: https://t.me/waves_wuthering/13339
+2026-10-22 16:12:57,358 [worker-1] INFO: cryptg detected, it will be used for encryption
+2026-10-22 16:12:57,768 [worker-1] INFO: Sending message to Discord: https://t.me/waves_wuthering/13339
+2026-10-22 16:12:58,476 [worker-1] INFO: Message sent successfully.
+2026-10-22 16:12:58,478 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-22 16:13:02,588 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-22 16:13:58,724 [main] INFO: Got difference for channel 2405953050 updates
+2026-10-22 16:18:02,589 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-22 16:18:05,859 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-22 16:18:07,563 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-22 16:18:09,363 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-22 16:18:11,761 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/10919
+2026-10-22 16:18:13,356 [worker-0] INFO: cryptg detected, it will be used for encryption
+2026-10-22 16:18:13,858 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/10919
+2026-10-22 16:18:14,462 [worker-0] INFO: Message sent successfully.
+2026-10-22 16:18:14,466 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/10920
+2026-10-22 16:18:14,467 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/10920
+2026-10-22 16:18:15,088 [worker-0] INFO: Message sent successfully.
+2026-10-22 16:18:15,092 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/10921
+2026-10-22 16:18:15,093 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/10921
+2026-10-22 16:18:15,726 [worker-0] INFO: Message sent successfully.
+2026-10-22 16:18:16,752 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/10922
+2026-10-22 16:18:16,754 [worker-0] INFO: Connecting to 91.108.56.190:443/TcpFull...
+2026-10-22 16:18:16,757 [worker-0] INFO: Connection to 91.108.56.190:443/TcpFull complete!
+2026-10-22 16:18:16,828 [worker-0] INFO: Telethon connected successfully to DC 5 at 91.108.56.190
+2026-10-22 16:18:16,873 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:18:16,884 [worker-0] INFO: File lives in another DC
+2026-10-22 16:18:16,898 [worker-0] INFO: Connecting to 149.154.167.92:443/TcpFull...
+2026-10-22 16:18:19,336 [worker-0] INFO: Connection to 149.154.167.92:443/TcpFull complete!
+2026-10-22 16:18:19,336 [worker-0] INFO: Exporting auth for new borrowed sender in DcOption(id=4, ip_address='149.154.167.92', port=443, ipv6=False, media_only=False, tcpo_only=False, cdn=False, static=False, this_port_only=False, secret=None)
+2026-10-22 16:18:21,433 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:18:21,450 [worker-0] INFO: File lives in another DC
+2026-10-22 16:18:21,998 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:18:22,013 [worker-0] INFO: File lives in another DC
+2026-10-22 16:18:22,474 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:18:22,487 [worker-0] INFO: File lives in another DC
+2026-10-22 16:18:22,922 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:18:22,936 [worker-0] INFO: File lives in another DC
+2026-10-22 16:18:23,393 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/10922
+2026-10-22 16:18:24,651 [worker-0] INFO: Message sent successfully.
+2026-10-22 16:18:24,654 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/10927
+2026-10-22 16:18:24,686 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:18:24,703 [worker-0] INFO: File lives in another DC
+2026-10-22 16:18:24,704 [worker-0] INFO: Connecting to 149.154.167.50:443/TcpFull...
+2026-10-22 16:18:28,311 [worker-0] INFO: Connection to 149.154.167.50:443/TcpFull complete!
+2026-10-22 16:18:28,311 [worker-0] INFO: Exporting auth for new borrowed sender in DcOption(id=2, ip_address='149.154.167.50', port=443, ipv6=False, media_only=False, tcpo_only=False, cdn=False, static=False, this_port_only=False, secret=None)
+2026-10-22 16:18:31,012 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/10927
+2026-10-22 16:18:31,774 [worker-0] INFO: Message sent successfully.
+2026-10-22 16:18:31,777 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/10928
+2026-10-22 16:18:31,804 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:18:31,817 [worker-0] INFO: File lives in another DC
+2026-10-22 16:18:32,843 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/10928
+2026-10-22 16:18:33,786 [worker-0] INFO: Message sent successfully.
+2026-10-22 16:18:33,790 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/10929
+2026-10-22 16:18:33,791 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/10929
+2026-10-22 16:18:34,481 [worker-0] INFO: Message sent successfully.
+2026-10-22 16:18:34,484 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/10930
+2026-10-22 16:18:34,514 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:18:34,526 [worker-0] INFO: File lives in another DC
+2026-10-22 16:18:34,527 [worker-0] INFO: Connecting to 149.154.175.54:443/TcpFull...
+2026-10-22 16:18:37,107 [worker-0] INFO: Connection to 149.154.175.54:443/TcpFull complete!
+2026-10-22 16:18:37,108 [worker-0] INFO: Exporting auth for new borrowed sender in DcOption(id=1, ip_address='149.154.175.54', port=443, ipv6=False, media_only=False, tcpo_only=False, cdn=False, static=False, this_port_only=False, secret=None)
+2026-10-22 16:18:38,553 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/10930
+2026-10-22 16:18:39,826 [worker-0] INFO: Message sent successfully.
+2026-10-22 16:18:39,831 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/10931
+2026-10-22 16:18:39,862 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:18:39,883 [worker-0] INFO: File lives in another DC
+2026-10-22 16:18:41,128 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:18:41,148 [worker-0] INFO: File lives in another DC
+2026-10-22 16:18:41,777 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/10931
+2026-10-22 16:18:43,279 [worker-0] INFO: Message sent successfully.
+2026-10-22 16:18:43,284 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/10933
+2026-10-22 16:18:43,307 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:18:43,319 [worker-0] INFO: File lives in another DC
+2026-10-22 16:18:43,636 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/10933
+2026-10-22 16:18:44,880 [worker-0] INFO: Message sent successfully.
+2026-10-22 16:18:47,282 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-22 16:18:51,062 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-22 16:18:52,966 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-22 16:18:55,876 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-22 16:19:59,073 [main] INFO: Got difference for channel 2405953050 updates
+2026-10-22 16:20:47,127 [main] INFO: Got difference for channel 2405953050 updates
+2026-10-22 16:23:55,954 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-22 16:23:59,475 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-22 16:24:01,260 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-22 16:24:02,666 [worker-0] INFO: New message sent: https://t.me/Team_Gemberry78/2965
+2026-10-22 16:24:04,577 [worker-0] INFO: cryptg detected, it will be used for encryption
+2026-10-22 16:24:05,173 [worker-0] INFO: Connecting to 91.108.56.190:443/TcpFull...
+2026-10-22 16:24:05,176 [worker-0] INFO: Connection to 91.108.56.190:443/TcpFull complete!
+2026-10-22 16:24:05,337 [worker-0] INFO: Telethon connected successfully to DC 5 at 91.108.56.190
+2026-10-22 16:24:05,381 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:24:05,408 [worker-0] INFO: Sending message to Discord: https://t.me/Team_Gemberry78/2965
+2026-10-22 16:24:06,367 [worker-0] INFO: Message sent successfully.
+2026-10-22 16:24:06,368 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-22 16:24:07,674 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/10936
+2026-10-22 16:24:07,806 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:24:07,821 [worker-0] INFO: File lives in another DC
+2026-10-22 16:24:07,839 [worker-0] INFO: Connecting to 149.154.175.54:443/TcpFull...
+2026-10-22 16:24:10,329 [worker-0] INFO: Connection to 149.154.175.54:443/TcpFull complete!
+2026-10-22 16:24:10,329 [worker-0] INFO: Exporting auth for new borrowed sender in DcOption(id=1, ip_address='149.154.175.54', port=443, ipv6=False, media_only=False, tcpo_only=False, cdn=False, static=False, this_port_only=False, secret=None)
+2026-10-22 16:24:12,497 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:24:12,510 [worker-0] INFO: File lives in another DC
+2026-10-22 16:24:12,924 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:24:12,942 [worker-0] INFO: File lives in another DC
+2026-10-22 16:24:13,312 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:24:13,325 [worker-0] INFO: File lives in another DC
+2026-10-22 16:24:13,657 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:24:13,670 [worker-0] INFO: File lives in another DC
+2026-10-22 16:24:13,974 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:24:13,988 [worker-0] INFO: File lives in another DC
+2026-10-22 16:24:14,291 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:24:14,304 [worker-0] INFO: File lives in another DC
+2026-10-22 16:24:14,615 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:24:14,627 [worker-0] INFO: File lives in another DC
+2026-10-22 16:24:14,919 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:24:14,981 [worker-0] INFO: File lives in another DC
+2026-10-22 16:24:15,268 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:24:15,285 [worker-0] INFO: File lives in another DC
+2026-10-22 16:24:15,561 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/10936
+2026-10-22 16:24:18,753 [worker-0] INFO: Message sent successfully.
+2026-10-22 16:24:19,854 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/10946
+2026-10-22 16:24:19,881 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:24:19,896 [worker-0] INFO: File lives in another DC
+2026-10-22 16:24:20,190 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:24:20,208 [worker-0] INFO: File lives in another DC
+2026-10-22 16:24:20,481 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:24:20,516 [worker-0] INFO: File lives in another DC
+2026-10-22 16:24:20,774 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:24:20,793 [worker-0] INFO: File lives in another DC
+2026-10-22 16:24:21,130 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:24:21,157 [worker-0] INFO: File lives in another DC
+2026-10-22 16:24:21,420 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/10946
+2026-10-22 16:24:23,474 [worker-0] INFO: Message sent successfully.
+2026-10-22 16:24:23,478 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/10951
+2026-10-22 16:24:23,517 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:24:23,531 [worker-0] INFO: File lives in another DC
+2026-10-22 16:24:23,532 [worker-0] INFO: Connecting to 149.154.167.50:443/TcpFull...
+2026-10-22 16:24:26,240 [worker-0] INFO: Connection to 149.154.167.50:443/TcpFull complete!
+2026-10-22 16:24:26,241 [worker-0] INFO: Exporting auth for new borrowed sender in DcOption(id=2, ip_address='149.154.167.50', port=443, ipv6=False, media_only=False, tcpo_only=False, cdn=False, static=False, this_port_only=False, secret=None)
+2026-10-22 16:24:28,216 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:24:28,228 [worker-0] INFO: File lives in another DC
+2026-10-22 16:24:28,801 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:24:28,813 [worker-0] INFO: File lives in another DC
+2026-10-22 16:24:29,327 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:24:29,340 [worker-0] INFO: File lives in another DC
+2026-10-22 16:24:29,775 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:24:29,788 [worker-0] INFO: File lives in another DC
+2026-10-22 16:24:30,272 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:24:30,286 [worker-0] INFO: File lives in another DC
+2026-10-22 16:24:30,746 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:24:30,760 [worker-0] INFO: File lives in another DC
+2026-10-22 16:24:31,214 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:24:31,295 [worker-0] INFO: File lives in another DC
+2026-10-22 16:24:31,751 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:24:31,780 [worker-0] INFO: File lives in another DC
+2026-10-22 16:24:32,266 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/10951
+2026-10-22 16:24:35,284 [worker-0] INFO: Message sent successfully.
+2026-10-22 16:24:35,289 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/10961
+2026-10-22 16:24:35,309 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:24:35,324 [worker-0] INFO: File lives in another DC
+2026-10-22 16:24:37,228 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/10961
+2026-10-22 16:24:38,583 [worker-0] INFO: Message sent successfully.
+2026-10-22 16:24:40,880 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-22 16:24:44,770 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-22 16:24:46,662 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-22 16:24:49,370 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-22 16:29:49,456 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-22 16:29:52,565 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-22 16:29:53,955 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-22 16:29:55,654 [worker-0] INFO: New message sent: https://t.me/Team_Gemberry78/2966
+2026-10-22 16:29:57,466 [worker-0] INFO: cryptg detected, it will be used for encryption
+2026-10-22 16:29:57,967 [worker-0] INFO: Connecting to 91.108.56.190:443/TcpFull...
+2026-10-22 16:29:58,054 [worker-0] INFO: Connection to 91.108.56.190:443/TcpFull complete!
+2026-10-22 16:29:58,281 [worker-0] INFO: Telethon connected successfully to DC 5 at 91.108.56.190
+2026-10-22 16:29:58,406 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:29:58,439 [worker-0] INFO: Sending message to Discord: https://t.me/Team_Gemberry78/2966
+2026-10-22 16:29:59,141 [worker-0] INFO: Message sent successfully.
+2026-10-22 16:29:59,141 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-22 16:30:00,457 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/10962
+2026-10-22 16:30:00,512 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:30:00,555 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/10962
+2026-10-22 16:30:01,601 [worker-0] INFO: Message sent successfully.
+2026-10-22 16:30:01,605 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/10963
+2026-10-22 16:30:01,670 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:30:01,718 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/10963
+2026-10-22 16:30:02,499 [worker-0] INFO: Message sent successfully.
+2026-10-22 16:30:02,503 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/10964
+2026-10-22 16:30:02,504 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/10964
+2026-10-22 16:30:03,200 [worker-0] INFO: Message sent successfully.
+2026-10-22 16:30:05,754 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-22 16:30:09,060 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-22 16:30:10,959 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-22 16:30:14,063 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-22 16:31:59,652 [main] INFO: Got difference for channel 2405953050 updates
+2026-10-22 16:35:14,064 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-22 16:35:17,862 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-22 16:35:19,760 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-22 16:35:21,865 [worker-0] INFO: New message sent: https://t.me/Team_Gemberry78/2967
+2026-10-22 16:35:23,655 [worker-0] INFO: cryptg detected, it will be used for encryption
+2026-10-22 16:35:24,164 [worker-0] INFO: Connecting to 91.108.56.190:443/TcpFull...
+2026-10-22 16:35:24,168 [worker-0] INFO: Connection to 91.108.56.190:443/TcpFull complete!
+2026-10-22 16:35:24,292 [worker-0] INFO: Telethon connected successfully to DC 5 at 91.108.56.190
+2026-10-22 16:35:24,348 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:35:24,388 [worker-0] INFO: Sending message to Discord: https://t.me/Team_Gemberry78/2967
+2026-10-22 16:35:27,909 [worker-0] INFO: Message sent successfully.
+2026-10-22 16:35:27,910 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-22 16:35:30,444 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/10965
+2026-10-22 16:35:30,477 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:35:30,492 [worker-0] INFO: File lives in another DC
+2026-10-22 16:35:30,507 [worker-0] INFO: Connecting to 149.154.167.92:443/TcpFull...
+2026-10-22 16:35:33,068 [worker-0] INFO: Connection to 149.154.167.92:443/TcpFull complete!
+2026-10-22 16:35:33,068 [worker-0] INFO: Exporting auth for new borrowed sender in DcOption(id=4, ip_address='149.154.167.92', port=443, ipv6=False, media_only=False, tcpo_only=False, cdn=False, static=False, this_port_only=False, secret=None)
+2026-10-22 16:35:34,270 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:35:34,286 [worker-0] INFO: File lives in another DC
+2026-10-22 16:35:34,635 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:35:34,649 [worker-0] INFO: File lives in another DC
+2026-10-22 16:35:35,001 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:35:35,046 [worker-0] INFO: File lives in another DC
+2026-10-22 16:35:35,387 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:35:35,402 [worker-0] INFO: File lives in another DC
+2026-10-22 16:35:35,792 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:35:35,809 [worker-0] INFO: File lives in another DC
+2026-10-22 16:35:36,172 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:35:36,187 [worker-0] INFO: File lives in another DC
+2026-10-22 16:35:36,536 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:35:36,551 [worker-0] INFO: File lives in another DC
+2026-10-22 16:35:36,866 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:35:36,884 [worker-0] INFO: File lives in another DC
+2026-10-22 16:35:37,217 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:35:37,251 [worker-0] INFO: File lives in another DC
+2026-10-22 16:35:37,650 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/10965
+2026-10-22 16:35:39,632 [worker-0] INFO: Message sent successfully.
+2026-10-22 16:35:40,649 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/10975
+2026-10-22 16:35:40,676 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:35:40,690 [worker-0] INFO: File lives in another DC
+2026-10-22 16:35:40,996 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:35:41,018 [worker-0] INFO: File lives in another DC
+2026-10-22 16:35:41,328 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:35:41,342 [worker-0] INFO: File lives in another DC
+2026-10-22 16:35:41,645 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:35:41,660 [worker-0] INFO: File lives in another DC
+2026-10-22 16:35:42,001 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/10975
+2026-10-22 16:35:43,562 [worker-0] INFO: Message sent successfully.
+2026-10-22 16:35:45,873 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-22 16:35:47,277 [main] INFO: Got difference for channel 2405953050 updates
+2026-10-22 16:35:47,355 [main] INFO: Got difference for channel 2356846718 updates
+2026-10-22 16:35:49,661 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-22 16:35:51,559 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-22 16:35:54,454 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-22 16:40:54,455 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-22 16:40:58,257 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-22 16:40:59,964 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-22 16:41:01,459 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-22 16:41:02,763 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/10979
+2026-10-22 16:41:04,558 [worker-0] INFO: cryptg detected, it will be used for encryption
+2026-10-22 16:41:05,056 [worker-0] INFO: Connecting to 91.108.56.190:443/TcpFull...
+2026-10-22 16:41:05,059 [worker-0] INFO: Connection to 91.108.56.190:443/TcpFull complete!
+2026-10-22 16:41:05,149 [worker-0] INFO: Telethon connected successfully to DC 5 at 91.108.56.190
+2026-10-22 16:41:05,203 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:41:05,225 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/10979
+2026-10-22 16:41:06,089 [worker-0] INFO: Message sent successfully.
+2026-10-22 16:41:06,093 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/10980
+2026-10-22 16:41:06,173 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:41:06,199 [worker-0] INFO: File lives in another DC
+2026-10-22 16:41:06,214 [worker-0] INFO: Connecting to 149.154.167.50:443/TcpFull...
+2026-10-22 16:41:08,688 [worker-0] INFO: Connection to 149.154.167.50:443/TcpFull complete!
+2026-10-22 16:41:08,689 [worker-0] INFO: Exporting auth for new borrowed sender in DcOption(id=2, ip_address='149.154.167.50', port=443, ipv6=False, media_only=False, tcpo_only=False, cdn=False, static=False, this_port_only=False, secret=None)
+2026-10-22 16:41:10,303 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/10980
+2026-10-22 16:41:11,394 [worker-0] INFO: Message sent successfully.
+2026-10-22 16:41:11,397 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/10981
+2026-10-22 16:41:11,398 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/10981
+2026-10-22 16:41:12,196 [worker-0] INFO: Message sent successfully.
+2026-10-22 16:41:12,201 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/10982
+2026-10-22 16:41:12,202 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/10982
+2026-10-22 16:41:12,940 [worker-0] INFO: Message sent successfully.
+2026-10-22 16:41:12,949 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/10983
+2026-10-22 16:41:12,951 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/10983
+2026-10-22 16:41:13,718 [worker-0] INFO: Message sent successfully.
+2026-10-22 16:41:13,723 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/10984
+2026-10-22 16:41:13,804 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:41:13,818 [worker-0] INFO: File lives in another DC
+2026-10-22 16:41:14,177 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/10984
+2026-10-22 16:41:15,333 [worker-0] INFO: Message sent successfully.
+2026-10-22 16:41:17,268 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-22 16:41:20,965 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-22 16:41:22,754 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-22 16:41:25,067 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-22 16:45:00,256 [main] INFO: Got difference for channel 2405953050 updates
+2026-10-22 16:46:25,156 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-22 16:46:28,661 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-22 16:46:30,356 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-22 16:46:31,957 [worker-0] INFO: New message sent: https://t.me/Team_Gemberry78/2968
+2026-10-22 16:46:33,567 [worker-0] INFO: cryptg detected, it will be used for encryption
+2026-10-22 16:46:34,065 [worker-0] INFO: Connecting to 91.108.56.190:443/TcpFull...
+2026-10-22 16:46:34,068 [worker-0] INFO: Connection to 91.108.56.190:443/TcpFull complete!
+2026-10-22 16:46:34,179 [worker-0] INFO: Telethon connected successfully to DC 5 at 91.108.56.190
+2026-10-22 16:46:34,219 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:46:34,238 [worker-0] INFO: Sending message to Discord: https://t.me/Team_Gemberry78/2968
+2026-10-22 16:46:35,055 [worker-0] INFO: Message sent successfully.
+2026-10-22 16:46:36,153 [worker-0] INFO: New message sent: https://t.me/Team_Gemberry78/2969
+2026-10-22 16:46:36,183 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:46:36,218 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:46:36,250 [worker-0] INFO: Sending message to Discord: https://t.me/Team_Gemberry78/2969
+2026-10-22 16:46:37,722 [worker-0] INFO: Message sent successfully.
+2026-10-22 16:46:37,726 [worker-0] INFO: New message sent: https://t.me/Team_Gemberry78/2971
+2026-10-22 16:46:37,754 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:46:37,792 [worker-0] INFO: Sending message to Discord: https://t.me/Team_Gemberry78/2971
+2026-10-22 16:46:38,618 [worker-0] INFO: Message sent successfully.
+2026-10-22 16:46:38,619 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-22 16:46:40,262 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/10985
+2026-10-22 16:46:40,314 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:46:40,349 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/10985
+2026-10-22 16:46:41,439 [worker-0] INFO: Message sent successfully.
+2026-10-22 16:46:42,504 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/10986
+2026-10-22 16:46:42,554 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:46:42,694 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:46:42,842 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/10986
+2026-10-22 16:46:44,374 [worker-0] INFO: Message sent successfully.
+2026-10-22 16:46:44,378 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/10988
+2026-10-22 16:46:44,444 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:46:44,523 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/10988
+2026-10-22 16:46:45,547 [worker-0] INFO: Message sent successfully.
+2026-10-22 16:46:45,550 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/10989
+2026-10-22 16:46:45,551 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/10989
+2026-10-22 16:46:46,251 [worker-0] INFO: Message sent successfully.
+2026-10-22 16:46:47,976 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-22 16:46:51,362 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-22 16:46:52,962 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-22 16:46:55,774 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-22 16:51:55,775 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-22 16:51:59,558 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-22 16:52:01,355 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-22 16:52:03,173 [worker-0] INFO: New message sent: https://t.me/Team_Gemberry78/2972
+2026-10-22 16:52:05,072 [worker-0] INFO: cryptg detected, it will be used for encryption
+2026-10-22 16:52:05,666 [worker-0] INFO: Connecting to 91.108.56.190:443/TcpFull...
+2026-10-22 16:52:05,669 [worker-0] INFO: Connection to 91.108.56.190:443/TcpFull complete!
+2026-10-22 16:52:05,800 [worker-0] INFO: Telethon connected successfully to DC 5 at 91.108.56.190
+2026-10-22 16:52:05,842 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:52:05,864 [worker-0] INFO: Sending message to Discord: https://t.me/Team_Gemberry78/2972
+2026-10-22 16:52:07,248 [worker-0] INFO: Message sent successfully.
+2026-10-22 16:52:07,253 [worker-0] INFO: New message sent: https://t.me/Team_Gemberry78/2973
+2026-10-22 16:52:07,282 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:52:07,296 [worker-0] INFO: File lives in another DC
+2026-10-22 16:52:07,310 [worker-0] INFO: Connecting to 149.154.175.54:443/TcpFull...
+2026-10-22 16:52:09,875 [worker-0] INFO: Connection to 149.154.175.54:443/TcpFull complete!
+2026-10-22 16:52:09,876 [worker-0] INFO: Exporting auth for new borrowed sender in DcOption(id=1, ip_address='149.154.175.54', port=443, ipv6=False, media_only=False, tcpo_only=False, cdn=False, static=False, this_port_only=False, secret=None)
+2026-10-22 16:52:11,479 [worker-0] INFO: Sending message to Discord: https://t.me/Team_Gemberry78/2973
+2026-10-22 16:52:12,472 [worker-0] INFO: Message sent successfully.
+2026-10-22 16:52:12,473 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-22 16:52:14,569 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/10990
+2026-10-22 16:52:14,655 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:52:14,672 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/10990
+2026-10-22 16:52:15,782 [worker-0] INFO: Message sent successfully.
+2026-10-22 16:52:15,788 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/10991
+2026-10-22 16:52:15,790 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/10991
+2026-10-22 16:52:16,466 [worker-0] INFO: Message sent successfully.
+2026-10-22 16:52:16,471 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/10992
+2026-10-22 16:52:16,509 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:52:16,554 [worker-0] INFO: File lives in another DC
+2026-10-22 16:52:17,005 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/10992
+2026-10-22 16:52:18,247 [worker-0] INFO: Message sent successfully.
+2026-10-22 16:52:18,258 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/10993
+2026-10-22 16:52:18,259 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/10993
+2026-10-22 16:52:19,059 [worker-0] INFO: Message sent successfully.
+2026-10-22 16:52:19,066 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/10994
+2026-10-22 16:52:19,067 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/10994
+2026-10-22 16:52:19,786 [worker-0] INFO: Message sent successfully.
+2026-10-22 16:52:22,176 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-22 16:52:26,165 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-22 16:52:28,356 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-22 16:52:30,967 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-22 16:55:00,773 [main] INFO: Got difference for channel 1695568528 updates
+2026-10-22 16:56:00,801 [main] INFO: Got difference for channel 2405953050 updates
+2026-10-22 16:57:30,968 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-22 16:57:34,261 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-22 16:57:36,056 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-22 16:57:37,667 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-22 16:57:39,554 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/10995
+2026-10-22 16:57:41,485 [worker-0] INFO: cryptg detected, it will be used for encryption
+2026-10-22 16:57:42,060 [worker-0] INFO: Connecting to 91.108.56.190:443/TcpFull...
+2026-10-22 16:57:42,063 [worker-0] INFO: Connection to 91.108.56.190:443/TcpFull complete!
+2026-10-22 16:57:42,133 [worker-0] INFO: Telethon connected successfully to DC 5 at 91.108.56.190
+2026-10-22 16:57:42,237 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:57:42,267 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/10995
+2026-10-22 16:57:43,228 [worker-0] INFO: Message sent successfully.
+2026-10-22 16:57:43,233 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/10996
+2026-10-22 16:57:43,258 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:57:43,277 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/10996
+2026-10-22 16:57:44,170 [worker-0] INFO: Message sent successfully.
+2026-10-22 16:57:44,175 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/10997
+2026-10-22 16:57:44,203 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:57:44,276 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/10997
+2026-10-22 16:57:45,594 [worker-0] INFO: Message sent successfully.
+2026-10-22 16:57:47,791 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-22 16:57:51,765 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-22 16:57:54,158 [worker-1] INFO: New message sent: https://t.me/waves_wuthering/13340
+2026-10-22 16:57:55,973 [worker-1] INFO: cryptg detected, it will be used for encryption
+2026-10-22 16:57:56,469 [worker-1] INFO: Connecting to 91.108.56.190:443/TcpFull...
+2026-10-22 16:57:56,566 [worker-1] INFO: Connection to 91.108.56.190:443/TcpFull complete!
+2026-10-22 16:57:56,715 [worker-1] INFO: Telethon connected successfully to DC 5 at 91.108.56.190
+2026-10-22 16:57:56,754 [worker-1] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:57:56,769 [worker-1] INFO: File lives in another DC
+2026-10-22 16:57:56,804 [worker-1] INFO: Connecting to 149.154.167.50:443/TcpFull...
+2026-10-22 16:58:00,011 [worker-1] INFO: Connection to 149.154.167.50:443/TcpFull complete!
+2026-10-22 16:58:00,011 [worker-1] INFO: Exporting auth for new borrowed sender in DcOption(id=2, ip_address='149.154.167.50', port=443, ipv6=False, media_only=False, tcpo_only=False, cdn=False, static=False, this_port_only=False, secret=None)
+2026-10-22 16:58:01,876 [worker-1] INFO: Sending message to Discord: https://t.me/waves_wuthering/13340
+2026-10-22 16:58:02,803 [worker-1] INFO: Message sent successfully.
+2026-10-22 16:58:02,808 [worker-1] INFO: New message sent: https://t.me/waves_wuthering/13341
+2026-10-22 16:58:02,833 [worker-1] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:58:02,848 [worker-1] INFO: File lives in another DC
+2026-10-22 16:58:03,471 [worker-1] INFO: Sending message to Discord: https://t.me/waves_wuthering/13341
+2026-10-22 16:58:04,331 [worker-1] INFO: Message sent successfully.
+2026-10-22 16:58:04,334 [worker-1] INFO: New message sent: https://t.me/waves_wuthering/13342
+2026-10-22 16:58:04,362 [worker-1] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:58:04,377 [worker-1] INFO: File lives in another DC
+2026-10-22 16:58:05,095 [worker-1] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:58:05,136 [worker-1] INFO: File lives in another DC
+2026-10-22 16:58:05,764 [worker-1] INFO: Sending message to Discord: https://t.me/waves_wuthering/13342
+2026-10-22 16:58:07,081 [worker-1] INFO: Message sent successfully.
+2026-10-22 16:58:07,088 [worker-1] INFO: New message sent: https://t.me/waves_wuthering/13344
+2026-10-22 16:58:07,118 [worker-1] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:58:07,157 [worker-1] INFO: File lives in another DC
+2026-10-22 16:58:07,617 [worker-1] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:58:07,635 [worker-1] INFO: File lives in another DC
+2026-10-22 16:58:08,106 [worker-1] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:58:08,132 [worker-1] INFO: File lives in another DC
+2026-10-22 16:58:08,580 [worker-1] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:58:08,599 [worker-1] INFO: File lives in another DC
+2026-10-22 16:58:09,051 [worker-1] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:58:09,067 [worker-1] INFO: File lives in another DC
+2026-10-22 16:58:09,933 [worker-1] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:58:09,953 [worker-1] INFO: File lives in another DC
+2026-10-22 16:58:10,399 [worker-1] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:58:10,414 [worker-1] INFO: File lives in another DC
+2026-10-22 16:58:10,857 [worker-1] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:58:10,869 [worker-1] INFO: File lives in another DC
+2026-10-22 16:58:11,303 [worker-1] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:58:11,323 [worker-1] INFO: File lives in another DC
+2026-10-22 16:58:11,756 [worker-1] INFO: Sending message to Discord: https://t.me/waves_wuthering/13344
+2026-10-22 16:58:16,382 [worker-1] INFO: Message sent successfully.
+2026-10-22 16:58:16,386 [worker-1] INFO: New message sent: https://t.me/waves_wuthering/13353
+2026-10-22 16:58:16,410 [worker-1] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:58:16,424 [worker-1] INFO: File lives in another DC
+2026-10-22 16:58:16,881 [worker-1] INFO: Sending message to Discord: https://t.me/waves_wuthering/13353
+2026-10-22 16:58:17,661 [worker-1] INFO: Message sent successfully.
+2026-10-22 16:58:17,665 [worker-1] INFO: New message sent: https://t.me/waves_wuthering/13354
+2026-10-22 16:58:17,691 [worker-1] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:58:17,705 [worker-1] INFO: File lives in another DC
+2026-10-22 16:58:18,074 [worker-1] INFO: Sending message to Discord: https://t.me/waves_wuthering/13354
+2026-10-22 16:58:18,879 [worker-1] INFO: Message sent successfully.
+2026-10-22 16:58:18,882 [worker-1] INFO: New message sent: https://t.me/waves_wuthering/13355
+2026-10-22 16:58:18,911 [worker-1] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:58:18,925 [worker-1] INFO: File lives in another DC
+2026-10-22 16:58:19,798 [worker-1] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:58:19,864 [worker-1] INFO: File lives in another DC
+2026-10-22 16:58:20,946 [worker-1] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 16:58:20,960 [worker-1] INFO: File lives in another DC
+2026-10-22 16:58:21,949 [worker-1] INFO: Sending message to Discord: https://t.me/waves_wuthering/13355
+2026-10-22 16:58:23,724 [worker-1] INFO: Message sent successfully.
+2026-10-22 16:58:23,725 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-22 16:58:27,681 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-22 16:59:00,961 [main] INFO: Got difference for channel 1695568528 updates
+2026-10-22 17:03:27,754 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-22 17:03:31,466 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-22 17:03:33,457 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-22 17:03:35,363 [worker-0] INFO: New message sent: https://t.me/Team_Gemberry78/2974
+2026-10-22 17:03:37,159 [worker-0] INFO: cryptg detected, it will be used for encryption
+2026-10-22 17:03:37,659 [worker-0] INFO: Connecting to 91.108.56.190:443/TcpFull...
+2026-10-22 17:03:37,662 [worker-0] INFO: Connection to 91.108.56.190:443/TcpFull complete!
+2026-10-22 17:03:37,871 [worker-0] INFO: Telethon connected successfully to DC 5 at 91.108.56.190
+2026-10-22 17:03:37,951 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 17:03:37,967 [worker-0] INFO: File lives in another DC
+2026-10-22 17:03:37,981 [worker-0] INFO: Connecting to 149.154.175.54:443/TcpFull...
+2026-10-22 17:03:39,972 [worker-0] INFO: Connection to 149.154.175.54:443/TcpFull complete!
+2026-10-22 17:03:39,972 [worker-0] INFO: Exporting auth for new borrowed sender in DcOption(id=1, ip_address='149.154.175.54', port=443, ipv6=False, media_only=False, tcpo_only=False, cdn=False, static=False, this_port_only=False, secret=None)
+2026-10-22 17:03:41,575 [worker-0] INFO: Sending message to Discord: https://t.me/Team_Gemberry78/2974
+2026-10-22 17:03:42,979 [worker-0] INFO: Message sent successfully.
+2026-10-22 17:03:42,983 [worker-0] INFO: New message sent: https://t.me/Team_Gemberry78/2975
+2026-10-22 17:03:43,021 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 17:03:43,044 [worker-0] INFO: Sending message to Discord: https://t.me/Team_Gemberry78/2975
+2026-10-22 17:03:43,864 [worker-0] INFO: Message sent successfully.
+2026-10-22 17:03:43,870 [worker-0] INFO: New message sent: https://t.me/Team_Gemberry78/2976
+2026-10-22 17:03:43,898 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 17:03:43,913 [worker-0] INFO: Sending message to Discord: https://t.me/Team_Gemberry78/2976
+2026-10-22 17:03:44,874 [worker-0] INFO: Message sent successfully.
+2026-10-22 17:03:44,875 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-22 17:03:46,667 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/10998
+2026-10-22 17:03:46,696 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 17:03:46,770 [worker-0] INFO: File lives in another DC
+2026-10-22 17:03:47,260 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/10998
+2026-10-22 17:03:48,629 [worker-0] INFO: Message sent successfully.
+2026-10-22 17:03:48,632 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/10999
+2026-10-22 17:03:48,702 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 17:03:49,107 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/10999
+2026-10-22 17:03:50,315 [worker-0] INFO: Message sent successfully.
+2026-10-22 17:03:50,357 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/11000
+2026-10-22 17:03:50,358 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/11000
+2026-10-22 17:03:51,088 [worker-0] INFO: Message sent successfully.
+2026-10-22 17:03:53,167 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-22 17:03:56,656 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-22 17:03:58,962 [worker-1] INFO: New message sent: https://t.me/waves_wuthering/13358
+2026-10-22 17:04:00,559 [worker-1] INFO: cryptg detected, it will be used for encryption
+2026-10-22 17:04:01,066 [worker-1] INFO: Sending message to Discord: https://t.me/waves_wuthering/13358
+2026-10-22 17:04:01,254 [main] INFO: Got difference for channel 2405953050 updates
+2026-10-22 17:04:01,866 [worker-1] INFO: Message sent successfully.
+2026-10-22 17:04:01,867 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-22 17:04:05,670 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-22 17:05:47,480 [main] INFO: Got difference for channel 2356846718 updates
+2026-10-22 17:09:05,754 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-22 17:09:09,565 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-22 17:09:11,261 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-22 17:09:12,863 [worker-0] INFO: New message sent: https://t.me/Team_Gemberry78/2977
+2026-10-22 17:09:14,562 [worker-0] INFO: cryptg detected, it will be used for encryption
+2026-10-22 17:09:15,067 [worker-0] INFO: Connecting to 91.108.56.190:443/TcpFull...
+2026-10-22 17:09:15,157 [worker-0] INFO: Connection to 91.108.56.190:443/TcpFull complete!
+2026-10-22 17:09:15,228 [worker-0] INFO: Telethon connected successfully to DC 5 at 91.108.56.190
+2026-10-22 17:09:15,269 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 17:09:15,289 [worker-0] INFO: Sending message to Discord: https://t.me/Team_Gemberry78/2977
+2026-10-22 17:09:16,358 [worker-0] INFO: Message sent successfully.
+2026-10-22 17:09:16,362 [worker-0] INFO: New message sent: https://t.me/Team_Gemberry78/2978
+2026-10-22 17:09:16,403 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 17:09:16,486 [worker-0] INFO: Sending message to Discord: https://t.me/Team_Gemberry78/2978
+2026-10-22 17:09:18,672 [worker-0] INFO: Message sent successfully.
+2026-10-22 17:09:18,676 [worker-0] INFO: New message sent: https://t.me/Team_Gemberry78/2979
+2026-10-22 17:09:18,711 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 17:09:18,765 [worker-0] INFO: Sending message to Discord: https://t.me/Team_Gemberry78/2979
+2026-10-22 17:09:20,349 [worker-0] INFO: Message sent successfully.
+2026-10-22 17:09:20,350 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-22 17:09:22,268 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/11001
+2026-10-22 17:09:22,444 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 17:09:22,580 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/11001
+2026-10-22 17:09:24,237 [worker-0] INFO: Message sent successfully.
+2026-10-22 17:09:24,241 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/11002
+2026-10-22 17:09:24,242 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/11002
+2026-10-22 17:09:24,806 [worker-0] INFO: Message sent successfully.
+2026-10-22 17:09:27,254 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-22 17:09:30,967 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-22 17:09:33,565 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-22 17:09:36,470 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-22 17:14:01,082 [main] INFO: Got difference for channel 1695568528 updates
+2026-10-22 17:14:36,554 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-22 17:14:40,261 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-22 17:14:41,757 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-22 17:14:43,262 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-22 17:14:44,765 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/11003
+2026-10-22 17:14:46,462 [worker-0] INFO: cryptg detected, it will be used for encryption
+2026-10-22 17:14:46,961 [worker-0] INFO: Connecting to 91.108.56.190:443/TcpFull...
+2026-10-22 17:14:46,965 [worker-0] INFO: Connection to 91.108.56.190:443/TcpFull complete!
+2026-10-22 17:14:47,044 [worker-0] INFO: Telethon connected successfully to DC 5 at 91.108.56.190
+2026-10-22 17:14:47,098 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 17:14:47,196 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/11003
+2026-10-22 17:14:48,337 [worker-0] INFO: Message sent successfully.
+2026-10-22 17:14:48,341 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/11004
+2026-10-22 17:14:48,397 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 17:14:48,442 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/11004
+2026-10-22 17:14:49,773 [worker-0] INFO: Message sent successfully.
+2026-10-22 17:14:49,777 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/11005
+2026-10-22 17:14:49,778 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/11005
+2026-10-22 17:14:50,668 [worker-0] INFO: Message sent successfully.
+2026-10-22 17:14:52,273 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-22 17:14:55,868 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-22 17:14:57,357 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-22 17:15:00,168 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-22 17:20:00,172 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-22 17:20:03,667 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-22 17:20:05,260 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-22 17:20:06,956 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-22 17:20:10,354 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-22 17:20:14,061 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-22 17:20:15,461 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-22 17:20:17,565 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-22 17:25:17,566 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-22 17:25:20,754 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-22 17:25:22,166 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-22 17:25:23,660 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-22 17:25:26,660 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-22 17:25:30,057 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-22 17:25:31,558 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-22 17:25:34,066 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-22 17:29:01,175 [main] INFO: Got difference for channel 1695568528 updates
+2026-10-22 17:30:02,322 [main] INFO: Got difference for channel 2405953050 updates
+2026-10-22 17:30:34,068 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-22 17:30:37,869 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-22 17:30:39,263 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-22 17:30:40,855 [worker-0] INFO: New message sent: https://t.me/Team_Gemberry78/2980
+2026-10-22 17:30:42,367 [worker-0] INFO: cryptg detected, it will be used for encryption
+2026-10-22 17:30:42,857 [worker-0] INFO: Connecting to 91.108.56.190:443/TcpFull...
+2026-10-22 17:30:42,861 [worker-0] INFO: Connection to 91.108.56.190:443/TcpFull complete!
+2026-10-22 17:30:42,943 [worker-0] INFO: Telethon connected successfully to DC 5 at 91.108.56.190
+2026-10-22 17:30:42,992 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 17:30:43,223 [worker-0] INFO: Sending message to Discord: https://t.me/Team_Gemberry78/2980
+2026-10-22 17:30:45,364 [worker-0] INFO: Message sent successfully.
+2026-10-22 17:30:45,365 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-22 17:30:47,063 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/11006
+2026-10-22 17:30:47,064 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/11006
+2026-10-22 17:30:47,698 [worker-0] INFO: Message sent successfully.
+2026-10-22 17:30:47,703 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/11007
+2026-10-22 17:30:47,778 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 17:30:47,844 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 17:30:47,892 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 17:30:47,953 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 17:30:47,984 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 17:30:48,026 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/11007
+2026-10-22 17:30:51,460 [worker-0] INFO: Message sent successfully.
+2026-10-22 17:30:51,470 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/11012
+2026-10-22 17:30:51,593 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 17:30:51,932 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/11012
+2026-10-22 17:30:54,152 [worker-0] INFO: Message sent successfully.
+2026-10-22 17:30:56,277 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-22 17:30:59,559 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-22 17:31:00,964 [worker-1] INFO: New message sent: https://t.me/waves_wuthering/13359
+2026-10-22 17:31:02,569 [worker-1] INFO: cryptg detected, it will be used for encryption
+2026-10-22 17:31:03,062 [worker-1] INFO: Sending message to Discord: https://t.me/waves_wuthering/13359
+2026-10-22 17:31:04,089 [worker-1] INFO: Message sent successfully.
+2026-10-22 17:31:04,093 [worker-1] INFO: New message sent: https://t.me/waves_wuthering/13360
+2026-10-22 17:31:04,094 [worker-1] INFO: Connecting to 91.108.56.190:443/TcpFull...
+2026-10-22 17:31:04,097 [worker-1] INFO: Connection to 91.108.56.190:443/TcpFull complete!
+2026-10-22 17:31:04,186 [worker-1] INFO: Telethon connected successfully to DC 5 at 91.108.56.190
+2026-10-22 17:31:04,233 [worker-1] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 17:31:04,601 [worker-1] INFO: Sending message to Discord: https://t.me/waves_wuthering/13360
+2026-10-22 17:31:06,695 [worker-1] INFO: Message sent successfully.
+2026-10-22 17:31:06,696 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-22 17:31:10,578 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-22 17:36:10,579 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-22 17:36:13,562 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-22 17:36:15,156 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-22 17:36:16,769 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-22 17:36:18,668 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/11013
+2026-10-22 17:36:20,463 [worker-0] INFO: cryptg detected, it will be used for encryption
+2026-10-22 17:36:20,969 [worker-0] INFO: Connecting to 91.108.56.190:443/TcpFull...
+2026-10-22 17:36:21,057 [worker-0] INFO: Connection to 91.108.56.190:443/TcpFull complete!
+2026-10-22 17:36:21,121 [worker-0] INFO: Telethon connected successfully to DC 5 at 91.108.56.190
+2026-10-22 17:36:21,465 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/11013
+2026-10-22 17:36:22,321 [worker-0] INFO: Message sent successfully.
+2026-10-22 17:36:22,330 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/11014
+2026-10-22 17:36:22,360 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 17:36:22,377 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/11014
+2026-10-22 17:36:23,275 [worker-0] INFO: Message sent successfully.
+2026-10-22 17:36:25,165 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-22 17:36:28,754 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-22 17:36:30,155 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-22 17:36:32,272 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-22 17:41:32,273 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-22 17:41:35,461 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-22 17:41:37,267 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-22 17:41:38,860 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-22 17:41:40,857 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/11015
+2026-10-22 17:41:42,764 [worker-0] INFO: cryptg detected, it will be used for encryption
+2026-10-22 17:41:43,267 [worker-0] INFO: Connecting to 91.108.56.190:443/TcpFull...
+2026-10-22 17:41:43,271 [worker-0] INFO: Connection to 91.108.56.190:443/TcpFull complete!
+2026-10-22 17:41:43,397 [worker-0] INFO: Telethon connected successfully to DC 5 at 91.108.56.190
+2026-10-22 17:41:43,443 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 17:41:43,511 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/11015
+2026-10-22 17:41:45,405 [worker-0] INFO: Message sent successfully.
+2026-10-22 17:41:45,410 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/11016
+2026-10-22 17:41:45,436 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 17:41:45,497 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/11016
+2026-10-22 17:41:47,319 [worker-0] INFO: Message sent successfully.
+2026-10-22 17:41:47,324 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/11017
+2026-10-22 17:41:47,351 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 17:41:47,400 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/11017
+2026-10-22 17:41:48,793 [worker-0] INFO: Message sent successfully.
+2026-10-22 17:41:50,764 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-22 17:41:54,067 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-22 17:41:55,866 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-22 17:42:00,567 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-22 17:42:02,914 [main] INFO: Got difference for channel 1695568528 updates
+2026-10-22 17:47:00,655 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-22 17:47:03,760 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-22 17:47:05,359 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-22 17:47:07,058 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-22 17:47:08,756 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/11018
+2026-10-22 17:47:10,355 [worker-0] INFO: cryptg detected, it will be used for encryption
+2026-10-22 17:47:10,766 [worker-0] INFO: Connecting to 91.108.56.190:443/TcpFull...
+2026-10-22 17:47:10,770 [worker-0] INFO: Connection to 91.108.56.190:443/TcpFull complete!
+2026-10-22 17:47:10,927 [worker-0] INFO: Telethon connected successfully to DC 5 at 91.108.56.190
+2026-10-22 17:47:11,156 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/11018
+2026-10-22 17:47:11,960 [worker-0] INFO: Message sent successfully.
+2026-10-22 17:47:14,167 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-22 17:47:17,357 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-22 17:47:18,968 [worker-1] INFO: New message sent: https://t.me/waves_wuthering/13361
+2026-10-22 17:47:20,463 [worker-1] INFO: cryptg detected, it will be used for encryption
+2026-10-22 17:47:20,961 [worker-1] INFO: Connecting to 91.108.56.190:443/TcpFull...
+2026-10-22 17:47:20,965 [worker-1] INFO: Connection to 91.108.56.190:443/TcpFull complete!
+2026-10-22 17:47:21,078 [worker-1] INFO: Telethon connected successfully to DC 5 at 91.108.56.190
+2026-10-22 17:47:21,136 [worker-1] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 17:47:21,209 [worker-1] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 17:47:21,265 [worker-1] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 17:47:21,306 [worker-1] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 17:47:21,352 [worker-1] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 17:47:21,413 [worker-1] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 17:47:21,467 [worker-1] INFO: Sending message to Discord: https://t.me/waves_wuthering/13361
+2026-10-22 17:47:25,098 [worker-1] INFO: Message sent successfully.
+2026-10-22 17:47:25,099 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-22 17:47:29,283 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-22 17:52:29,284 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-22 17:52:32,778 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-22 17:52:34,563 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-22 17:52:36,058 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-22 17:52:37,659 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/11019
+2026-10-22 17:52:39,259 [worker-0] INFO: cryptg detected, it will be used for encryption
+2026-10-22 17:52:39,664 [worker-0] INFO: Connecting to 91.108.56.190:443/TcpFull...
+2026-10-22 17:52:39,668 [worker-0] INFO: Connection to 91.108.56.190:443/TcpFull complete!
+2026-10-22 17:52:39,730 [worker-0] INFO: Telethon connected successfully to DC 5 at 91.108.56.190
+2026-10-22 17:52:39,798 [worker-0] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 17:52:39,809 [worker-0] INFO: File lives in another DC
+2026-10-22 17:52:39,824 [worker-0] INFO: Connecting to 149.154.167.50:443/TcpFull...
+2026-10-22 17:52:42,273 [worker-0] INFO: Connection to 149.154.167.50:443/TcpFull complete!
+2026-10-22 17:52:42,274 [worker-0] INFO: Exporting auth for new borrowed sender in DcOption(id=2, ip_address='149.154.167.50', port=443, ipv6=False, media_only=False, tcpo_only=False, cdn=False, static=False, this_port_only=False, secret=None)
+2026-10-22 17:52:44,395 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/11019
+2026-10-22 17:52:45,737 [worker-0] INFO: Message sent successfully.
+2026-10-22 17:52:47,266 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-22 17:52:50,866 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-22 17:52:52,962 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-22 17:52:55,368 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-22 17:57:03,016 [main] INFO: Got difference for channel 1695568528 updates
+2026-10-22 17:57:55,369 [main] INFO: Spawning worker 0 for channels: disgramtest,Team_Gemberry78,Seele_WW_Leak
+2026-10-22 17:57:58,858 [worker-0] INFO: Scraping messages from Telegram channel: disgramtest (Attempt 1)
+2026-10-22 17:58:00,556 [worker-0] INFO: Scraping messages from Telegram channel: Team_Gemberry78 (Attempt 1)
+2026-10-22 17:58:02,356 [worker-0] INFO: Scraping messages from Telegram channel: Seele_WW_Leak (Attempt 1)
+2026-10-22 17:58:04,261 [worker-0] INFO: New message sent: https://t.me/Seele_WW_Leak/11020
+2026-10-22 17:58:05,965 [worker-0] INFO: cryptg detected, it will be used for encryption
+2026-10-22 17:58:06,462 [worker-0] INFO: Sending message to Discord: https://t.me/Seele_WW_Leak/11020
+2026-10-22 17:58:07,485 [worker-0] INFO: Message sent successfully.
+2026-10-22 17:58:09,766 [main] INFO: Spawning worker 1 for channels: waves_wuthering,stepleaker
+2026-10-22 17:58:13,266 [worker-1] INFO: Scraping messages from Telegram channel: waves_wuthering (Attempt 1)
+2026-10-22 17:58:14,859 [worker-1] INFO: New message sent: https://t.me/waves_wuthering/13367
+2026-10-22 17:58:16,566 [worker-1] INFO: cryptg detected, it will be used for encryption
+2026-10-22 17:58:17,067 [worker-1] INFO: Connecting to 91.108.56.190:443/TcpFull...
+2026-10-22 17:58:17,070 [worker-1] INFO: Connection to 91.108.56.190:443/TcpFull complete!
+2026-10-22 17:58:17,237 [worker-1] INFO: Telethon connected successfully to DC 5 at 91.108.56.190
+2026-10-22 17:58:17,276 [worker-1] INFO: Starting direct file download in chunks of 131072 at 0, stride 131072
+2026-10-22 17:58:17,312 [worker-1] INFO: Sending message to Discord: https://t.me/waves_wuthering/13367
+2026-10-22 17:58:18,457 [worker-1] INFO: Message sent successfully.
+2026-10-22 17:58:18,458 [worker-1] INFO: Scraping messages from Telegram channel: stepleaker (Attempt 1)
+2026-10-22 17:58:22,777 [main] INFO: Completed full cycle. Sleeping for 300 seconds.
+2026-10-22 18:00:13,871 [main] INFO: Background commit triggered by scheduled, committing log changes...
+2026-10-22 18:00:14,761 [main] INFO: Successfully generated new GitHub App installation token
+2026-10-22 18:00:14,773 [main] INFO: Git authentication configured for repository: SimpNick6703/Disgram.git
+2026-10-22 18:00:17,060 [main] INFO: Log files to be committed: Disgram.log
